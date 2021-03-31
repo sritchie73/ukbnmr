@@ -24,21 +24,19 @@ process_data <- function(x) {
   if (data_format == "processed")
     return(x)
 
+  # Give field ids consistent names based on data format
+  if (data_format == "raw") {
+    setnames(x, gsub("-|\\.", "_", names(x)))
+  } else if (data_format == "ukbtools") {
+    setnames(x, gsub(".*_f", "", names(x)))
+  }
+
   # Melt wide to long format
   x <- melt(x, id.vars="eid")
   x <- x[!is.na(value)] # drops empty columns
 
   # Split what were the column names into separate fields
-  if (data_format == "raw") {
-    x[, "field_id" := as.integer(gsub("-.*", "", variable))]
-    x[, "instance" := as.integer(gsub("\\..*", "", gsub(".*-", "", variable)))]
-    x[, "array_index" := as.integer(gsub(".*\\.", "", gsub(".*-", "", variable)))]
-  } else if (data_format == "ukbtools") {
-    x[, "variable" := gsub(".*_f", "", variable)]
-    x[, "field_id" := as.integer(gsub("_.*", "", variable))]
-    x[, "instance" := as.integer(gsub("_.*", "", gsub("[0-9]{2,}_", "", variable)))]
-    x[, "array_index" := as.integer(gsub(".*_", "", gsub("[0-9]{2,}_", "", variable)))]
-  }
+  x[, c("field_id", "instance", "array_index") := lapply(tstrsplit(variable, split="_"), as.integer)]
 
   # Map field IDs to short biomarker names to use as column names
   x[ukbnmr::nmr_info[!is.na(UKB.Field.ID)],

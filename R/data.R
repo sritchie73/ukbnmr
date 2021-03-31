@@ -3,7 +3,7 @@
 #' Contains details on the Nightingale biomarkers available in UK Biobank and
 #' computed by this package.
 #'
-#' @format A data table with 249 rows and 9 columns:
+#' @format A data table with 325 rows and 8 columns:
 #' \describe{
 #'   \item{Biomarker}{Short column name assigned to the biomarker}
 #'   \item{Description}{Biomarker description, matching the description field provided by UK Biobank and Nightingale Health}
@@ -12,7 +12,6 @@
 #'   \item{Group}{Biomarker group as provided by Nightingale Health}
 #'   \item{Sub.Group}{Biomarker sub-group as provided by Nightingale Health}
 #'   \item{Nightingale}{Logical. Indicates biomarker is quantified by the Nightingale Health platform}
-#'   \item{UKB}{Logical. Indicates the biomarker is currently downloadable from UK Biobank}
 #'   \item{UKB.Field.ID}{Field ID in UK Biobank}
 #' }
 "nmr_info"

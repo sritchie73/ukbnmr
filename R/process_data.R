@@ -1,18 +1,21 @@
 # Helper function for processing user input data
 #
-# Currently expects only a data.frame loaded from the output of ukbconv, in which
-# case it converts the ukb field identifiers to biomarker names, splitting x
-# repeat instances and samples per eid.
+# Columns in the raw UK Biobank data are <field_id>-<instance>.<array_index>,
+# where <field_id> corresponds to the biomarker, e.g. 23474 for 3-Hydroxybutyrate
+# (given the variable name bOHbutyrate), <instance> corresponds to the timepoint
+# of biomarker quantification, 0 for baseline assessment, 1 for first repeat
+# assessment, and <array_index> corresponds to a number 0--N for repeated
+# measures at the same time point (always present, all 0 if only 1 measure
+# taken).
+#
+# This function splits out these columns into multiple rows, 1 per <instance>
+# and <array_index> per participant ("eid"), and maps the field identifiers to
+# the short biomarker variable names typically provided by Nightingale Health,
+# listed in the Biomarker column in the nmr_info data sheet included with this
+# package.
 process_data <- function(x) {
-  # The goal here is to convert field codes like "23474-0.0" to "bOHbutyrate"
-  # using the nmr_info table. Since columns are of the format
-  # <field_id>-<instance>.<array_index> we need to melt to long so we can split
-  # the column names into their respective parts. Here, "instance" is the
-  # assessment: 0 is baseline assessment, and 1 first repeat assessment.
-  # Array_index is used for repeated measures at the same time point.
-
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
-  variable <- value <- name <- Biomarker <- UKB.Field.ID <- NULL
+  value <- Biomarker <- UKB.Field.ID <- NULL
 
   # Determine format of data
   data_format <- detect_format(x)
@@ -31,27 +34,31 @@ process_data <- function(x) {
     setnames(x, gsub(".*_f", "", names(x)))
   }
 
-  # Melt wide to long format
-  x <- melt(x, id.vars="eid")
-  x <- x[!is.na(value)] # drops empty columns
+  # Extract field IDs present
+  field_ids <- data.table(UKB.Field.ID = names(x))
+  field_ids[, UKB.Field.ID := gsub("_.*", "", UKB.Field.ID)]
+  field_ids <- unique(field_ids)
+  field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$UKB.Field.ID)]
 
-  # Split what were the column names into separate fields
-  x[, c("field_id", "instance", "array_index") := lapply(tstrsplit(variable, split="_"), as.integer)]
+  # Map to biomarker variable names
+  field_ids[, UKB.Field.ID := as.integer(UKB.Field.ID)]
+  field_ids[ukbnmr::nmr_info, on = list(UKB.Field.ID), Biomarker := Biomarker]
+  field_ids[, UKB.Field.ID := as.character(UKB.Field.ID)]
 
-  # Map field IDs to short biomarker names to use as column names
-  x[ukbnmr::nmr_info[!is.na(UKB.Field.ID)],
-    on = c("field_id" = "UKB.Field.ID"),
-    name := Biomarker]
+  # Split out instance and array index fields
+  setkey(x, "eid")
+  x <- splitstackshape::merged.stack(x, id.vars="eid", sep="_", keep.all=FALSE,
+                                     var.stubs=field_ids$UKB.Field.ID)
+  setnames(x, c(".time_1", ".time_2"), c("instance", "array_index"))
 
-  # Drop any additional fields not relating to the NMR data or participant ID
-  x <- x[!is.na(name)]
+  # Rename Field IDs to biomarker variable names
+  setnames(x, field_ids$UKB.Field.ID, field_ids$Biomarker)
 
-  # Make sure values are numeric (may be character if other fields were present)
-  if (!is.numeric(x$value))
-    x[, value := as.numeric(value)]
-
-  # Convert back to wide format
-  x <- dcast(x, eid + instance + array_index ~ name, value.var="value")
+  # Drop instance and array index combinations with all missing data
+  x <- melt(x, id.vars=c("eid", "instance", "array_index"))
+  x <- x[!is.na(value)]
+  x <- dcast(x, eid + instance + array_index ~ variable, value.var="value")
+  setkeyv(x, c("eid", "instance", "array_index"))
 
   # Finished processing
   return(x)

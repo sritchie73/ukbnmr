@@ -3,4 +3,5 @@
 export(compute_nightingale_ratios)
 export(extract_biomarkers)
 import(data.table)
+import(splitstackshape)
 importFrom(stats,na.omit)

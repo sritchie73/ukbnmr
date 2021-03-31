@@ -27,15 +27,13 @@
 #' This function will also work with data extracted by the \code{ukbtools} R
 #' package.
 #'
-#' A \code{data.table} will be returned instead of a \code{data.frame} if the
-#' the user has loaded the package into their R session.
 #'
 #' @param x \code{data.frame} with column names "eid" followed by extracted
-#'           fields e.g. "23474-0.0", "23474-1.0", \dots, "23467-1.0".
-#' @return a \code{data.frame} or \code{data.table} with column names "eid",
-#'        "instance", and "array_index", followed by columns for each biomarker
-#'        e.g. "bOHbutyrate", \dots, "Valine".
+#'   fields e.g. "23474-0.0", "23474-1.0", \dots, "23467-1.0".
+#' @return a \code{data.frame} with column names "eid", "instance", and
+#'  "array_index", followed by columns for each biomarker.
 #'
+#' @seealso \code{\link{nmr_info}} for details on returned biomarkers.
 #' @export
 extract_biomarkers <- function(x) {
   if (detect_format(x) == "processed") {

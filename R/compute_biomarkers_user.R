@@ -1,43 +1,28 @@
 #' Compute 81 biomarker ratios on the Nightingale platform
 #'
 #' The Nightingale Health NMR metabolomics biomarker platform quantifies
-#' \href{https://nightingalehealth.com/biomarkers}{249 biomarkers}, "including 81
-#' biomarker ratios. UK Biobank currently only provides the 168 biomarkers that
-#' are not ratios for \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{download}.
-#' This function will compute the 81 missing ratios from the 168 downloadable
-#' biomarkers in UKB.
+#' \href{https://nightingalehealth.com/biomarkers}{249 biomarkers}, including 81
+#' biomarker ratios. Prior to the May update, UK Biobank only provided the 168
+#' biomarkers that are not ratios for
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{download}.
+#' This function will compute the 81 missing ratios.
 #'
 #' @details
-#' Data sets extracted by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#' have one row per UKB biobank participant whose project specific sample
-#' identifier is given in the first column named "eid". Columns following this
-#' have the format "<field_id>-<instance>.<array_index>", "where here <field_id>
-#' corresponds to a biomarker of interest, "e.g. 23474 for 3-Hydroxybutyrate,
-#' <instance> corresponds to the assessment time point, "e.g. 0 for baseline
-#' assessment, "1 for first repeat visit, "and <array_index> gives a number for
-#' repeated measurements at the same time point.
-#'
-#' In the returned \code{data.frame} there is single column for each biomarker,
-#' with additional columns for the instance and array index. Rows are uniquely
-#' identifiable by the combination of entries in columns "eid", ""instance",
-#' and "array index".
-#'
-#' Input data may be (1) a raw dataset extracted by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#' and loaded into R, "(2) a raw dataset extracted by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#' and loaded into R using the \code{ukbtools} R package, "or (3) a processed
-#' \code{data.frame} of biomarker data obtained from the above using \code{\link{extract_biomarkers}()}.
-#'
-#' A \code{data.table} will be returned instead of a \code{data.frame} if the
-#' the user has loaded the package into their R session.
+#' If your UK Biobank project only has access to a subset of biomarkers, then
+#' this function will only return the subset of ratios that can be computed from
+#' the biomarker data provided.
 #'
 #' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
+#'   May either be raw field data output by
+#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
+#'   or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.
 #'
-#' @return a \code{data.frame} or \code{data.table} with column names "eid",
-#'        "instance", "and "array_index", "followed by columns for each of the
-#'         249 biomarkers and ratios.
+#' @return a \code{data.frame} with the additional computed biomarker ratios.
+#'
+#' @seealso \code{\link{nmr_info}} for list of computed biomarker ratios and
+#'   \code{\link{extract_biomarkers}()} for details on how raw data from
+#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
+#'   is processed.
 #'
 #' @export
 compute_nightingale_ratios <- function(x) {
@@ -46,6 +31,93 @@ compute_nightingale_ratios <- function(x) {
 
   # compute ratios
   x <- nightingale_ratio_compute(x)
+
+  # Return
+  returnDT(x)
+}
+
+#' Compute extended set of biomarker ratios
+#'
+#' Computes 76 additional ratios not provided by the Nightingale platform. These
+#' include lipid fractions in HDL, LDL, VLDL, and total serum, as well as
+#' cholesterol fractions, and omega to polyunsaturated fatty acid ratios. See
+#' \code{\link{nmr_info}} for details. Also computes Nightingale biomarker
+#' ratios if missing (see \code{\link{compute_nightingale_ratios}()}).
+#'
+#' @details
+#' If your UK Biobank project only has access to a subset of biomarkers, then
+#' this function will only return the subset of ratios that can be computed from
+#' the biomarker data provided.
+#'
+#' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
+#'   May either be raw field data output by
+#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
+#'   or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.
+#'
+#' @return a \code{data.frame} with the additional computed biomarker ratios.
+#'
+#' @seealso \code{\link{nmr_info}} for list of computed biomarker ratios and
+#'   \code{\link{extract_biomarkers}()} for details on how raw data from
+#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
+#'   is processed.
+#'
+#' @export
+compute_extended_ratios <- function(x) {
+  # Process data to correct format
+  x <- process_data(x) # copy of x created if already in right format
+
+  # Are the nightingale ratios already computed? If not, also compute these
+  Type <- Nightingale <- Biomarker <- NULL # Silence CRAN NOTES for data.table columns
+  nightingale_ratios <- ukbnmr::nmr_info[
+    (Nightingale) & !(Type %in% c("Non-derived", "Composite")),
+    Biomarker]
+  has_nightingale_ratios <- (length(intersect(names(x), nightingale_ratios)) > 0)
+
+  # compute ratios
+  if (!has_nightingale_ratios)
+    x <- compute_nightingale_ratios(x)
+
+  x <- extended_ratios_compute(x)
+
+  # Return
+  returnDT(x)
+}
+
+#' Recompute composite biomarkers and ratios from the 107 non-derived biomarkers
+#'
+#' When adjusting biomarkers for unwanted biological covariates, it is desirable
+#' to recompute composite biomarkers and ratios to ensure consistency in the
+#' adjusted dataset. This function will compute all composite biomarkers and
+#' ratios from their parts (see \code{\link{nmr_info}} for biomarker details).
+#'
+#' @details
+#' If your UK Biobank project only has access to a subset of biomarkers, then
+#' this function will only return the subset of ratios that can be computed from
+#' the biomarker data provided.
+#'
+#' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
+#'   May either be raw field data output by
+#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
+#'   or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.
+#'
+#' @return a \code{data.frame} with all composite biomarkers and ratios
+#'   (re)computed from the 107 non-derived biomarkers (see \code{\link{nmr_info}}
+#'   for details).
+#'
+#' @seealso \code{\link{nmr_info}} for list of recomputed biomarkers and
+#'   \code{\link{extract_biomarkers}()} for details on how raw data from
+#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
+#'   is processed.
+#'
+#' @export
+recompute_derived_biomarkers <- function(x) {
+  # Process data to correct format
+  x <- process_data(x) # copy of x created if already in right format
+
+  # Composite biomarkers *must* be recomputed before downstream ratios
+  x <- nightingale_composite_biomarker_compute(x)
+  x <- nightingale_ratio_compute(x)
+  x <- extended_ratios_compute(x)
 
   # Return
   returnDT(x)

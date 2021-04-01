@@ -12,7 +12,10 @@
 # but cannot be multiplied (e.g. if 'bar' is class character).
 #
 tryAssign <- function(...) {
- invisible(tryCatch(..., error = function(e) {}))
+ tryCatch(..., error = function(e) {
+   if (!(e %like% "object .* not found"))
+     stop(e) # throw error if not related to column not existing
+ })
 }
 
 # Cast object to data.table, or if already a data.table, make a copy so we don't

@@ -113,19 +113,13 @@ process_data <- function(x, type) {
                "High ethanol", "Isopropyl alcohol", "Low glutamine or high glutamate",
                "Medium ethanol", "Polysaccharides", "Unknown contamination", "Ethanol")
     )
-    x[flag_map, on = .(value=integer_rep), value := flag]
+    x[flag_map, on = .(value=integer_rep), flag := flag]
 
-    x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="value")
+    x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="flag")
   }
 
-  # Drop "repeat" field if no repeat measures at each timepoint and set column
-  # keys for fast joining by user
-  if (x[,sum(repeat_index)] == 0) {
-    x[, repeat_index := NULL]
-    setkeyv(x, c("eid", "visit_index"))
-  } else {
-    setkeyv(x, c("eid", "visit_index", "repeat_index"))
-  }
+  # Set column keys for fast joining by user
+  setkeyv(x, c("eid", "visit_index", "repeat_index"))
 
   # Finished processing
   return(x)

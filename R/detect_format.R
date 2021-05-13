@@ -19,7 +19,7 @@ detect_format <- function(x, type) {
   }
   if (type != "sample_qc_flags" & length(intersect(names(x), ukbnmr::nmr_info[["Biomarker"]])) > 0) {
     return("processed")
-  } else if (type == "sample_qc_flags" & length(intersect(names(x), ukbnmr::sample_qc_fields[["Name"]])) > 0) {
+  } else if (type == "sample_qc_flags" & length(intersect(names(x), sample_qc_fields[["Name"]])) > 0) {
     return("processed")
   } else if (length(intersect(names(x), raw_ukb_cols)) > 0) {
     return("raw")

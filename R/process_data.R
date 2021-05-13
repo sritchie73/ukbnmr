@@ -46,7 +46,7 @@ process_data <- function(x, type) {
   } else if (type == "biomarker_qc_flags") {
     field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$QC.Flag.Field.ID)]
   } else if (type == "sample_qc_flags") {
-    field_ids <- ukbnmr:::sample_qc_fields$UKB.Field.ID
+    field_ids <- sample_qc_fields$UKB.Field.ID
   } else {
     stop("internal error: 'type' must be one of \"biomarkers\", \"biomarker_qc_flags\", or \"sample_qc_flags\"")
   }
@@ -62,7 +62,7 @@ process_data <- function(x, type) {
     field_ids[, UKB.Field.ID := as.character(UKB.Field.ID)]
   } else if (type == "sample_qc_flags") {
     field_ids[, UKB.Field.ID := as.integer(UKB.Field.ID)]
-    field_ids[ukbnmr:::sample_qc_fields, on = list(UKB.Field.ID), Biomarker := Name] # Not biomarkers but harmonises with rest of code
+    field_ids[sample_qc_fields, on = list(UKB.Field.ID), Biomarker := Name] # Not biomarkers but harmonises with rest of code
     field_ids[, UKB.Field.ID := as.character(UKB.Field.ID)]
   }
 
@@ -136,7 +136,7 @@ get_biomarker_qc_flag_values <- function(x) {
       x[, value := as.integer(value)]
     }
 
-    x[ukbnmr:::biomarker_flag_map, on = list(value=integer_rep), flag := flag]
+    x[biomarker_flag_map, on = list(value=integer_rep), flag := flag]
   }
 
   x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="flag")
@@ -163,7 +163,7 @@ get_sample_qc_flag_values <- function(x) {
     x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", Shipment.Plate))]
   }
   if (is.integer(x$Measurement.Quality.Flagged)) {
-    x[ukbnmr:::measure_quality_map, on = list(Measurement.Quality.Flagged=integer_rep), Measurement.Quality.Flagged := flag]
+    x[measure_quality_map, on = list(Measurement.Quality.Flagged=integer_rep), Measurement.Quality.Flagged := flag]
   }
 
   return(x)

@@ -41,6 +41,7 @@ returnDT <- function(x) {
 is.integer <- function(x) {
   tryCatch({
     as.integer(x)
+    return(TRUE)
   }, warning=function(w) {
     return(FALSE)
   })

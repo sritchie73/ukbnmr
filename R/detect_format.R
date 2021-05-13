@@ -7,7 +7,7 @@ detect_format <- function(x, type) {
   } else if (type == "biomarker_qc_flags") {
     field_ids <- ukbnmr::nmr_info[, na.omit(QC.Flag.Field.ID)]
   } else if (type == "sample_qc_flags") {
-    field_ids <- ukbnmr:::sample_qc_fields$UKB.Field.ID
+    field_ids <- sample_qc_fields$UKB.Field.ID
   } else {
     stop("internal error: 'type' must be one of \"biomarkers\", \"biomarker_qc_flags\", or \"sample_qc_flags\"")
   }

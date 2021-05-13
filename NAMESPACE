@@ -3,5 +3,6 @@
 export(compute_nightingale_ratios)
 export(extract_biomarker_qc_flags)
 export(extract_biomarkers)
+export(extract_sample_qc_flags)
 import(data.table)
 importFrom(stats,na.omit)

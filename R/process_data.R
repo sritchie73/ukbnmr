@@ -136,7 +136,7 @@ get_biomarker_qc_flag_values <- function(x) {
       x[, value := as.integer(value)]
     }
 
-    x[ukbnmr:::biomarker_flag_map, on = .(value=integer_rep), flag := flag]
+    x[ukbnmr:::biomarker_flag_map, on = list(value=integer_rep), flag := flag]
   }
 
   x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="flag")
@@ -157,13 +157,13 @@ get_sample_qc_flag_values <- function(x) {
   x[, Low.Protein := ifelse(is.na(Low.Protein), NA_character_, "Yes")]
 
   if (is.integer(x$Spectrometer)) {
-    x[, Spectrometer := ifelse(is.na(Spectrometer), NA_character_, paste("Spectrometer", value))]
+    x[, Spectrometer := ifelse(is.na(Spectrometer), NA_character_, paste("Spectrometer", Spectrometer))]
   }
-  if (!is.character(x$Shipment.Plate) | !grepl("^Plate", utils::na.omit(x$Shipment.Plate)[1])) {
-    x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", value))]
+  if (!is.character(x$Shipment.Plate) | !grepl("^Plate", stats::na.omit(x$Shipment.Plate)[1])) {
+    x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", Shipment.Plate))]
   }
   if (is.integer(x$Measurement.Quality.Flagged)) {
-    x[ukbnmr:::measure_quality_map, on = .(Measurement.Quality.Flagged=integer_rep), Measurement.Quality.Flagged := flag]
+    x[ukbnmr:::measure_quality_map, on = list(Measurement.Quality.Flagged=integer_rep), Measurement.Quality.Flagged := flag]
   }
 
   return(x)

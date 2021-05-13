@@ -35,11 +35,10 @@ QC Flag for 3-Hydroxybutyrate. <visit_index> corresponds to the assessment
 time point, e.g. 0 for baseline assessment, 1 for first repeat visit, and
 <repeat_index> gives a number for repeated measurements at the same time point.
 
-In the returned \code{data.frame} there is single column for the QC Flags for
-each biomarker, with additional columns for the instance and array index.
-Rows are uniquely identifiable by the combination of entries in columns "eid" and "visit_index".
-Currently there are no repeat measurements in the Nightingale data on
-UK Biobank.
+In the returned \code{data.frame} there is single column for each biomarker,
+with additional columns for the visit and repeat index. Rows are uniquely
+identifiable by the combination of entries in columns "eid" and "visit_index"
+and "repeat_index".
 
 This function will also work with data extracted by the \code{ukbtools} R
 package.

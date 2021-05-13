@@ -24,6 +24,8 @@ detect_format <- function(x, type) {
       stop("NMR biomarker fields (#23400-23578) not found in input data")
     } else if (type == "biomarker_qc_flags") {
       stop("NMR biomarker QC Flag fields (#23700-23878) not found in input data")
+    } else {
+      stop("internal error: 'type' must be one of \"biomarkers\" or \"biomarker_qc_flags\"")
     }
   }
 }

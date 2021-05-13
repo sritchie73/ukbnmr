@@ -13,12 +13,12 @@
 # the short biomarker variable names typically provided by Nightingale Health,
 # listed in the Biomarker column in the nmr_info data sheet included with this
 # package.
-process_data <- function(x) {
+process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
-  value <- Biomarker <- UKB.Field.ID <- NULL
+  value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <- repeat_index <- NULL
 
   # Determine format of data
-  data_format <- detect_format(x)
+  data_format <- detect_format(x, type)
 
   # Make sure its a data.table
   x <- getDT(x)
@@ -38,7 +38,13 @@ process_data <- function(x) {
   field_ids <- data.table(UKB.Field.ID = names(x))
   field_ids[, UKB.Field.ID := gsub("_.*", "", UKB.Field.ID)]
   field_ids <- unique(field_ids)
-  field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$UKB.Field.ID)]
+
+  # Filter to those we want to extract
+  if (type == "biomarker") {
+    field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$UKB.Field.ID)]
+  } else if (type == "biomarker_qc_flags") {
+    field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$QC.Flag.Field.ID)]
+  }
 
   # Map to biomarker variable names
   field_ids[, UKB.Field.ID := as.integer(UKB.Field.ID)]

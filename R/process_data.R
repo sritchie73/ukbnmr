@@ -46,7 +46,7 @@ process_data <- function(x, type) {
   } else if (type == "biomarker_qc_flags") {
     field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$QC.Flag.Field.ID)]
   } else if (type == "sample_qc_flags") {
-    field_ids <- sample_qc_fields$UKB.Field.ID
+    field_ids <- sample_qc_fields
   } else {
     stop("internal error: 'type' must be one of \"biomarkers\", \"biomarker_qc_flags\", or \"sample_qc_flags\"")
   }

@@ -21,8 +21,8 @@ sample_qc_fields <- data.table(
 # Measurement.Quality.Flagged field codings
 # https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=2302
 measure_quality_map <- data.table(
-  integer_rep = c(NA_integer_, 1L:2L),
-  flag = c(NA_character_, "Not enough sample material for measurement", "Solid material")
+  integer_rep = c("1", "2"), # char not int so we can join and reassign column
+  flag = c("Not enough sample material for measurement", "Solid material")
 )
 
 save(biomarker_flag_map, sample_qc_fields, measure_quality_map,

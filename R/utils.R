@@ -36,3 +36,12 @@ returnDT <- function(x) {
   }
   return(x)
 }
+
+# Is a vector an integer? It may have been loaded as character / numeric
+is.integer <- function(x) {
+  tryCatch({
+    as.integer(x)
+  }, warning=function(w) {
+    return(FALSE)
+  })
+}

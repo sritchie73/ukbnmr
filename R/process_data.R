@@ -16,7 +16,7 @@
 process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <-
-    repeat_index <- integer_rep <- flag <- variable <- NULL
+    repeat_index <- integer_rep <- flag <- variable <- Name <- NULL
 
   # Determine format of data
   data_format <- detect_format(x, type)
@@ -45,8 +45,10 @@ process_data <- function(x, type) {
     field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$UKB.Field.ID)]
   } else if (type == "biomarker_qc_flags") {
     field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$QC.Flag.Field.ID)]
+  } else if (type == "sample_qc_flags") {
+    field_ids <- ukbnmr:::sample_qc_fields$UKB.Field.ID
   } else {
-    stop("internal error: 'type' must be one of \"biomarkers\" or \"biomarker_qc_flags\"")
+    stop("internal error: 'type' must be one of \"biomarkers\", \"biomarker_qc_flags\", or \"sample_qc_flags\"")
   }
 
   # Map to biomarker variable names
@@ -57,6 +59,10 @@ process_data <- function(x, type) {
   } else if (type == "biomarker_qc_flags") {
     field_ids[, UKB.Field.ID := as.integer(UKB.Field.ID)]
     field_ids[ukbnmr::nmr_info, on = list(UKB.Field.ID=QC.Flag.Field.ID), Biomarker := Biomarker]
+    field_ids[, UKB.Field.ID := as.character(UKB.Field.ID)]
+  } else if (type == "sample_qc_flags") {
+    field_ids[, UKB.Field.ID := as.integer(UKB.Field.ID)]
+    field_ids[ukbnmr:::sample_qc_fields, on = list(UKB.Field.ID), Biomarker := Name] # Not biomarkers but harmonises with rest of code
     field_ids[, UKB.Field.ID := as.character(UKB.Field.ID)]
   }
 
@@ -104,23 +110,61 @@ process_data <- function(x, type) {
   # For biomarker QC flags, map integers to flag values:
   # https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=2310
   if (type == "biomarker_qc_flags") {
-    x <- melt(x, id.vars=c("eid", "visit_index", "repeat_index"))
-    x <- x[!is.na(value)]
-
-    flag_map <- data.table(
-      integer_rep = 1L:10L,
-      flag = c("Below limit of quantification", "Citrate plasma", "Degraded sample",
-               "High ethanol", "Isopropyl alcohol", "Low glutamine or high glutamate",
-               "Medium ethanol", "Polysaccharides", "Unknown contamination", "Ethanol")
-    )
-    x[flag_map, on = .(value=integer_rep), flag := flag]
-
-    x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="flag")
+    x <- get_biomarker_qc_flag_values(x)
+  } else if (type == "sample_qc_flags") {
+    x <- get_sample_qc_flag_values(x)
   }
 
   # Set column keys for fast joining by user
   setkeyv(x, c("eid", "visit_index", "repeat_index"))
 
   # Finished processing
+  return(x)
+}
+
+# Map integer representation of biomarker QC flags to string
+# https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=2310
+get_biomarker_qc_flag_values <- function(x) {
+  # Silence CRAN NOTES about undefined global variables (columns in data.tables)
+  value <- visit_index <- repeat_index <- integer_rep <- flag <- variable <-  NULL
+
+  x <- melt(x, id.vars=c("eid", "visit_index", "repeat_index"))
+  x <- x[!is.na(value)]
+
+  if (is.integer(x$value)) { # check if values are integer (or character representations of integer values)
+    if (!inherits(x$value, "integer")) {
+      x[, value := as.integer(value)]
+    }
+
+    x[ukbnmr:::biomarker_flag_map, on = .(value=integer_rep), flag := flag]
+  }
+
+  x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="flag")
+  return(x)
+}
+
+# Map integer representation of biomarker QC flags to string
+# https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=2310
+get_sample_qc_flag_values <- function(x) {
+  # Silence CRAN NOTES about undefined global variables (columns in data.tables)
+  Spectrometer <- Shipment.Plate <- High.Lactate <- High.Pyruvate <-
+    Low.Glucose <- Low.Protein <- Measurement.Quality.Flagged <- integer_rep <-
+    flag <- NULL
+
+  x[, High.Lactate := ifelse(is.na(High.Lactate), NA_character_, "Yes")]
+  x[, High.Pyruvate := ifelse(is.na(High.Pyruvate), NA_character_, "Yes")]
+  x[, Low.Glucose := ifelse(is.na(Low.Glucose), NA_character_, "Yes")]
+  x[, Low.Protein := ifelse(is.na(Low.Protein), NA_character_, "Yes")]
+
+  if (is.integer(x$Spectrometer)) {
+    x[, Spectrometer := ifelse(is.na(Spectrometer), NA_character_, paste("Spectrometer", value))]
+  }
+  if (!is.character(x$Shipment.Plate) | !grepl("^Plate", utils::na.omit(x$Shipment.Plate)[1])) {
+    x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", value))]
+  }
+  if (is.integer(x$Measurement.Quality.Flagged)) {
+    x[ukbnmr:::measure_quality_map, on = .(Measurement.Quality.Flagged=integer_rep), Measurement.Quality.Flagged := flag]
+  }
+
   return(x)
 }

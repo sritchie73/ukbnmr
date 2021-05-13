@@ -45,20 +45,50 @@ process_data <- function(x) {
   field_ids[ukbnmr::nmr_info, on = list(UKB.Field.ID), Biomarker := Biomarker]
   field_ids[, UKB.Field.ID := as.character(UKB.Field.ID)]
 
-  # Split out instance and array index fields
-  setkey(x, "eid")
-  x <- splitstackshape::merged.stack(x, id.vars="eid", sep="_", keep.all=FALSE,
-                                     var.stubs=field_ids$UKB.Field.ID)
-  setnames(x, c(".time_1", ".time_2"), c("instance", "array_index"))
+  # Split out instance (visit) and array index (repeat measure) fields so they
+  # are rows instead of columns
+  visit_repeats <- setdiff(unique(gsub("^[0-9]+_", "", names(x))), "eid")
+  x <- rbindlist(fill=TRUE, use.names=TRUE, lapply(visit_repeats, function(vr) {
+    # Find columns matching this visit repeat pair (e.g. ending in _0_0)
+    this_cols <- names(x)[grepl(pattern=paste0(vr, "$"), names(x))]
 
-  # Rename Field IDs to biomarker variable names
-  setnames(x, field_ids$UKB.Field.ID, field_ids$Biomarker)
+    # Filter to these columns
+    this_x <- x[, .SD, .SDcols=c("eid", this_cols)]
 
-  # Drop instance and array index combinations with all missing data
-  x <- melt(x, id.vars=c("eid", "instance", "array_index"))
-  x <- x[!is.na(value)]
-  x <- dcast(x, eid + instance + array_index ~ variable, value.var="value")
-  setkeyv(x, c("eid", "instance", "array_index"))
+    # Drop repeat visit pair label from column name
+    setnames(this_x, this_cols, gsub(paste0("_", vr, "$"), "", this_cols))
+
+    # Check if fields of interest are here, if not, return empty
+    if (length(intersect(names(this_x), field_ids$UKB.Field.ID)) == 0) {
+      return(NULL)
+    }
+
+    # Add columns for visit and repeat index
+    this_x[, visit_index := as.integer(gsub("_.*", "", vr))]
+    this_x[, repeat_index := as.integer(gsub(".*_", "", vr))]
+
+    # Filter to field IDs of interest
+    this_x <- this_x[, .SD, .SDcols=c("eid", "visit_index", "repeat_index", field_ids$UKB.Field.ID)]
+
+    # Rename Field IDs to biomarker variable names
+    setnames(this_x, field_ids$UKB.Field.ID, field_ids$Biomarker)
+
+    # Drop instance and array index combinations with all missing data
+    this_x <- this_x[apply(this_x, 1, function(row) { sum(!is.na(row)) > 3L })]
+
+    # Return to rbindlist - which will row-bind all data.tables in the list
+    # (one data.table per visit repeat pair)
+    return(this_x)
+  }))
+
+  # Drop "repeat" field if no repeat measures at each timepoint and set column
+  # keys for fast joining by user
+  if (x[,sum(repeat_index)] == 0) {
+    x[, repeat_index := NULL]
+    setkeyv(x, c("eid", "visit_index"))
+  } else {
+    setkeyv(x, c("eid", "visit_index", "repeat_index"))
+  }
 
   # Finished processing
   return(x)

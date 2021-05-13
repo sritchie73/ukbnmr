@@ -20,7 +20,6 @@
 #' @docType package
 #' @name ukbnmr
 #' @import data.table
-#' @import splitstackshape
 #' @importFrom stats na.omit
 #' @keywords package
 NULL

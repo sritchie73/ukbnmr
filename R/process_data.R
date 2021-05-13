@@ -15,7 +15,8 @@
 # package.
 process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
-  value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <- repeat_index <- NULL
+  value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <-
+    repeat_index <- integer_rep <- flag <- variable <- NULL
 
   # Determine format of data
   data_format <- detect_format(x, type)
@@ -99,6 +100,23 @@ process_data <- function(x, type) {
     # (one data.table per visit repeat pair)
     return(this_x)
   }))
+
+  # For biomarker QC flags, map integers to flag values:
+  # https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=2310
+  if (type == "biomarker_qc_flags") {
+    x <- melt(x, id.vars=c("eid", "visit_index", "repeat_index"))
+    x <- x[!is.na(value)]
+
+    flag_map <- data.table(
+      integer_rep = 1L:10L,
+      flag = c("Below limit of quantification", "Citrate plasma", "Degraded sample",
+               "High ethanol", "Isopropyl alcohol", "Low glutamine or high glutamate",
+               "Medium ethanol", "Polysaccharides", "Unknown contamination", "Ethanol")
+    )
+    x[flag_map, on = .(value=integer_rep), value := flag]
+
+    x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="value")
+  }
 
   # Drop "repeat" field if no repeat measures at each timepoint and set column
   # keys for fast joining by user

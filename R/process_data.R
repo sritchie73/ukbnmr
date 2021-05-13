@@ -16,7 +16,7 @@
 process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <-
-    repeat_index <- integer_rep <- flag <- variable <- Name <- NULL
+    repeat_index <- integer_rep <- flag <- variable <- Name <- Shipment.Plate <- NULL
 
   # Determine format of data
   data_format <- detect_format(x, type)
@@ -46,7 +46,7 @@ process_data <- function(x, type) {
   } else if (type == "biomarker_qc_flags") {
     field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$QC.Flag.Field.ID)]
   } else if (type == "sample_qc_flags") {
-    field_ids <- sample_qc_fields
+    field_ids <- field_ids[UKB.Field.ID %in% sample_qc_fields$UKB.Field.ID]
   } else {
     stop("internal error: 'type' must be one of \"biomarkers\", \"biomarker_qc_flags\", or \"sample_qc_flags\"")
   }
@@ -97,6 +97,11 @@ process_data <- function(x, type) {
     # Rename Field IDs to biomarker variable names
     this_names <- field_ids[UKB.Field.ID %in% this_fields]
     setnames(this_x, this_names$UKB.Field.ID, this_names$Biomarker)
+
+    # Shipment.Plate may be integer64, convert to char
+    if ("Shipment.Plate" %in% names(this_x) & inherits(this_x$Shipment.Plate, "integer64")) {
+      this_x[, Shipment.Plate := as.character(Shipment.Plate)]
+    }
 
     # Drop instance and array index combinations with all missing data
     # eid, visit_index, and array_index always non-missing
@@ -163,6 +168,7 @@ get_sample_qc_flag_values <- function(x) {
     x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", Shipment.Plate))]
   }
   if (is.integer(x$Measurement.Quality.Flagged)) {
+    x[, Measurement.Quality.Flagged := as.character(Measurement.Quality.Flagged)]
     x[measure_quality_map, on = list(Measurement.Quality.Flagged=integer_rep), Measurement.Quality.Flagged := flag]
   }
 

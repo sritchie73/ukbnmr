@@ -76,7 +76,7 @@ compute_nightingale_ratios <- function(x) {
 
 
   # Process data to correct format
-  x <- process_data(x) # copy of x created if already in right format
+  x <- process_data(x, type="biomarkers") # copy of x created if already in right format
 
   # For each of the 14 lipoprotein subclasses, compute percentage of total
   # lipids composed of cholesteryl esters (CE), free cholesterol (FC), total

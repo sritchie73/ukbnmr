@@ -12,16 +12,16 @@
 #' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 #' have one row per UKB biobank participant whose project specific sample
 #' identifier is given in the first column named "eid". Columns following this
-#' have the format "<field_id>-<instance>.<array_index>", "where here <field_id>
-#' corresponds to a biomarker of interest, "e.g. 23474 for 3-Hydroxybutyrate,
-#' <instance> corresponds to the assessment time point, "e.g. 0 for baseline
-#' assessment, "1 for first repeat visit, "and <array_index> gives a number for
+#' have the format "<field_id>-<visit_index>.<repeat_index>", where here <field_id>
+#' corresponds to a biomarker of interest, e.g. 23474 for 3-Hydroxybutyrate,
+#' <visit_index> corresponds to the assessment time point, e.g. 0 for baseline
+#' assessment, 1 for first repeat visit, and <repeat_index> gives a number for
 #' repeated measurements at the same time point.
 #'
 #' In the returned \code{data.frame} there is single column for each biomarker,
-#' with additional columns for the instance and array index. Rows are uniquely
-#' identifiable by the combination of entries in columns "eid", ""instance",
-#' and "array index".
+#' with additional columns for the visit and repeat index. Rows are uniquely
+#' identifiable by the combination of entries in columns "eid" and "visit_index"
+#' and "repeat_index".
 #'
 #' Input data may be (1) a raw dataset extracted by
 #' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
@@ -36,7 +36,7 @@
 #' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
 #'
 #' @return a \code{data.frame} or \code{data.table} with column names "eid",
-#'        "instance", "and "array_index", "followed by columns for each of the
+#'        "visit_index", and "repeat_index", followed by columns for each of the
 #'         249 biomarkers and ratios.
 #'
 #' @export

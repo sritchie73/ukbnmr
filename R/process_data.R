@@ -18,7 +18,6 @@ process_data <- function(x, type) {
   value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <-
     repeat_index <- integer_rep <- flag <- variable <- Name <- Shipment.Plate <- NULL
 
-  browser()
   # Determine format of data
   data_format <- detect_format(x, type)
 
@@ -54,7 +53,12 @@ process_data <- function(x, type) {
   if (type == "biomarkers") {
     field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$UKB.Field.ID)]
   } else if (type == "biomarker_qc_flags") {
-    field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$QC.Flag.Field.ID)]
+    # Not all biomarkers have QC flags, but we need to know where the column is
+    # missing due to this, or due to the user not having access.
+    biomarkers_present <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$UKB.Field.ID)]
+    biomarkers_present[, UKB.Field.ID := as.integer(UKB.Field.ID)]
+    biomarkers_present[ukbnmr::nmr_info, on = list(UKB.Field.ID), QC.Flag.Field.ID := QC.Flag.Field.ID]
+    field_ids <- biomarkers_present[, list(UKB.Field.ID=QC.Flag.Field.ID)]
   } else if (type == "sample_qc_flags") {
     field_ids <- field_ids[UKB.Field.ID %in% sample_qc_fields$UKB.Field.ID]
   } else {
@@ -103,6 +107,15 @@ process_data <- function(x, type) {
 
     # Filter to field IDs of interest
     this_x <- this_x[, .SD, .SDcols=c("eid", "visit_index", "repeat_index", this_fields)]
+
+    # For biomarkers with no QC flags, add in missing columns
+    miss_fields <- setdiff(field_ids$UKB.Field.ID, names(this_x))
+    if (length(miss_fields) > 0) {
+      for (fid in miss_fields) {
+        this_x[, c(fid) := NA_integer_]
+      }
+      this_fields <- intersect(names(this_x), field_ids$UKB.Field.ID)
+    }
 
     # Rename Field IDs to biomarker variable names
     this_names <- field_ids[UKB.Field.ID %in% this_fields]

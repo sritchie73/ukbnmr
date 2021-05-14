@@ -18,6 +18,7 @@ process_data <- function(x, type) {
   value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <-
     repeat_index <- integer_rep <- flag <- variable <- Name <- Shipment.Plate <- NULL
 
+  browser()
   # Determine format of data
   data_format <- detect_format(x, type)
 

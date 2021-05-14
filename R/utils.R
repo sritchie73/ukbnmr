@@ -55,6 +55,8 @@ collate_flags <- function(...) {
   colnames <- sapply(substitute(list(...))[-1], deparse)
   cols <- list(...)
 
+  browser()
+
   tags_with_names <- sapply(seq_along(colnames), function(argIdx) {
     ifelse(is.na(cols[[argIdx]]), NA_character_, sprintf("%s: %s", colnames[argIdx], cols[[argIdx]]))
   })

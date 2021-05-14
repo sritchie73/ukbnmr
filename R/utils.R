@@ -39,6 +39,9 @@ returnDT <- function(x) {
 
 # Is a vector an integer? It may have been loaded as character / numeric
 is.integer <- function(x) {
+  if (is.factor(x)) {
+    return(FALSE)
+  }
   tryCatch({
     as.integer(x)
     return(TRUE)

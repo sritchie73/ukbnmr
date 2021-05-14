@@ -55,7 +55,12 @@ collate_flags <- function(...) {
   colnames <- sapply(substitute(list(...))[-1], deparse)
   cols <- list(...)
 
-  browser()
+  # Throw appropriate error if column does not exist
+  for (ii in seq_along(colnames)) {
+    if (is.null(cols[[ii]])) {
+      stop(sprintf("object '%s' not found", colnames[ii]))
+    }
+  }
 
   tags_with_names <- sapply(seq_along(colnames), function(argIdx) {
     ifelse(is.na(cols[[argIdx]]), NA_character_, sprintf("%s: %s", colnames[argIdx], cols[[argIdx]]))

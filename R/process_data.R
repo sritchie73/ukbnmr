@@ -143,7 +143,6 @@ get_biomarker_qc_flag_values <- function(x) {
   value <- visit_index <- repeat_index <- integer_rep <- flag <- variable <-  NULL
 
   x <- melt(x, id.vars=c("eid", "visit_index", "repeat_index"))
-  x <- x[!is.na(value)]
 
   if (is.integer(x$value)) { # check if values are integer (or character representations of integer values)
     if (!inherits(x$value, "integer")) {

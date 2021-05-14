@@ -14,6 +14,7 @@ detect_format <- function(x, type) {
 
   raw_ukb_cols <- c(paste0(field_ids, "-0.0"), paste0(field_ids, "-1.0"))
   ukbtools_cols <- c(paste0(field_ids, "_0_0"), paste0(field_ids, "_1_0"))
+  ukbconv_r_cols <- c(paste0("f.", field_ids, ".0.0"), paste0("f.", field_ids, ".1.0"))
   if (!is.data.frame(x)) {
     stop("Input data must be a data.frame or data.table")
   }
@@ -25,6 +26,8 @@ detect_format <- function(x, type) {
     return("raw")
   } else if (length(intersect(gsub(".*_f", "", names(x)), ukbtools_cols)) > 0) {
     return("ukbtools")
+  } else if (length(intersect(names(x), ukbconv_r_cols)) > 0) {
+    return("ukbconv_r")
   } else {
     if (type == "biomarkers") {
       stop("NMR biomarker fields (#23400-23578) not found in input data")

@@ -40,6 +40,8 @@ process_data <- function(x, type) {
     setnames(x, gsub("-|\\.", "_", names(x)))
   } else if (data_format == "ukbtools") {
     setnames(x, gsub(".*_f", "", names(x)))
+  } else if (data_format == "ukbconv_r") {
+    setnames(x, gsub("\\.", "_", gsub("f\\.", "", names(x))))
   }
 
   # Extract field IDs present

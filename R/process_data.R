@@ -174,13 +174,19 @@ get_sample_qc_flag_values <- function(x) {
 
   if (is.integer(x$Spectrometer)) {
     x[, Spectrometer := ifelse(is.na(Spectrometer), NA_character_, paste("Spectrometer", Spectrometer))]
+  } else if (is.factor(x$Spectrometer)) {
+    x[, Spectrometer := as.character(Spectrometer)]
   }
-  if (!is.character(x$Shipment.Plate) | !grepl("^Plate", stats::na.omit(x$Shipment.Plate)[1])) {
-    x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", Shipment.Plate))]
-  }
+
   if (is.integer(x$Measurement.Quality.Flagged)) {
     x[, Measurement.Quality.Flagged := as.character(Measurement.Quality.Flagged)]
     x[measure_quality_map, on = list(Measurement.Quality.Flagged=integer_rep), Measurement.Quality.Flagged := flag]
+  } else if (is.factor(x$Spectrometer)) {
+    x[, Measurement.Quality.Flagged := as.character(Measurement.Quality.Flagged)]
+  }
+
+  if (!is.character(x$Shipment.Plate) | !grepl("^Plate", stats::na.omit(x$Shipment.Plate)[1])) {
+    x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", Shipment.Plate))]
   }
 
   return(x)

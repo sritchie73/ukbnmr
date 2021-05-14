@@ -20,7 +20,7 @@ The `extract_sample_qc_flags()` function will take a raw dataset output by [ukbc
 
 ### Methods for computing biomarker ratios.
 
-The `compute_nightingale_ratios()` function will compute the [81 Nightingale Health biomarker ratios](https://nightingalehealth.com/biomarkers) from the 168 biomarkers currently available for download from [UK Biobank](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220).
+The `compute_nightingale_ratios()` function will compute the [81 Nightingale Health biomarker ratios](https://nightingalehealth.com/biomarkers) from the 168 biomarkers currently available for download from [UK Biobank](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220). A companion function, `compute_nightingale_ratio_qc_flags()` will aggregate the QC flags for the biomarkers underlying each ratio. 
 
 ## Installation
 

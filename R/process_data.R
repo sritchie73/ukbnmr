@@ -151,9 +151,11 @@ get_biomarker_qc_flag_values <- function(x) {
     }
 
     x[biomarker_flag_map, on = list(value=integer_rep), flag := flag]
+    x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="flag")
+  } else {
+    x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="value")
   }
 
-  x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="flag")
   return(x)
 }
 

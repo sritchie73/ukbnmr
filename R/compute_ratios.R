@@ -1,7 +1,7 @@
 #' Compute 81 biomarker ratios on the Nightingale platform
 #'
 #' The Nightingale Health NMR metabolomics biomarker platform quantifies
-#' \href{https://nightingalehealth.com/biomarkers}{249 biomarkers}, "including 81
+#' \href{https://nightingalehealth.com/biomarkers}{249 biomarkers}, including 81
 #' biomarker ratios. UK Biobank currently only provides the 168 biomarkers that
 #' are not ratios for \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{download}.
 #' This function will compute the 81 missing ratios from the 168 downloadable

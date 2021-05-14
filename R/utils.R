@@ -49,3 +49,16 @@ is.integer <- function(x) {
     return(FALSE)
   })
 }
+
+# Paste together QC flags for biomarkers when computing ratios
+collate_flags <- function(...) {
+  colnames <- sapply(substitute(list(...))[-1], deparse)
+  cols <- list(...)
+
+  tags_with_names <- sapply(seq_along(colnames), function(argIdx) {
+    ifelse(is.na(cols[[argIdx]]), NA_character_, sprintf("%s: %s", colnames[argIdx], cols[[argIdx]]))
+  })
+  apply(tags_with_names, 1, function(row) {
+    ifelse(all(is.na(row)), NA_character_, paste0(paste(stats::na.omit(row), collapse=". "), "."))
+  })
+}

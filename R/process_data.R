@@ -16,7 +16,8 @@
 process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <-
-    repeat_index <- integer_rep <- flag <- variable <- Name <- Shipment.Plate <- NULL
+    repeat_index <- integer_rep <- flag <- variable <- Name <- Shipment.Plate <-
+    QC.Field.Empty <- NULL
 
   # Determine format of data
   data_format <- detect_format(x, type)
@@ -55,10 +56,11 @@ process_data <- function(x, type) {
   } else if (type == "biomarker_qc_flags") {
     # Not all biomarkers have QC flags, but we need to know where the column is
     # missing due to this, or due to the user not having access.
-    biomarkers_present <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$UKB.Field.ID)]
-    biomarkers_present[, UKB.Field.ID := as.integer(UKB.Field.ID)]
-    biomarkers_present[ukbnmr::nmr_info, on = list(UKB.Field.ID), QC.Flag.Field.ID := QC.Flag.Field.ID]
-    field_ids <- biomarkers_present[, list(UKB.Field.ID=QC.Flag.Field.ID)]
+    qc_flags_present <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$QC.Flag.Field.ID)]
+    empty_flags_with_biomarkers <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$UKB.Field.ID)]
+    empty_flags_with_biomarkers[ukbnmr::nmr_info, on = list(UKB.Field.ID), QC.Flag.Field.ID := QC.Flag.Field.ID]
+    empty_flags_with_biomarkers <- empty_flags_with_biomarkers[QC.Flag.Field.ID %in% empty_qc_fields]
+    field_ids <- rbind(qc_flags_present, empty_flags_with_biomarkers[,list(UKB.Field.ID=QC.Flag.Field.ID)])
   } else if (type == "sample_qc_flags") {
     field_ids <- field_ids[UKB.Field.ID %in% sample_qc_fields$UKB.Field.ID]
   } else {
@@ -67,17 +69,11 @@ process_data <- function(x, type) {
 
   # Map to biomarker variable names
   if (type == "biomarkers") {
-    field_ids[, UKB.Field.ID := as.integer(UKB.Field.ID)]
     field_ids[ukbnmr::nmr_info, on = list(UKB.Field.ID), Biomarker := Biomarker]
-    field_ids[, UKB.Field.ID := as.character(UKB.Field.ID)]
   } else if (type == "biomarker_qc_flags") {
-    field_ids[, UKB.Field.ID := as.integer(UKB.Field.ID)]
     field_ids[ukbnmr::nmr_info, on = list(UKB.Field.ID=QC.Flag.Field.ID), Biomarker := Biomarker]
-    field_ids[, UKB.Field.ID := as.character(UKB.Field.ID)]
   } else if (type == "sample_qc_flags") {
-    field_ids[, UKB.Field.ID := as.integer(UKB.Field.ID)]
     field_ids[sample_qc_fields, on = list(UKB.Field.ID), Biomarker := Name] # Not biomarkers but harmonises with rest of code
-    field_ids[, UKB.Field.ID := as.character(UKB.Field.ID)]
   }
 
   # Split out instance (visit) and array index (repeat measure) fields so they

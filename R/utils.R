@@ -63,7 +63,9 @@ collate_flags <- function(...) {
   }
 
   tags_with_names <- sapply(seq_along(colnames), function(argIdx) {
-    ifelse(is.na(cols[[argIdx]]), NA_character_, sprintf("%s: %s", colnames[argIdx], cols[[argIdx]]))
+    ifelse(is.na(cols[[argIdx]]), NA_character_,
+      ifelse(grepl(":", cols[[argIdx]]), gsub(".$", cols[[argIdx]]),
+        sprintf("%s: %s", colnames[argIdx], cols[[argIdx]])))
   })
   apply(tags_with_names, 1, function(row) {
     ifelse(all(is.na(row)), NA_character_, paste0(paste(stats::na.omit(row), collapse=". "), "."))

@@ -1,11 +1,9 @@
-#' Compute 81 biomarker ratios on the Nightingale platform
+#' Aggregate QC Flags when computing Nightingale's 81 biomarker ratios
 #'
-#' The Nightingale Health NMR metabolomics biomarker platform quantifies
-#' \href{https://nightingalehealth.com/biomarkers}{249 biomarkers}, including 81
-#' biomarker ratios. Prior to the May update, UK Biobank only provided the 168
-#' biomarkers that are not ratios for
-#' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{download}.
-#' This function will compute the 81 missing ratios.
+#' For the 81 biomarker ratios computed by \code{\link{compute_nightingale_ratios}()},
+#' aggregates the biomarker QC flags from the biomarkers composing each ratio
+#' (see \code{\link{nmr_info}}), which can be useful for determining the reason
+#' underlying missing values in the biomarker ratios.
 #'
 #' @details
 #' If your UK Biobank project only has access to a subset of biomarkers, then
@@ -17,7 +15,8 @@
 #'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 #'   or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.
 #'
-#' @return a \code{data.frame} with the additional computed biomarker ratios.
+#' @return a \code{data.frame} with QC flags aggregated for all computed
+#'         biomarker ratios.
 #'
 #' @seealso \code{\link{nmr_info}} for list of computed biomarker ratios and
 #'   \code{\link{extract_biomarkers}()} for details on how raw data from
@@ -25,24 +24,23 @@
 #'   is processed.
 #'
 #' @export
-compute_nightingale_ratios <- function(x) {
+compute_nightingale_ratio_qc_flags <- function(x) {
   # Process data to correct format
-  x <- process_data(x, type="biomarkers") # copy of x created if already in right format
+  x <- process_data(x, type="biomarker_qc_flags") # copy of x created if already in right format
 
   # compute ratios
-  x <- nightingale_ratio_compute(x)
+  x <- nightingale_ratio_flags(x)
 
   # Return
   returnDT(x)
 }
 
-#' Compute extended set of biomarker ratios
+#' Aggregate QC Flags when computing the extended set of biomarker ratios
 #'
-#' Computes 76 additional ratios not provided by the Nightingale platform. These
-#' include lipid fractions in HDL, LDL, VLDL, and total serum, as well as
-#' cholesterol fractions, and omega to polyunsaturated fatty acid ratios. See
-#' \code{\link{nmr_info}} for details. Also computes Nightingale biomarker
-#' ratios if missing (see \code{\link{compute_nightingale_ratios}()}).
+#' For the 76 biomarker ratios computed by \code{\link{compute_extended_ratios}()},
+#' aggregates the biomarker QC flags from the biomarkers composing each ratio
+#' (see \code{\link{nmr_info}}), which can be useful for determining the reason
+#' underlying missing values in the biomarker ratios.
 #'
 #' @details
 #' If your UK Biobank project only has access to a subset of biomarkers, then
@@ -54,7 +52,8 @@ compute_nightingale_ratios <- function(x) {
 #'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 #'   or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.
 #'
-#' @return a \code{data.frame} with the additional computed biomarker ratios.
+#' @return a \code{data.frame} with QC flags aggregated for all computed
+#'         biomarker ratios.
 #'
 #' @seealso \code{\link{nmr_info}} for list of computed biomarker ratios and
 #'   \code{\link{extract_biomarkers}()} for details on how raw data from
@@ -62,9 +61,9 @@ compute_nightingale_ratios <- function(x) {
 #'   is processed.
 #'
 #' @export
-compute_extended_ratios <- function(x) {
+compute_extended_ratio_qc_flags <- function(x) {
   # Process data to correct format
-  x <- process_data(x, type="biomarkers") # copy of x created if already in right format
+  x <- process_data(x, type="biomarker_qc_flags") # copy of x created if already in right format
 
   # Are the nightingale ratios already computed? If not, also compute these
   Type <- Nightingale <- Biomarker <- NULL # Silence CRAN NOTES for data.table columns
@@ -75,20 +74,20 @@ compute_extended_ratios <- function(x) {
 
   # compute ratios
   if (!has_nightingale_ratios)
-    x <- nightingale_ratio_compute(x)
+    x <- nightingale_ratio_flags(x)
 
-  x <- extended_ratios_compute(x)
+  x <- extended_ratios_flags(x)
 
   # Return
   returnDT(x)
 }
 
-#' Recompute composite biomarkers and ratios from the 107 non-derived biomarkers
+#' Aggregate QC Flags when recomputing all composite and derived biomarkers
 #'
-#' When adjusting biomarkers for unwanted biological covariates, it is desirable
-#' to recompute composite biomarkers and ratios to ensure consistency in the
-#' adjusted dataset. This function will compute all composite biomarkers and
-#' ratios from their parts (see \code{\link{nmr_info}} for biomarker details).
+#' For the 61 composite biomarkers, 81 Nightingale biomarker ratios, and 76
+#' extended biomarker ratios computed by \code{\link{recompute_derived_biomarkers}()},
+#' aggregates the biomarker QC flags from the underlying biomarkers
+#' (see \code{\link{nmr_info}}).
 #'
 #' @details
 #' If your UK Biobank project only has access to a subset of biomarkers, then
@@ -100,24 +99,23 @@ compute_extended_ratios <- function(x) {
 #'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 #'   or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.
 #'
-#' @return a \code{data.frame} with all composite biomarkers and ratios
-#'   (re)computed from the 107 non-derived biomarkers (see \code{\link{nmr_info}}
-#'   for details).
+#' @return a \code{data.frame} with QC flags aggregated for all computed
+#'         biomarkers and ratios.
 #'
-#' @seealso \code{\link{nmr_info}} for list of recomputed biomarkers and
+#' @seealso \code{\link{nmr_info}} for list of computed biomarker ratios and
 #'   \code{\link{extract_biomarkers}()} for details on how raw data from
 #'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 #'   is processed.
 #'
 #' @export
-recompute_derived_biomarkers <- function(x) {
+recompute_derived_biomarker_qc_flags <- function(x) {
   # Process data to correct format
-  x <- process_data(x, type="biomarkers") # copy of x created if already in right format
+  x <- process_data(x, type="biomarker_qc_flags") # copy of x created if already in right format
 
   # Composite biomarkers *must* be recomputed before downstream ratios
-  x <- nightingale_composite_biomarker_compute(x)
-  x <- nightingale_ratio_compute(x)
-  x <- extended_ratios_compute(x)
+  x <- nightingale_composite_biomarker_flags(x)
+  x <- nightingale_ratio_flags(x)
+  x <- extended_ratios_flags(x)
 
   # Return
   returnDT(x)

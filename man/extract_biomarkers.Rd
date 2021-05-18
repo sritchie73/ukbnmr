@@ -12,7 +12,7 @@ fields e.g. "23474-0.0", "23474-1.0", \dots, "23467-1.0".}
 }
 \value{
 a \code{data.frame} or \code{data.table} with column names "eid",
-       "instance", and "array_index", followed by columns for each biomarker
+        and "visit_index", followed by columns for each biomarker
        e.g. "bOHbutyrate", \dots, "Valine".
 }
 \description{
@@ -32,16 +32,22 @@ identifier is given in the first column named "eid". Columns following this
 have the format "<field_id>-<visit_index>.<repeat_index>", where here <field_id>
 corresponds to a biomarker of interest, e.g. 23474 for 3-Hydroxybutyrate,
 <visit_index> corresponds to the assessment time point, e.g. 0 for baseline
-assessment, 1 for first repeat visit, and <repeat_index> gives a number for
-repeated measurements at the same time point.
+assessment, 1 for first repeat visit. For the UKB NMR data, the <repeat_index>
+column is reserved for cases where biomarker measurements have more than
+one QC Flag (see \code{\link{extract_biomarker_qc_flags}()}).
 
 In the returned \code{data.frame} there is single column for each biomarker,
-with additional columns for the visit and repeat index. Rows are uniquely
-identifiable by the combination of entries in columns "eid" and "visit_index"
-and "repeat_index".
+with an additional column for the visit index. Rows are uniquely identifiable
+by the combination of entries in columns "eid" and "visit_index". There are
+currently no repeat measure data for the NMR biomarker data in UKB,
+so no repeat_index column is returned.
 
 This function will also work with data extracted by the \code{ukbtools} R
 package.
+
+If your UK Biobank project only has access to a subset of biomarkers, then
+this function will only return the subset of ratios that can be computed from
+the biomarker data provided.
 
 A \code{data.table} will be returned instead of a \code{data.frame} if the
 the user has loaded the package into their R session.

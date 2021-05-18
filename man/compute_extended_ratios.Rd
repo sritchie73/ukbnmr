@@ -26,10 +26,16 @@ ratios if missing (see \code{\link{compute_nightingale_ratios}()}).
 If your UK Biobank project only has access to a subset of biomarkers, then
 this function will only return the subset of ratios that can be computed from
 the biomarker data provided.
+
+All biomarkers in the input data are also returned alongside the ratios computed
+by this function.
 }
 \seealso{
-\code{\link{nmr_info}} for list of computed biomarker ratios and
-  \code{\link{extract_biomarkers}()} for details on how raw data from
+\code{\link{nmr_info}} for list of computed biomarker ratios,
+  \code{\link{compute_extended_ratio_qc_flags}()} for obtaining an
+  aggregate of the biomarker QC flags from the biomarkers underlying each
+  computed ratio, and \code{\link{extract_biomarkers}()} for details on how
+  raw data from
   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
   is processed.
 }

@@ -26,6 +26,9 @@ underlying missing values in the biomarker ratios.
 If your UK Biobank project only has access to a subset of biomarkers, then
 this function will only return the subset of ratios that can be computed from
 the biomarker data provided.
+
+Biomarker QC Flags in the input data are also returned alongside those
+aggregated by this function for the computed biomarker ratios.
 }
 \seealso{
 \code{\link{nmr_info}} for list of computed biomarker ratios and

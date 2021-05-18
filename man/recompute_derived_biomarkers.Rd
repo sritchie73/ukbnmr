@@ -27,10 +27,16 @@ ratios from their parts (see \code{\link{nmr_info}} for biomarker details).
 If your UK Biobank project only has access to a subset of biomarkers, then
 this function will only return the subset of ratios that can be computed from
 the biomarker data provided.
+
+All biomarkers in the input data are also returned alongside those computed
+by this function.
 }
 \seealso{
-\code{\link{nmr_info}} for list of recomputed biomarkers and
-  \code{\link{extract_biomarkers}()} for details on how raw data from
+\code{\link{nmr_info}} for list of computed biomarker ratios,
+  \code{\link{recompute_derived_biomarker_qc_flags}()} for obtaining an
+  aggregate of the biomarker QC flags from the biomarkers underlying each
+  computed biomarker, and \code{\link{extract_biomarkers}()} for details on how
+  raw data from
   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
   is processed.
 }

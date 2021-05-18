@@ -10,6 +10,9 @@
 #' this function will only return the subset of ratios that can be computed from
 #' the biomarker data provided.
 #'
+#' Biomarker QC Flags in the input data are also returned alongside those
+#' aggregated by this function for the computed biomarker ratios.
+#'
 #' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
 #'   May either be raw field data output by
 #'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
@@ -46,6 +49,9 @@ compute_nightingale_ratio_qc_flags <- function(x) {
 #' If your UK Biobank project only has access to a subset of biomarkers, then
 #' this function will only return the subset of ratios that can be computed from
 #' the biomarker data provided.
+#'
+#' Biomarker QC Flags in the input data are also returned alongside those
+#' aggregated by this function for the computed biomarker ratios.
 #'
 #' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
 #'   May either be raw field data output by
@@ -93,6 +99,9 @@ compute_extended_ratio_qc_flags <- function(x) {
 #' If your UK Biobank project only has access to a subset of biomarkers, then
 #' this function will only return the subset of ratios that can be computed from
 #' the biomarker data provided.
+#'
+#' Biomarker QC Flags in the input data are also returned alongside those
+#' aggregated by this function for the computed biomarker ratios.
 #'
 #' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
 #'   May either be raw field data output by

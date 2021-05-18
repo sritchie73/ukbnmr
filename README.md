@@ -7,6 +7,8 @@ This package provides utilities for working with the NMR metabolomics data in [U
 There are two groups of functions in this package: (1) data extraction functions,
 and (2) methods for computing biomarker ratios.
 
+All functions can be applied directly to raw data extracted from UK Biobank.
+
 This package also provides a `data.frame` of biomarker information, loaded
 as `nmr_info`.
 

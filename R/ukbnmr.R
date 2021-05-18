@@ -8,6 +8,8 @@
 #' There are two groups of functions in this package: (1) data extraction functions,
 #' and (2) methods for computing derived biomarkers and biomarker ratios.
 #'
+#' All functions can be applied directly to raw data extracted from UK Biobank.
+#'
 #' This package also provides a \code{data.frame} of biomarker information, loaded
 #' as \code{\link{nmr_info}}.
 #'
@@ -40,14 +42,15 @@
 #'
 #' The \code{\link{compute_extended_ratios}()} function will compute an extended
 #' set of biomarker ratios expanding on the biomarkers available directly from
-#' the Nightingale platform.
+#' the Nightingale platform. A companion function, \code{\link{compute_extended_ratio_qc_flags}()},
+#' will aggregate the QC flags for the biomarkers underlying each ratio.
 #'
 #' The \code{\link{recompute_derived_biomarkers}()} function will recompute all
 #' composite biomarkers and ratios from 107 non-derived biomarkers, which is
 #' useful for ensuring data consistency when adjusting for unwanted biological
-#' variation.
-#'
-#' All functions can be applied directly to raw data extracted from UK Biobank.
+#' variation. A companion function, \code{\link{recompute_derived_biomarker_qc_flags}()} will
+#' aggregate the QC flags for the biomarkers underlying each composite biomarker
+#' and ratio.
 #'
 #' @docType package
 #' @name ukbnmr

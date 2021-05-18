@@ -2,17 +2,23 @@
 #
 # Columns in the raw UK Biobank data are <field_id>-<instance>.<array_index>,
 # where <field_id> corresponds to the biomarker, e.g. 23474 for 3-Hydroxybutyrate
-# (given the variable name bOHbutyrate), <instance> corresponds to the timepoint
-# of biomarker quantification, 0 for baseline assessment, 1 for first repeat
-# assessment, and <array_index> corresponds to a number 0--N for repeated
-# measures at the same time point (always present, all 0 if only 1 measure
-# taken).
+# (given the variable name bOHbutyrate). <instance> corresponds to the timepoint
+# of biomarker quantification, in the NMR data, either 0 for baseline assessment,
+# or 1 for first repeat. <array_index> is usually used for repeated measures at
+# the same timepoint. Currently, they are used where there are multiple biomarker
+# QC Flags for a given measurement.
 #
-# This function splits out these columns into multiple rows, 1 per <instance>
-# and <array_index> per participant ("eid"), and maps the field identifiers to
-# the short biomarker variable names typically provided by Nightingale Health,
-# listed in the Biomarker column in the nmr_info data sheet included with this
-# package.
+# This function extracts from raw UK Biobank data the fields corresponding to
+# either (1) biomarker concentrations, (2) biomarker QC Flags, or (3) sample QC
+# Flags (as per the calling function, indicated by the 'type' argument). Columns
+# corresponding to each <instance> are aggregated instead to multiple rows per
+# participant (i.e. so there is only 1 column per biomarker / QC Flag). In
+# instances where there are multiple QC Flags for a biomarker measurement (at
+# a single time point for a single person), these are collated into a single
+# comma separated entry. Fields are renamed with the short biomarker variable
+# name typically provided by Nightingale Health, listed in the Biomarker column i
+# in the nmr_info data sheet included with this package
+#
 process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <-
@@ -131,6 +137,7 @@ process_data <- function(x, type) {
     return(this_x)
   }))
 
+
   # For biomarker QC flags, map integers to flag values:
   # https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=2310
   if (type == "biomarker_qc_flags") {
@@ -139,8 +146,11 @@ process_data <- function(x, type) {
     x <- get_sample_qc_flag_values(x)
   }
 
+  # Remove repeat_index column no longer needed
+  x[, repeat_index := NULL]
+
   # Set column keys for fast joining by user
-  setkeyv(x, c("eid", "visit_index", "repeat_index"))
+  setkeyv(x, c("eid", "visit_index"))
 
   # Finished processing
   return(x)
@@ -154,16 +164,26 @@ get_biomarker_qc_flag_values <- function(x) {
 
   x <- melt(x, id.vars=c("eid", "visit_index", "repeat_index"))
 
+  # Sometimes the integer representations have already been mapped to their
+  # character representations, e.g. when loading data using the Rscript made by
+  # ukbconv r, in which case we can skip the mapping step.
   if (is.integer(x$value)) { # check if values are integer (or character representations of integer values)
     if (!inherits(x$value, "integer")) {
       x[, value := as.integer(value)]
     }
 
     x[biomarker_flag_map, on = list(value=integer_rep), flag := flag]
-    x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="flag")
-  } else {
-    x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="value")
+    x[, value := NULL]
+    setnames(x, "flag", "value")
   }
+
+  # Where there are multiple flags per visit_index, concatenate
+  x <- x[, list(repeat_index=0,
+    value=ifelse(all(is.na(value)), NA_character_, paste(sort(na.omit(value)), collapse=", "))),
+    by=.(eid, visit_index, variable)]
+
+  # Cast back to wide format
+  x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="value")
 
   return(x)
 }

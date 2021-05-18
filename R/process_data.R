@@ -160,7 +160,8 @@ process_data <- function(x, type) {
 # https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=2310
 get_biomarker_qc_flag_values <- function(x) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
-  value <- visit_index <- repeat_index <- integer_rep <- flag <- variable <-  NULL
+  value <- visit_index <- repeat_index <- integer_rep <- flag <- variable <-
+    eid <- NULL
 
   x <- melt(x, id.vars=c("eid", "visit_index", "repeat_index"))
 
@@ -180,7 +181,7 @@ get_biomarker_qc_flag_values <- function(x) {
   # Where there are multiple flags per visit_index, concatenate
   x <- x[, list(repeat_index=0,
     value=ifelse(all(is.na(value)), NA_character_, paste(sort(na.omit(value)), collapse=", "))),
-    by=.(eid, visit_index, variable)]
+    by=list(eid, visit_index, variable)]
 
   # Cast back to wide format
   x <- dcast(x, eid + visit_index + repeat_index ~ variable, value.var="value")

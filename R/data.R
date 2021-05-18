@@ -15,5 +15,7 @@
 #'   \item{UKB}{Logical. Indicates the biomarker is currently downloadable from UK Biobank}
 #'   \item{UKB.Field.ID}{Field ID in UK Biobank, see \url{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}}
 #'   \item{QC.Flag.Field.ID}{Field ID in UK Biobank for the biomarker QC Flags, see \url{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}}
+#'   \item{Full.Formula}{For composite biomarkers and ratios, details formula through which the biomarker can be derived from the 107 non-derived biomarkers}
+#'   \item{Simplified.Formula}{Simplified form of the full formula most clearly expressing how each composite biomarker and ratio can be rederived from other biomarkers}
 #' }
 "nmr_info"

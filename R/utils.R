@@ -12,7 +12,10 @@
 # but cannot be multiplied (e.g. if 'bar' is class character).
 #
 tryAssign <- function(...) {
- invisible(tryCatch(..., error = function(e) {}))
+ tryCatch(..., error = function(e) {
+   if (!(e %like% "object .* not found"))
+     stop(e) # throw error if not related to column not existing
+ })
 }
 
 # Cast object to data.table, or if already a data.table, make a copy so we don't
@@ -32,4 +35,37 @@ returnDT <- function(x) {
     setDF(x)
   }
   return(x)
+}
+
+# Is a vector an integer? It may have been loaded as character / numeric
+is.integer <- function(x) {
+  if (is.factor(x)) {
+    return(FALSE)
+  }
+  tryCatch({
+    as.integer(x)
+    return(TRUE)
+  }, warning=function(w) {
+    return(FALSE)
+  })
+}
+
+# Paste together QC flags for biomarkers when computing ratios
+collate_flags <- function(...) {
+  colnames <- sapply(substitute(list(...))[-1], deparse)
+  cols <- list(...)
+
+  # Throw appropriate error if column does not exist
+  for (ii in seq_along(colnames)) {
+    if (is.null(cols[[ii]])) {
+      stop(sprintf("object '%s' not found", colnames[ii]))
+    }
+  }
+
+  tags_with_names <- sapply(seq_along(colnames), function(argIdx) {
+    ifelse(is.na(cols[[argIdx]]), NA_character_, sprintf("%s: %s", colnames[argIdx], cols[[argIdx]]))
+  })
+  apply(tags_with_names, 1, function(row) {
+    ifelse(all(is.na(row)), NA_character_, paste0(paste(stats::na.omit(row), collapse=". "), "."))
+  })
 }

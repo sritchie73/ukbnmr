@@ -4,18 +4,23 @@
 
 This package provides utilities for working with the NMR metabolomics data in [UK Biobank](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220).
 
-There are currently four main functions:
+There are two groups of functions in this package: (1) data extraction functions,
+and (2) methods for computing derived biomarkers and biomarker ratios.
 
-The `extract_biomarkers()` function will take a raw dataset
-output by [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide),
-extract the NMR biomarker fields and give them short comprehensible column
-names. Measurements are also split into multiple rows where a participant has
-measurements at both baseline and first repeat assessment.
+This package also provides a `data.frame` of biomarker information, loaded
+as `nmr_info`.
 
-The `compute_nightingale_ratios()` function will compute the
-[81 Nightingale Health biomarker ratios](\https://nightingalehealth.com/biomarkers)
-that were missing prior to the May update of
-[UK Biobank](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220).
+### Data Extraction Functions
+
+The `extract_biomarkers()` function will take a raw dataset output by [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide), extract the [NMR biomarker fields](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220) and give them short comprehensible column names. Measurements are also split into multiple rows where a participant has measurements at both baseline and first repeat assessment.
+
+The `extract_biomarker_qc_flags()` function will take a raw dataset output by [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide), extract the [Nightingale quality control flags](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221) for each biomarker measurement, returning a single column per biomarker (corresponding to respective columns output by `extract_biomarkers()`).
+
+The `extract_sample_qc_flags()` function will take a raw dataset output by [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide) and extract the [sample quality control tags](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222) for the Nightingale NMR metabolomics data.
+
+### Methods for computing biomarker ratios.
+
+The `compute_nightingale_ratios()` function will compute the [81 Nightingale Health biomarker ratios](https://nightingalehealth.com/biomarkers) that were missing prior to the May update of [UK Biobank](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220). A companion function, `compute_nightingale_ratio_qc_flags()` will aggregate the QC flags for the biomarkers underlying each ratio. 
 
 The `compute_extended_ratios()` function will compute an extended
 set of biomarker ratios expanding on the biomarkers available directly from
@@ -25,11 +30,6 @@ The `recompute_derived_biomarkers()` function will recompute all
 composite biomarkers and ratios from 107 non-derived biomarkers, which is
 useful for ensuring data consistency when adjusting for unwanted biological
 variation.
-
-All functions can be applied directly to raw data extracted from UK Biobank.
-
-This package also provides a `data.frame` of biomarker information, loaded
-as `nmr_info`.
 
 ## Installation
 

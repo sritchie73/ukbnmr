@@ -8,36 +8,18 @@
 #' biomarkers in UKB.
 #'
 #' @details
-#' Data sets extracted by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#' have one row per UKB biobank participant whose project specific sample
-#' identifier is given in the first column named "eid". Columns following this
-#' have the format "<field_id>-<visit_index>.<repeat_index>", where here <field_id>
-#' corresponds to a biomarker of interest, e.g. 23474 for 3-Hydroxybutyrate,
-#' <visit_index> corresponds to the assessment time point, e.g. 0 for baseline
-#' assessment, 1 for first repeat visit, and <repeat_index> gives a number for
-#' repeated measurements at the same time point.
+#' If your UK Biobank project only has access to a subset of biomarkers, then
+#' this function will only return the subset of ratios that can be computed from
+#' the biomarker data provided.
 #'
-#' In the returned \code{data.frame} there is single column for each biomarker,
-#' with additional columns for the visit and repeat index. Rows are uniquely
-#' identifiable by the combination of entries in columns "eid" and "visit_index"
-#' and "repeat_index".
-#'
-#' Input data may be (1) a raw dataset extracted by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#' and loaded into R, "(2) a raw dataset extracted by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#' and loaded into R using the \code{ukbtools} R package, "or (3) a processed
-#' \code{data.frame} of biomarker data obtained from the above using \code{\link{extract_biomarkers}()}.
-#'
-#' A \code{data.table} will be returned instead of a \code{data.frame} if the
-#' the user has loaded the package into their R session.
+#' All biomarkers in the input data are also returned alongside the ratios computed
+#' by this function.
 #'
 #' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
 #'
-#' @return a \code{data.frame} or \code{data.table} with column names "eid",
-#'        "visit_index", and "repeat_index", followed by columns for each of the
-#'         249 biomarkers and ratios.
+#' @return a \code{data.frame} or \code{data.table} with column names "eid" and
+#'        "visit_index" followed by columns for each of the 249 biomarkers and
+#'        ratios.
 #'
 #' @export
 compute_nightingale_ratios <- function(x) {

@@ -180,7 +180,7 @@ get_biomarker_qc_flag_values <- function(x) {
 
   # Where there are multiple flags per visit_index, concatenate
   x <- x[, list(repeat_index=0,
-    value=ifelse(all(is.na(value)), NA_character_, paste(sort(na.omit(value)), collapse=", "))),
+    value=ifelse(all(is.na(value)), NA_character_, paste(sort(na.omit(value)), collapse="; "))),
     by=list(eid, visit_index, variable)]
 
   # Cast back to wide format

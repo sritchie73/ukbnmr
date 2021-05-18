@@ -22,7 +22,7 @@ extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{UK B
 corresponding to the
 \href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{Nightingale Health NMR metabolomics biomarker QC Flags}
 giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
-available in this package. QC Flags are comma-separated in each column where
+available in this package. QC Flags are separated by "; " in each column where
 there are multiple QC Flags for a single measurement.
 }
 \details{

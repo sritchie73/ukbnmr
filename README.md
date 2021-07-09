@@ -41,5 +41,5 @@ and ratio.
 This package can be installed from GitHub with the remotes package:
 
 ```
-remotes::install_github("sritchie73/ukbnmr", ref="development")
+remotes::install_github("sritchie73/ukbnmr")
 ```

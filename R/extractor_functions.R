@@ -73,8 +73,8 @@ extract_biomarkers <- function(x) {
 #'
 #' The <repeat_index> field is currently used by UK Biobank to index cases where
 #' there are multiple QC Flags for a biomarker for a single participant and
-#' visit_index. These are collated into a single entry in the output from this
-#' function, with distinct QC Flags separated by commas in the output.
+#' visit_index. QC Flags are separated by "; " in each column where
+#' there are multiple QC Flags for a single measurement.
 #'
 #' In the returned \code{data.frame} there is single column for each biomarker,
 #' with an additional column for the visit index. Rows are uniquely identifiable

@@ -6,8 +6,9 @@ Author: Scott C. Ritchie <sritchie73@gmail.com>
 Maintainer: Scott C. Ritchie <sritchie73@gmail.com>
 Description: A suite of utilities for working with the NMR metabolomics data in
     UK Biobank. Includes functions for extracting biomarkers from raw UK Biobank 
-    field data and computing missing biomarker ratios not yet provided by UK 
-    Biobank. 
+    field data, computing an extended set of lipid, fatty acid, and cholesterol 
+    fractions, and for re-deriving composite biomarkers and ratios after 
+    adjusting data for unwanted biological variation.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

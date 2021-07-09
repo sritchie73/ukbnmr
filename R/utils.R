@@ -62,10 +62,23 @@ collate_flags <- function(...) {
     }
   }
 
+  # If any of the input biomarkers have QC flags, aggregate, and add the respective
+  # biomarker name. If no tags, return NA. If any column is itself an aggregated
+  # set of flags (e.g. a ratio of Total_C / Total_L will be aggregated from the
+  # sums of all cholesterols and lipids), don't add the biomarker name.
   tags_with_names <- sapply(seq_along(colnames), function(argIdx) {
-    ifelse(is.na(cols[[argIdx]]), NA_character_, sprintf("%s: %s", colnames[argIdx], cols[[argIdx]]))
+    ifelse(is.na(cols[[argIdx]]), NA_character_,
+      ifelse(grepl(":", cols[[argIdx]]), gsub(".$", "", cols[[argIdx]]),
+        sprintf("%s: %s", colnames[argIdx], cols[[argIdx]])))
   })
-  apply(tags_with_names, 1, function(row) {
+  # For each row, get a single string of collated flags.
+  collated_tags <- apply(tags_with_names, 1, function(row) {
     ifelse(all(is.na(row)), NA_character_, paste0(paste(stats::na.omit(row), collapse=". "), "."))
+  })
+  # In some cases, biomarkers may appear multiple times where they contribute to
+  # e.g. both a numerator and denominator of a ratio. Split out the string and
+  # make sure we only return each underlying biomarker's flags once.
+  sapply(strsplit(collated_tags, split="\\. ?"), function(row) {
+    ifelse(all(is.na(row)), NA_character_, paste0(paste(sort(unique(row)), collapse=". "), "."))
   })
 }

@@ -5,7 +5,7 @@
 This package provides utilities for working with the NMR metabolomics data in [UK Biobank](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220).
 
 There are two groups of functions in this package: (1) data extraction functions,
-and (2) methods for computing biomarker ratios.
+and (2) methods for computing derived biomarkers and biomarker ratios.
 
 All functions can be applied directly to raw data extracted from UK Biobank.
 
@@ -22,12 +22,24 @@ The `extract_sample_qc_flags()` function will take a raw dataset output by [ukbc
 
 ### Methods for computing biomarker ratios.
 
-The `compute_nightingale_ratios()` function will compute the [81 Nightingale Health biomarker ratios](https://nightingalehealth.com/biomarkers) from the 168 biomarkers currently available for download from [UK Biobank](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220). A companion function, `compute_nightingale_ratio_qc_flags()` will aggregate the QC flags for the biomarkers underlying each ratio. 
+The `compute_nightingale_ratios()` function will compute the [81 Nightingale Health biomarker ratios](https://nightingalehealth.com/biomarkers) that were missing prior to the May update of [UK Biobank](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220). A companion function, `compute_nightingale_ratio_qc_flags()` will aggregate the QC flags for the biomarkers underlying each ratio. 
+
+The `compute_extended_ratios()` function will compute an extended
+set of 76 biomarker ratios expanding on the biomarkers available directly from
+the Nightingale platform. A companion function, `compute_extended_ratio_qc_flags()`,
+will aggregate the QC flags for the biomarkers underlying each ratio.
+
+The `recompute_derived_biomarkers()` function will recompute all
+composite biomarkers and ratios from 107 non-derived biomarkers, which is
+useful for ensuring data consistency when adjusting for unwanted biological
+variation. A companion function, `recompute_derived_biomarker_qc_flags()` will
+aggregate the QC flags for the biomarkers underlying each composite biomarker
+and ratio.
 
 ## Installation
 
 This package can be installed from GitHub with the remotes package:
 
 ```
-remotes::install_github("sritchie73/ukbnmr")
+remotes::install_github("sritchie73/ukbnmr", ref="development")
 ```

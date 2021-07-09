@@ -5,7 +5,7 @@
 \alias{nmr_info}
 \title{Nightingale biomarker information}
 \format{
-A data table with 249 rows and 9 columns:
+A data table with 325 rows and 8 columns:
 \describe{
   \item{Biomarker}{Short column name assigned to the biomarker}
   \item{Description}{Biomarker description, matching the description field provided by UK Biobank and Nightingale Health}

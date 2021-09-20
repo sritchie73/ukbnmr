@@ -10,16 +10,6 @@ biomarker_flag_map <- data.table(
            "Medium ethanol", "Polysaccharides", "Unknown contamination", "Ethanol")
 )
 
-# Sample QC Field names
-# https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222
-sample_qc_fields <- data.table(
-  UKB.Field.ID = c(23649L:23655L, 23658L:23660L),
-  Name = c("Shipment.Plate", "Spectrometer", "Measurement.Quality.Flagged",
-           "High.Lactate", "High.Pyruvate", "Low.Glucose", "Low.Protein",
-           "Sample.Measured.Date.and.Time", "Sample.Prepared.Date.and.Time",
-           "Well.position.within.plate")
-)
-
 # Measurement.Quality.Flagged field codings
 # https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=2302
 measure_quality_map <- data.table(
@@ -45,5 +35,5 @@ empty_qc_fields <- c(
   23918L, 23919L, 23924L, 23944L, 23945L, 23947L
 )
 
-save(biomarker_flag_map, sample_qc_fields, measure_quality_map, empty_qc_fields,
+save(biomarker_flag_map, measure_quality_map, empty_qc_fields,
      version=2, compress="bzip2", file="R/sysdata.rda")

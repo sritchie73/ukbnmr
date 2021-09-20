@@ -18,3 +18,15 @@
 #'   \item{Simplified.Formula}{Simplified form of the full formula most clearly expressing how each composite biomarker and ratio can be rederived from other biomarkers}
 #' }
 "nmr_info"
+
+#' Nightingale biomarker sample information
+#'
+#' Contains details on the Nightingale biomarker sample QC information available
+#' in UKB.
+#'
+#' @format A data table with 10 rows and 2 columns:
+#' \describe{
+#'   \item{Name}{Column name assigned to the sample information field}
+#'   \item{UKB.Field.ID}{Field ID in UK Biobank, see \url{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}}
+#' }
+"sample_qc_fields"

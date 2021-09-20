@@ -79,7 +79,7 @@ process_data <- function(x, type) {
   } else if (type == "biomarker_qc_flags") {
     field_ids[ukbnmr::nmr_info, on = list(UKB.Field.ID=QC.Flag.Field.ID), Biomarker := Biomarker]
   } else if (type == "sample_qc_flags") {
-    field_ids[sample_qc_fields, on = list(UKB.Field.ID), Biomarker := Name] # Not biomarkers but harmonises with rest of code
+    field_ids[ukbnmr::sample_qc_fields, on = list(UKB.Field.ID), Biomarker := Name] # Not biomarkers but harmonises with rest of code
   }
 
   # Split out instance (visit) and array index (repeat measure) fields so they

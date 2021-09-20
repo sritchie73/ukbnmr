@@ -53,8 +53,8 @@ process_data <- function(x, type) {
 
   # Extract field IDs present
   field_ids <- data.table(UKB.Field.ID = names(x))
-  field_ids[, UKB.Field.ID := gsub("_.*", "", UKB.Field.ID)]
-  field_ids <- unique(field_ids)
+  field_ids[, UKB.Field.ID := suppressWarnings(as.integer(gsub("_.*", "", UKB.Field.ID)))]
+  field_ids <- unique(field_ids[!is.na(UKB.Field.ID)])
 
   # Filter to those we want to extract
   if (type == "biomarkers") {
@@ -114,18 +114,28 @@ process_data <- function(x, type) {
     miss_fields <- setdiff(field_ids$UKB.Field.ID, names(this_x))
     if (length(miss_fields) > 0) {
       for (fid in miss_fields) {
-        this_x[, c(fid) := NA_integer_]
+        this_x[, as.character(fid) := NA_integer_]
       }
       this_fields <- intersect(names(this_x), field_ids$UKB.Field.ID)
     }
 
     # Rename Field IDs to biomarker variable names
     this_names <- field_ids[UKB.Field.ID %in% this_fields]
-    setnames(this_x, this_names$UKB.Field.ID, this_names$Biomarker)
+    setnames(this_x, as.character(this_names$UKB.Field.ID), this_names$Biomarker)
 
     # Shipment.Plate may be integer64, convert to char
     if ("Shipment.Plate" %in% names(this_x) & inherits(this_x$Shipment.Plate, "integer64")) {
       this_x[, Shipment.Plate := as.character(Shipment.Plate)]
+    } else if ("Shipment.Plate" %in% names(this_x)) {
+      # If already a character string, may have "" instead of NA_character_ for
+      # samples without NMR data
+      this_x[Shipment.Plate == "", Shipment.Plate := NA_character_]
+    }
+
+    # Well.position.within.plate may have "" instead of NA_character_ for
+    # samples without NMR data, fix
+    if ("Well.position.within.plate" %in% names(this_x)) {
+      this_x[Well.position.within.plate == "", Well.position.within.plate := NA_character_]
     }
 
     # Drop instance and array index combinations with all missing data

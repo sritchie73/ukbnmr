@@ -30,11 +30,11 @@ detect_format <- function(x, type) {
     return("ukbconv_r")
   } else {
     if (type == "biomarkers") {
-      stop("NMR biomarker fields (#23400-23578) not found in input data")
+      stop("NMR biomarker fields (#23400-23648) not found in input data")
     } else if (type == "biomarker_qc_flags") {
-      stop("NMR biomarker QC Flag fields (#23700-23878) not found in input data")
+      stop("NMR biomarker QC Flag fields (#23700-23948) not found in input data")
     } else if (type == "sample_qc_flags") {
-      stop("NMR sample QC Flag fields (#23649-23655) not found in input data")
+      stop("NMR sample QC Flag fields (#23649-23660) not found in input data")
     } else {
       stop("internal error: 'type' must be one of \"biomarkers\", \"biomarker_qc_flags\", or \"sample_qc_flags\"")
     }

@@ -16,7 +16,8 @@ and (2) methods for computing derived biomarkers and biomarker ratios.
 All functions can be applied directly to raw data extracted from UK Biobank.
 
 This package also provides a \code{data.frame} of biomarker information, loaded
-as \code{\link{nmr_info}}.
+as \code{\link{nmr_info}}, and \code{data.frame} of sample processing information,
+loaded as \code{\link{sample_qc_fields}}.
 }
 \section{Data Extraction Functions}{
 

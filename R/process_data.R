@@ -23,7 +23,7 @@ process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <-
     repeat_index <- integer_rep <- flag <- variable <- Name <- Shipment.Plate <-
-    QC.Field.Empty <- NULL
+    QC.Field.Empty <- Well.Position.Within.Plate <- NULL
 
   # Determine format of data
   data_format <- detect_format(x, type)
@@ -132,10 +132,10 @@ process_data <- function(x, type) {
       this_x[Shipment.Plate == "", Shipment.Plate := NA_character_]
     }
 
-    # Well.position.within.plate may have "" instead of NA_character_ for
+    # Well.Position.Within.Plate may have "" instead of NA_character_ for
     # samples without NMR data, fix
-    if ("Well.position.within.plate" %in% names(this_x)) {
-      this_x[Well.position.within.plate == "", Well.position.within.plate := NA_character_]
+    if ("Well.Position.Within.Plate" %in% names(this_x)) {
+      this_x[Well.Position.Within.Plate == "", Well.Position.Within.Plate := NA_character_]
     }
 
     # Drop instance and array index combinations with all missing data

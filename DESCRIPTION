@@ -15,7 +15,8 @@ LazyData: true
 Depends:
   R (>= 2.10)
 Imports:
-  data.table
+  data.table,
+  MASS
 Suggests:
   roxygen2
 RoxygenNote: 7.1.1

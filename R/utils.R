@@ -82,3 +82,31 @@ collate_flags <- function(...) {
     ifelse(all(is.na(row)), NA_character_, paste0(paste(sort(unique(row)), collapse=". "), "."))
   })
 }
+
+# Convert an ITime object to numeric representation of hours since midnight
+hours.decimal <- function(time) {
+  hour(time) + minute(time)/60 + second(time/3600)
+}
+
+# Compute durations between events (hours)
+duration.hours <- function(days1, time1, days2, time2) {
+  (days2 - days1)*24 + (hours.decimal(time2) - hours.decimal(time1))
+}
+
+# Function for converting a set of numbers to a factor, ordering levels by group size
+factor_by_size <- function(x) {
+  # Suppress CRAN warnings for data.table columns
+  N <- NULL
+
+  group_sizes <- as.data.table(table(x))
+  group_sizes <- group_sizes[order(-N)]
+  factor(x, levels=group_sizes$x)
+}
+
+# Split a series of dates into 10 equal size bins, ordered by date
+bin_dates <- function(date, n=10) {
+  date_as_int <- as.integer(date)
+  date_order <- as.integer(factor(date_as_int))
+  bin_size <- max(date_order)/n
+  as.integer(ceiling(date_order/bin_size))
+}

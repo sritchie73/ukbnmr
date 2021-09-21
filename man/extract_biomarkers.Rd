@@ -16,7 +16,7 @@ a \code{data.frame} or \code{data.table} with column names "eid",
        e.g. "bOHbutyrate", \dots, "Valine".
 }
 \description{
-Given an input \code{data.frame} loaded from an dataset extracted by
+Given an input \code{data.frame} loaded from a dataset extracted by
 \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank fields}
 corresponding to the

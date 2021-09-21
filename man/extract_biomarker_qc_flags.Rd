@@ -12,11 +12,11 @@ fields e.g. "23774-0.0", "23774-1.0", \dots, "23767-1.0".}
 }
 \value{
 a \code{data.frame} or \code{data.table} with column names "eid",
-       and "vist_index" followed by columns for each biomarker
+       and "visit_index" followed by columns for each biomarker
        e.g. "bOHbutyrate", \dots, "Valine".
 }
 \description{
-Given an input \code{data.frame} loaded from an dataset extracted by
+Given an input \code{data.frame} loaded from a dataset extracted by
 \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{UK Biobank fields}
 corresponding to the

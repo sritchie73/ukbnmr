@@ -12,27 +12,27 @@
 #' @details
 #' A multi-step procedure is applied to the raw biomarker data to remove the
 #' effects of technical variation:
-#' \itemize{
-#'   \item{(1) }{First biomarker data is filtered to the 107 biomarkers that
+#' \enumerate{
+#'   \item{First biomarker data is filtered to the 107 biomarkers that
 #'   cannot be derived from any combination of other biomarkers.}
-#'   \item{(2) }{Absolute concentrations are log transformed, with a small offset
+#'   \item{Absolute concentrations are log transformed, with a small offset
 #'   applied to biomarkers with concentrations of 0.}
-#'   \item{(3) }{Each biomarker is adjusted for the time between sample preparation
+#'   \item{Each biomarker is adjusted for the time between sample preparation
 #'   and sample measurement (hours)}
-#'   \item{(4) }{Each biomarker is adjusted for systematic differences between rows
+#'   \item{Each biomarker is adjusted for systematic differences between rows
 #'   (A-H) on the 96-well shipment plates.}
-#'   \item{(5) }{Each biomarker is adjusted for remaining systematic differences
+#'   \item{Each biomarker is adjusted for remaining systematic differences
 #'   between columns (1-12) on the 96-well shipment plates.}
-#'   \item{(6) }{Each biomarker is adjusted for drift over time within each of the
+#'   \item{Each biomarker is adjusted for drift over time within each of the
 #'   six spectrometers (samples grouped into 10 bins by measurement date in each
 #'   spectrometer separately)}
-#'   \item{(7) }{Regression residuals after the sequential adjustments are
+#'   \item{Regression residuals after the sequential adjustments are
 #'   transformed back to absolute concentrations.}
-#'   \item{(8) }{Samples belonging to shipment plates that are outliers of
+#'   \item{Samples belonging to shipment plates that are outliers of
 #'   non-biological origin are identified and set to missing.}
-#'   \item{(9) }{The 61 composite biomarkers and 81 biomarker ratios are recomputed
+#'   \item{The 61 composite biomarkers and 81 biomarker ratios are recomputed
 #'   from their adjusted parts.}
-#'   \item{(10) }{An additional 76 biomarker ratios of potential biological
+#'   \item{An additional 76 biomarker ratios of potential biological
 #'   significance are computed.}
 #' }
 #'
@@ -40,6 +40,8 @@
 #' \link[MASS:rlm]{robust linear regression}. Plate row, plate column, and
 #' sample measurement date bin are treated as factors, using the group with the
 #' largest sample size as reference in the regression.
+#'
+#' Takes 10-15 minutes to run and requires at least 14 GB of RAM.
 #'
 #' @return a \code{list} containing three \code{data.frames}: \describe{
 #'   \item{biomarkers}{A \code{data.frame} with column names "eid",
@@ -54,11 +56,39 @@
 #'         control indicators} for each sample. "High plate outlier" and "Low
 #'         plate outlier" indicate the value was set to missing due to systematic
 #'         abnormalities in the biomarker's concentration on the sample's shipment
-#'         plate compared to all other shipment plates (see Details).}
+#'         plate compared to all other shipment plates (see Details). For
+#'         composite and derived biomarkers, quality control flags are aggregates
+#'         of any quality control flags for the underlying biomarkers from which
+#'         the composite biomarker or ratio is derived.}
 #'   \item{sample_processing}{A \code{data.frame} containing the
 #'         \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{processing
-#'         information and quality control indicators} for each sample. See
-#'         \code{\link{sample_qc_fields}} for details.}
+#'         information and quality control indicators} for each sample, including
+#'         those derived for removal of unwanted technical variation by this
+#'         function. See \code{\link{processing_info}} for details.}
+#'   \item{log_offset}{A \code{data.frame} containing diagnostic information on
+#'         the offset applied so that biomarkers with concentrations of 0 could
+#'         be log transformed, and any right shift applied to prevent negative
+#'         concentrations after rescaling adjusted residuals back to absolute
+#'         concentrations. Should contain only biomarkers with minimum
+#'         concentrations of 0 (in the "Minimum" column). "Minimum.Non.Zero"
+#'         gives the smallest non-zero concentration for the biomarker.
+#'         "Log.Offset" the small offset added to all samples prior to
+#'         log transformation: half the mininum non-zero concentration.
+#'         "Right.Shift" gives the small offset added to prevent negative
+#'         concentrations that arise after rescaling residuals to log
+#'         concentrations: this should be at least one order of magnitude
+#'         smaller than the smallest non-zero value (i.e. the offset added
+#'         should amount to noise in numeric precision for all samples). See
+#'         preprint for more details.}
+#'   \item{outlier_plate_detection}{A \code{data.frame} containing diagnostic
+#'         information and details of outlier plate detection. For each of the
+#'         107 non-derived biomarkers, the median concentration on each of the
+#'         1,352 plates was calculated, then plates were flagged as outliers if
+#'         their median value deviated more than expected from the mean of plate
+#'         medians. "Mean.Plate.Medians" gives the mean of the plate medians for
+#'         each biomarker. "Lower.Limit" and "Upper.Limit" give the values below
+#'         and above which plates are flagged as outliers based on their plate
+#'         median. See preprint for more details.}
 #' }
 #'
 #' @importFrom stats coef
@@ -75,7 +105,7 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
     Sample.Prepared.Date <- Sample.Prepared.Time <- Prep.to.Measure.Duration <-
     Spectrometer.Date.Bin <- Spectrometer <- Type <- Biomarker <- eid <- visit_index <-
     Shipment.Plate <- value <- Log.Offset <- Minimum <- Minimum.Non.Zero <-
-    log_value <- adj <- Right.Shift <- outlier <- lower_lim <- upper_lim <-
+    log_value <- adj <- Right.Shift <- outlier <- Lower.Limit <- Upper.Limit <-
     Name <- UKB.Field.ID <- NULL
 
   # Check relevant fields exist
@@ -99,7 +129,7 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
            "Sample.Prepared.Date.and.Time", "Spectrometer", "Shipment.Plate")
   miss_req <- setdiff(req, names(sinfo))
   if (length(miss_req) > 0) {
-    err_txt <- ukbnmr::sample_qc_fields[Name %in% miss_req]
+    err_txt <- ukbnmr::processing_info[Name %in% miss_req]
     err_txt <- err_txt[, sprintf("%s (Field: %s)", Name, UKB.Field.ID)]
     err_txt <- paste(err_txt, collapse=", ")
     stop("Missing required sample processing fields: ", err_txt, ".")
@@ -116,13 +146,17 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
   sinfo[, Sample.Prepared.Time := as.ITime(gsub("^.* ", "", Sample.Prepared.Date.and.Time))]
 
   # Compute hours between sample prep and sample measurement
-  sinfo[, Prep.to.Measure.Duration := duration.hours(
+  sinfo[, Prep.to.Measure.Duration := duration_hours(
     Sample.Prepared.Date, Sample.Prepared.Time,
     Sample.Measured.Date, Sample.Measured.Time
   )]
 
   # Split sample measurement date into 10 equal size bins per spectrometer
   sinfo[, Spectrometer.Date.Bin := bin_dates(Sample.Measured.Date), by=Spectrometer]
+
+  # Offset date bin by spectrometer number to reduce potential confusion by users
+  # in output
+  sinfo[, Spectrometer.Date.Bin := Spectrometer.Date.Bin + 10 * as.integer(gsub(".* ", "", Spectrometer)) - 1]
 
   # Melt to long, filtering to non-derived biomarkers and dropping missing values
   bio <- melt(bio, id.vars=c("eid", "visit_index"), variable.name="Biomarker", na.rm=TRUE,
@@ -181,13 +215,14 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
   plate_medians <- bio[, list(value = median(adj)), by=list(Biomarker, Shipment.Plate)]
 
   outlier_lim <- plate_medians[, list(
-    lower_lim = mean(value) - sd(value) * sdlim,
-    upper_lim = mean(value) + sd(value) * sdlim
+    Lower.Limit = mean(value) - sd(value) * sdlim,
+    Mean.Plate.Medians = mean(value),
+    Upper.Limit = mean(value) + sd(value) * sdlim
   ), by=Biomarker]
 
   plate_medians[, outlier := "no"]
-  plate_medians[outlier_lim, on = list(Biomarker, value < lower_lim), outlier := "low"]
-  plate_medians[outlier_lim, on = list(Biomarker, value > upper_lim), outlier := "high"]
+  plate_medians[outlier_lim, on = list(Biomarker, value < Lower.Limit), outlier := "low"]
+  plate_medians[outlier_lim, on = list(Biomarker, value > Upper.Limit), outlier := "high"]
 
   # Add outlier plate tags to biomarker qc tags
   bio_qc <- melt(bio_qc, id.vars=c("eid", "visit_index"), variable.name="Biomarker", na.rm=TRUE,
@@ -217,10 +252,15 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
   bio_qc <- nightingale_ratio_flags(bio_qc)
   bio_qc <- extended_ratios_flags(bio_qc)
 
+  # Add back in samples with no QC flags for any biomarkers
+  bio_qc <- bio_qc[bio[, list(eid, visit_index)], on = list(eid, visit_index)]
+
   # Return list
   return(list(
     biomarkers=returnDT(bio),
     biomarker_qc_flags=returnDT(bio_qc),
-    sample_processing=returnDT(sinfo)
+    sample_processing=returnDT(sinfo),
+    log_offset=returnDT(log_offset[Log.Offset != 0 | Right.Shift != 0]),
+    outlier_plate_detection=returnDT(outlier_lim)
   ))
 }

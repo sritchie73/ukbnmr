@@ -31,11 +31,39 @@ a \code{list} containing three \code{data.frames}: \describe{
         control indicators} for each sample. "High plate outlier" and "Low
         plate outlier" indicate the value was set to missing due to systematic
         abnormalities in the biomarker's concentration on the sample's shipment
-        plate compared to all other shipment plates (see Details).}
+        plate compared to all other shipment plates (see Details). For
+        composite and derived biomarkers, quality control flags are aggregates
+        of any quality control flags for the underlying biomarkers from which
+        the composite biomarker or ratio is derived.}
   \item{sample_processing}{A \code{data.frame} containing the
         \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{processing
-        information and quality control indicators} for each sample. See
-        \code{\link{sample_qc_fields}} for details.}
+        information and quality control indicators} for each sample, including
+        those derived for removal of unwanted technical variation by this
+        function. See \code{\link{processing_info}} for details.}
+  \item{log_offset}{A \code{data.frame} containing diagnostic information on
+        the offset applied so that biomarkers with concentrations of 0 could
+        be log transformed, and any right shift applied to prevent negative
+        concentrations after rescaling adjusted residuals back to absolute
+        concentrations. Should contain only biomarkers with minimum
+        concentrations of 0 (in the "Minimum" column). "Minimum.Non.Zero"
+        gives the smallest non-zero concentration for the biomarker.
+        "Log.Offset" the small offset added to all samples prior to
+        log transformation: half the mininum non-zero concentration.
+        "Right.Shift" gives the small offset added to prevent negative
+        concentrations that arise after rescaling residuals to log
+        concentrations: this should be at least one order of magnitude
+        smaller than the smallest non-zero value (i.e. the offset added
+        should amount to noise in numeric precision for all samples). See
+        preprint for more details.}
+  \item{outlier_plate_detection}{A \code{data.frame} containing diagnostic
+        information and details of outlier plate detection. For each of the
+        107 non-derived biomarkers, the median concentration on each of the
+        1,352 plates was calculated, then plates were flagged as outliers if
+        their median value deviated more than expected from the mean of plate
+        medians. "Mean.Plate.Medians" gives the mean of the plate medians for
+        each biomarker. "Lower.Limit" and "Upper.Limit" give the values below
+        and above which plates are flagged as outliers based on their plate
+        median. See preprint for more details.}
 }
 }
 \description{
@@ -44,27 +72,27 @@ Remove technical variation from NMR biomarker data in UK Biobank.
 \details{
 A multi-step procedure is applied to the raw biomarker data to remove the
 effects of technical variation:
-\itemize{
-  \item{(1) }{First biomarker data is filtered to the 107 biomarkers that
+\enumerate{
+  \item{First biomarker data is filtered to the 107 biomarkers that
   cannot be derived from any combination of other biomarkers.}
-  \item{(2) }{Absolute concentrations are log transformed, with a small offset
+  \item{Absolute concentrations are log transformed, with a small offset
   applied to biomarkers with concentrations of 0.}
-  \item{(3) }{Each biomarker is adjusted for the time between sample preparation
+  \item{Each biomarker is adjusted for the time between sample preparation
   and sample measurement (hours)}
-  \item{(4) }{Each biomarker is adjusted for systematic differences between rows
+  \item{Each biomarker is adjusted for systematic differences between rows
   (A-H) on the 96-well shipment plates.}
-  \item{(5) }{Each biomarker is adjusted for remaining systematic differences
+  \item{Each biomarker is adjusted for remaining systematic differences
   between columns (1-12) on the 96-well shipment plates.}
-  \item{(6) }{Each biomarker is adjusted for drift over time within each of the
+  \item{Each biomarker is adjusted for drift over time within each of the
   six spectrometers (samples grouped into 10 bins by measurement date in each
   spectrometer separately)}
-  \item{(7) }{Regression residuals after the sequential adjustments are
+  \item{Regression residuals after the sequential adjustments are
   transformed back to absolute concentrations.}
-  \item{(8) }{Samples belonging to shipment plates that are outliers of
+  \item{Samples belonging to shipment plates that are outliers of
   non-biological origin are identified and set to missing.}
-  \item{(9) }{The 61 composite biomarkers and 81 biomarker ratios are recomputed
+  \item{The 61 composite biomarkers and 81 biomarker ratios are recomputed
   from their adjusted parts.}
-  \item{(10) }{An additional 76 biomarker ratios of potential biological
+  \item{An additional 76 biomarker ratios of potential biological
   significance are computed.}
 }
 
@@ -72,4 +100,6 @@ At each step, adjustment for technical covariates is performed using
 \link[MASS:rlm]{robust linear regression}. Plate row, plate column, and
 sample measurement date bin are treated as factors, using the group with the
 largest sample size as reference in the regression.
+
+Takes 10-15 minutes to run and requires at least 14 GB of RAM.
 }

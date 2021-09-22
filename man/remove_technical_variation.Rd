@@ -39,7 +39,7 @@ a \code{list} containing three \code{data.frames}: \describe{
         \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{processing
         information and quality control indicators} for each sample, including
         those derived for removal of unwanted technical variation by this
-        function. See \code{\link{processing_info}} for details.}
+        function. See \code{\link{sample_qc_info}} for details.}
   \item{log_offset}{A \code{data.frame} containing diagnostic information on
         the offset applied so that biomarkers with concentrations of 0 could
         be log transformed, and any right shift applied to prevent negative

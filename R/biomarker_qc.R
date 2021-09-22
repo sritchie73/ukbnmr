@@ -64,7 +64,7 @@
 #'         \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{processing
 #'         information and quality control indicators} for each sample, including
 #'         those derived for removal of unwanted technical variation by this
-#'         function. See \code{\link{processing_info}} for details.}
+#'         function. See \code{\link{sample_qc_info}} for details.}
 #'   \item{log_offset}{A \code{data.frame} containing diagnostic information on
 #'         the offset applied so that biomarkers with concentrations of 0 could
 #'         be log transformed, and any right shift applied to prevent negative
@@ -129,7 +129,7 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
            "Sample.Prepared.Date.and.Time", "Spectrometer", "Shipment.Plate")
   miss_req <- setdiff(req, names(sinfo))
   if (length(miss_req) > 0) {
-    err_txt <- ukbnmr::processing_info[Name %in% miss_req]
+    err_txt <- ukbnmr::sample_qc_info[Name %in% miss_req]
     err_txt <- err_txt[, sprintf("%s (Field: %s)", Name, UKB.Field.ID)]
     err_txt <- paste(err_txt, collapse=", ")
     stop("Missing required sample processing fields: ", err_txt, ".")

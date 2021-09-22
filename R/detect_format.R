@@ -7,7 +7,7 @@ detect_format <- function(x, type) {
   } else if (type == "biomarker_qc_flags") {
     field_ids <- ukbnmr::nmr_info[, na.omit(QC.Flag.Field.ID)]
   } else if (type == "sample_qc_flags") {
-    field_ids <- ukbnmr::processing_info$UKB.Field.ID
+    field_ids <- ukbnmr::sample_qc_info$UKB.Field.ID
   } else {
     stop("internal error: 'type' must be one of \"biomarkers\", \"biomarker_qc_flags\", or \"sample_qc_flags\"")
   }
@@ -20,7 +20,7 @@ detect_format <- function(x, type) {
   }
   if (type != "sample_qc_flags" & length(intersect(names(x), ukbnmr::nmr_info[["Biomarker"]])) > 0) {
     return("processed")
-  } else if (type == "sample_qc_flags" & length(intersect(names(x), ukbnmr::processing_info[["Name"]])) > 0) {
+  } else if (type == "sample_qc_flags" & length(intersect(names(x), ukbnmr::sample_qc_info[["Name"]])) > 0) {
     return("processed")
   } else if (length(intersect(names(x), raw_ukb_cols)) > 0) {
     return("raw")

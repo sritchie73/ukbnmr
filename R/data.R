@@ -33,4 +33,4 @@
 #'   Rows missing \code{UKB.Field.ID} entries correspond to additional sample
 #'   processing information derived from these fields and returned by \code{\link{remove_technical_variation}}.}
 #' }
-"processing_info"
+"sample_qc_info"

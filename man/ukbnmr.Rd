@@ -17,7 +17,7 @@ All functions can be applied directly to raw data extracted from UK Biobank.
 
 This package also provides a \code{data.frame} of biomarker information, loaded
 as \code{\link{nmr_info}}, and \code{data.frame} of sample processing information,
-loaded as \code{\link{processing_info}}.
+loaded as \code{\link{sample_qc_info}}.
 }
 \section{Data Extraction Functions}{
 

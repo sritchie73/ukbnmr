@@ -18,7 +18,7 @@
 #'   \item{Absolute concentrations are log transformed, with a small offset
 #'   applied to biomarkers with concentrations of 0.}
 #'   \item{Each biomarker is adjusted for the time between sample preparation
-#'   and sample measurement (hours)}
+#'   and sample measurement (hours).}
 #'   \item{Each biomarker is adjusted for systematic differences between rows
 #'   (A-H) on the 96-well shipment plates.}
 #'   \item{Each biomarker is adjusted for remaining systematic differences

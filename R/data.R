@@ -19,14 +19,18 @@
 #' }
 "nmr_info"
 
-#' Nightingale biomarker sample information
+#' Nightingale biomarker sample processing information
 #'
-#' Contains details on the Nightingale biomarker sample QC information available
-#' in UKB.
+#' Contains details on the sample processing and quality control information for
+#' the NMR biomarker data in UK Biobank.
 #'
-#' @format A data table with 10 rows and 2 columns:
+#' @format A data table with 18 rows and 3 columns:
 #' \describe{
 #'   \item{Name}{Column name assigned to the sample information field}
-#'   \item{UKB.Field.ID}{Field ID in UK Biobank, see \url{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}}
+#'   \item{Description}{Brief description of the field contents. Further details
+#'   on the Nightingale sample QC columns can be found in the \href{https://biobank.ndph.ox.ac.uk/showcase/refer.cgi?id=3004}{accompanying resource on the UK Biobank showcase}.}
+#'   \item{UKB.Field.ID}{Field ID in UK Biobank, see \url{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}.
+#'   Rows missing \code{UKB.Field.ID} entries correspond to additional sample
+#'   processing information derived from these fields and returned by \code{\link{remove_technical_variation}}.}
 #' }
-"sample_qc_fields"
+"processing_info"

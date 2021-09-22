@@ -68,7 +68,7 @@ process_data <- function(x, type) {
     empty_flags_with_biomarkers <- empty_flags_with_biomarkers[QC.Flag.Field.ID %in% empty_qc_fields]
     field_ids <- rbind(qc_flags_present, empty_flags_with_biomarkers[,list(UKB.Field.ID=QC.Flag.Field.ID)])
   } else if (type == "sample_qc_flags") {
-    field_ids <- field_ids[UKB.Field.ID %in% sample_qc_fields$UKB.Field.ID]
+    field_ids <- field_ids[UKB.Field.ID %in% processing_info$UKB.Field.ID]
   } else {
     stop("internal error: 'type' must be one of \"biomarkers\", \"biomarker_qc_flags\", or \"sample_qc_flags\"")
   }
@@ -79,7 +79,7 @@ process_data <- function(x, type) {
   } else if (type == "biomarker_qc_flags") {
     field_ids[ukbnmr::nmr_info, on = list(UKB.Field.ID=QC.Flag.Field.ID), Biomarker := Biomarker]
   } else if (type == "sample_qc_flags") {
-    field_ids[ukbnmr::sample_qc_fields, on = list(UKB.Field.ID), Biomarker := Name] # Not biomarkers but harmonises with rest of code
+    field_ids[ukbnmr::processing_info, on = list(UKB.Field.ID), Biomarker := Name] # Not biomarkers but harmonises with rest of code
   }
 
   # Split out instance (visit) and array index (repeat measure) fields so they

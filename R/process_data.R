@@ -68,7 +68,7 @@ process_data <- function(x, type) {
     empty_flags_with_biomarkers <- empty_flags_with_biomarkers[QC.Flag.Field.ID %in% empty_qc_fields]
     field_ids <- rbind(qc_flags_present, empty_flags_with_biomarkers[,list(UKB.Field.ID=QC.Flag.Field.ID)])
   } else if (type == "sample_qc_flags") {
-    field_ids <- field_ids[UKB.Field.ID %in% processing_info$UKB.Field.ID]
+    field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::processing_info$UKB.Field.ID)]
   } else {
     stop("internal error: 'type' must be one of \"biomarkers\", \"biomarker_qc_flags\", or \"sample_qc_flags\"")
   }
@@ -207,26 +207,32 @@ get_sample_qc_flag_values <- function(x) {
     Low.Glucose <- Low.Protein <- Measurement.Quality.Flagged <- integer_rep <-
     flag <- NULL
 
-  x[, High.Lactate := ifelse(is.na(High.Lactate), NA_character_, "Yes")]
-  x[, High.Pyruvate := ifelse(is.na(High.Pyruvate), NA_character_, "Yes")]
-  x[, Low.Glucose := ifelse(is.na(Low.Glucose), NA_character_, "Yes")]
-  x[, Low.Protein := ifelse(is.na(Low.Protein), NA_character_, "Yes")]
+  tryAssign(x[, High.Lactate := ifelse(is.na(High.Lactate), NA_character_, "Yes")])
+  tryAssign(x[, High.Pyruvate := ifelse(is.na(High.Pyruvate), NA_character_, "Yes")])
+  tryAssign(x[, Low.Glucose := ifelse(is.na(Low.Glucose), NA_character_, "Yes")])
+  tryAssign(x[, Low.Protein := ifelse(is.na(Low.Protein), NA_character_, "Yes")])
 
-  if (is.integer(x$Spectrometer)) {
-    x[, Spectrometer := ifelse(is.na(Spectrometer), NA_character_, paste("Spectrometer", Spectrometer))]
-  } else if (is.factor(x$Spectrometer)) {
-    x[, Spectrometer := as.character(Spectrometer)]
+  if ("Spectrometer" %in% names(x)) {
+    if (is.integer(x$Spectrometer)) {
+      x[, Spectrometer := ifelse(is.na(Spectrometer), NA_character_, paste("Spectrometer", Spectrometer))]
+    } else if (is.factor(x$Spectrometer)) {
+      x[, Spectrometer := as.character(Spectrometer)]
+    }
   }
 
-  if (is.integer(x$Measurement.Quality.Flagged)) {
-    x[, Measurement.Quality.Flagged := as.character(Measurement.Quality.Flagged)]
-    x[measure_quality_map, on = list(Measurement.Quality.Flagged=integer_rep), Measurement.Quality.Flagged := flag]
-  } else if (is.factor(x$Spectrometer)) {
-    x[, Measurement.Quality.Flagged := as.character(Measurement.Quality.Flagged)]
+  if ("Measurement.Quality.Flagged" %in% names(x)) {
+    if (is.integer(x$Measurement.Quality.Flagged)) {
+      x[, Measurement.Quality.Flagged := as.character(Measurement.Quality.Flagged)]
+      x[measure_quality_map, on = list(Measurement.Quality.Flagged=integer_rep), Measurement.Quality.Flagged := flag]
+    } else if (is.factor(x$Spectrometer)) {
+      x[, Measurement.Quality.Flagged := as.character(Measurement.Quality.Flagged)]
+    }
   }
 
-  if (!is.character(x$Shipment.Plate) | !grepl("^Plate", stats::na.omit(x$Shipment.Plate)[1])) {
-    x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", Shipment.Plate))]
+  if ("Shipment.Plate" %in% names(x)) {
+    if (!is.character(x$Shipment.Plate) | !grepl("^Plate", stats::na.omit(x$Shipment.Plate)[1])) {
+      x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", Shipment.Plate))]
+    }
   }
 
   return(x)

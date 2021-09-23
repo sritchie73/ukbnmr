@@ -29,7 +29,8 @@ This applies a multistep process as described in Ritchie *et al.* 2021:
   3. Each biomarker is adjusted for the time between sample preparation and sample measurement (hours).
   4. Each biomarker is adjusted for systematic differences between rows (A-H) on the 96-well shipment plates.
   5. Each biomarker is adjusted for remaining systematic differences between columns (1-12) on the 96-well shipment plates.
-  6. Each biomarker is adjusted for drift over time within each of the six spectrometers (samples grouped into 10 bins by measurement date in each spectrometer separately.
+  6. Each biomarker is adjusted for drift over time within each of the six spectrometers. To do so, samples are grouped into 10
+     bins, within each spectrometer, by the date the majority of samples on their respective 96-well plates were measured.
   7. Regression residuals after the sequential adjustments are transformed back to absolute concentrations.
   8. Samples belonging to shipment plates that are outliers of non-biological origin are identified and set to missing.
   9. The 61 composite biomarkers and 81 biomarker ratios are recomputed from their adjusted parts.

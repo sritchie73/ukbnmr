@@ -53,9 +53,10 @@
 #'   (A-H) on the 96-well shipment plates.}
 #'   \item{Each biomarker is adjusted for remaining systematic differences
 #'   between columns (1-12) on the 96-well shipment plates.}
-#'   \item{Each biomarker is adjusted for drift over time within each of the
-#'   six spectrometers (samples grouped into 10 bins by measurement date in each
-#'   spectrometer separately)}
+#'   \item{Each biomarker is adjusted for drift over time within each of the six
+#'   spectrometers. To do so, samples are grouped into 10 bins, within each
+#'   spectrometer, by the date the majority of samples on their respective
+#'   96-well plates were measured.}
 #'   \item{Regression residuals after the sequential adjustments are
 #'   transformed back to absolute concentrations.}
 #'   \item{Samples belonging to shipment plates that are outliers of

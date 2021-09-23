@@ -33,7 +33,7 @@
 #' and extract the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{sample quality control tags}
 #' for the Nightingale NMR metabolomics data.
 #'
-#' @section Removal of technical variation
+#' @section Removal of technical variation:
 #' The \code{\link{remove_technical_variation}()} function will take a raw dataset output by
 #' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide)}{ukbconv},
 #' remove the effects of technical variation on biomarker concentrations, and return a list

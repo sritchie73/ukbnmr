@@ -85,7 +85,7 @@ collate_flags <- function(...) {
 
 # Convert an ITime object to numeric representation of hours since midnight
 hours_decimal <- function(time) {
-  hour(time) + minute(time)/60 + second(time/3600)
+  hour(time) + minute(time)/60 + second(time)/3600
 }
 
 # Compute durations between events (hours)

@@ -106,7 +106,8 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
     Spectrometer.Date.Bin <- Spectrometer <- Type <- Biomarker <- eid <- visit_index <-
     Shipment.Plate <- value <- Log.Offset <- Minimum <- Minimum.Non.Zero <-
     log_value <- adj <- Right.Shift <- outlier <- Lower.Limit <- Upper.Limit <-
-    Name <- UKB.Field.ID <- NULL
+    Name <- UKB.Field.ID <- N <- Plate.Measured.Date <- i.Sample.Measured.Date <-
+    NULL
 
   # Check relevant fields exist
   f1 <- detect_format(x, type="biomarkers")
@@ -151,8 +152,13 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
     Sample.Measured.Date, Sample.Measured.Time
   )]
 
+  # Get majority date of sample measurement per shipment plate
+  plate_measure_dates <- sinfo[,.N,by=list(Shipment.Plate, Sample.Measured.Date)]
+  plate_measure_dates <- plate_measure_dates[,.SD[which.max(N)],by=Shipment.Plate]
+  sinfo[plate_measure_dates, on = list(Shipment.Plate), Plate.Measured.Date := i.Sample.Measured.Date]
+
   # Split sample measurement date into 10 equal size bins per spectrometer
-  sinfo[, Spectrometer.Date.Bin := bin_dates(Sample.Measured.Date), by=Spectrometer]
+  sinfo[, Spectrometer.Date.Bin := bin_dates(Plate.Measured.Date), by=Spectrometer]
 
   # Offset date bin by spectrometer number to reduce potential confusion by users
   # in output

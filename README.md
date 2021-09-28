@@ -36,7 +36,7 @@ This applies a multistep process as described in Ritchie *et al.* 2021:
   9. The 61 composite biomarkers and 81 biomarker ratios are recomputed from their adjusted parts.
   10. An additional 76 biomarker ratios of potential biological significance are computed.
 
-Further details can be found in the preprint Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **medRxiv** 2021.
+Further details can be found in the preprint Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **medRxiv** (2021). doi: [10.1101/2021.09.24.21264079](https://www.medrxiv.org/content/10.1101/2021.09.24.21264079v1).
 
 This function takes 10-15 minutes to run, and requires at least 16 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
 
@@ -47,6 +47,8 @@ The `compute_nightingale_ratios()` function will compute the [81 Nightingale Hea
 The `compute_extended_ratios()` function will compute an extended set of 76 biomarker ratios expanding on the biomarkers available directly from the Nightingale platform. A companion function, `compute_extended_ratio_qc_flags()`, will aggregate the QC flags for the biomarkers underlying each ratio.
 
 The `recompute_derived_biomarkers()` function will recompute allcomposite biomarkers and ratios from 107 non-derived biomarkers, which is useful for ensuring data consistency when adjusting for unwanted biological variation. A companion function, `recompute_derived_biomarker_qc_flags()` will aggregate the QC flags for the biomarkers underlying each composite biomarker and ratio.
+
+If using these functions, please cite: Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **medRxiv** (2021). doi: [10.1101/2021.09.24.21264079](https://www.medrxiv.org/content/10.1101/2021.09.24.21264079v1).
 
 ## Installation
 

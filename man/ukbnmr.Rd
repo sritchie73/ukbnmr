@@ -61,9 +61,10 @@ This applies a multistep process as described in Ritchie \emph{et al.} 2021:
   (A-H) on the 96-well shipment plates.}
   \item{Each biomarker is adjusted for remaining systematic differences
   between columns (1-12) on the 96-well shipment plates.}
-  \item{Each biomarker is adjusted for drift over time within each of the
-  six spectrometers (samples grouped into 10 bins by measurement date in each
-  spectrometer separately)}
+  \item{Each biomarker is adjusted for drift over time within each of the six
+  spectrometers. To do so, samples are grouped into 10 bins, within each
+  spectrometer, by the date the majority of samples on their respective
+  96-well plates were measured.}
   \item{Regression residuals after the sequential adjustments are
   transformed back to absolute concentrations.}
   \item{Samples belonging to shipment plates that are outliers of
@@ -74,9 +75,10 @@ This applies a multistep process as described in Ritchie \emph{et al.} 2021:
   significance are computed.}
 }
 
-Further details can be found in the preprint Ritchie S. C. \emph{et al.},
+Further details can be found in the preprint: Ritchie S. C. \emph{et al.},
 Quality control and removal of technical variation of NMR metabolic biomarker
-data in ~120,000 UK Biobank participants, \strong{medRxiv} 2021.
+data in ~120,000 UK Biobank participants, \strong{medRxiv} (2021). doi:
+\href{https://www.medrxiv.org/content/early/2021/09/27/2021.09.24.21264079}{10.1101/2021.09.24.21264079}
 }
 
 \section{Methods for computing biomarker ratios}{

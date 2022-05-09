@@ -4,7 +4,11 @@
 \alias{remove_technical_variation}
 \title{Remove technical variation from NMR biomarker data in UK Biobank.}
 \usage{
-remove_technical_variation(x, remove.outlier.plates = TRUE)
+remove_technical_variation(
+  x,
+  remove.outlier.plates = TRUE,
+  skip.biomarker.qc.flags = FALSE
+)
 }
 \arguments{
 \item{x}{\code{data.frame} containing a dataset extracted by
@@ -16,6 +20,9 @@ containing the \href{https://nightingalehealth.com/biomarkers}{Nightingale Healt
 concentrations on outlier shipment plates (see details) are not set to
 missing but simply flagged in the \code{biomarker_qc_flags} \code{data.frame}
 in the returned \code{list}.}
+
+\item{skip.biomarker.qc.flags}{logical, when set to \code{TRUE} biomarker QC
+flags are not processed or returned.}
 }
 \value{
 a \code{list} containing three \code{data.frames}: \describe{

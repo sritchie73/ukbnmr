@@ -8,6 +8,8 @@
 #' concentrations on outlier shipment plates (see details) are not set to
 #' missing but simply flagged in the \code{biomarker_qc_flags} \code{data.frame}
 #' in the returned \code{list}.
+#' @param skip.biomarker.qc.flags logical, when set to \code{TRUE} biomarker QC
+#' flags are not processed or returned.
 #'
 #' @details
 #' A multi-step procedure is applied to the raw biomarker data to remove the
@@ -104,7 +106,11 @@
 #' @importFrom stats ppoints
 #' @importFrom MASS rlm
 #' @export
-remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
+remove_technical_variation <- function(
+  x,
+  remove.outlier.plates=TRUE,
+  skip.biomarker.qc.flags=FALSE
+) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   Well.Position.Within.Plate <- Well.Row <- Well.Column <- Sample.Measured.Date.and.Time <-
     Sample.Prepared.Date.and.Time <- Sample.Measured.Date <- Sample.Measured.Time <-
@@ -117,7 +123,7 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
 
   # Check relevant fields exist
   f1 <- detect_format(x, type="biomarkers")
-  f2 <- detect_format(x, type="biomarker_qc_flags")
+  f2 <- if (skip.biomarker.qc.flags) { "skipped" } else { detect_format(x, type="biomarker_qc_flags") }
   f3 <- detect_format(x, type="sample_qc_flags")
 
   # Make sure its not a "processed" dataset returned by extract_biomarkers() and
@@ -128,7 +134,9 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
 
   # Extract biomarkers, biomarker QC flags, and sample processing information
   bio <- process_data(x, type="biomarkers")
-  bio_qc <- process_data(x, type="biomarker_qc_flags")
+  if (!skip.biomarker.qc.flags) {
+    bio_qc <- process_data(x, type="biomarker_qc_flags")
+  }
   sinfo <- process_data(x, type="sample_qc_flags")
 
   # Check required sample processing fields exist
@@ -237,14 +245,17 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
   plate_medians[outlier_lim, on = list(Biomarker, value > Upper.Limit), outlier := "high"]
 
   # Add outlier plate tags to biomarker qc tags
-  bio_qc <- melt(bio_qc, id.vars=c("eid", "visit_index"), variable.name="Biomarker", na.rm=TRUE,
-              measure.vars=intersect(names(bio_qc), ukbnmr::nmr_info[Type == "Non-derived", Biomarker]))
+  if (!skip.biomarker.qc.flags) {
+    bio_qc <- melt(bio_qc, id.vars=c("eid", "visit_index"), variable.name="Biomarker", na.rm=TRUE,
+                   measure.vars=intersect(names(bio_qc), ukbnmr::nmr_info[Type == "Non-derived", Biomarker]))
 
-  outlier_flags <- bio[plate_medians[outlier != "no"], on = list(Shipment.Plate, Biomarker),
-    list(eid, visit_index, Biomarker, value=ifelse(outlier == "high", "High outlier plate", "Low outlier plate"))]
+    outlier_flags <- bio[plate_medians[outlier != "no"], on = list(Shipment.Plate, Biomarker),
+                         list(eid, visit_index, Biomarker, value=ifelse(
+                           outlier == "high", "High outlier plate", "Low outlier plate"))]
 
-  bio_qc <- rbind(bio_qc, outlier_flags)
-  bio_qc <- bio_qc[, list(value = paste(value, collapse="; ")), by=list(eid, visit_index, Biomarker)]
+    bio_qc <- rbind(bio_qc, outlier_flags)
+    bio_qc <- bio_qc[, list(value = paste(value, collapse="; ")), by=list(eid, visit_index, Biomarker)]
+  }
 
   # Remove outlier plates from biomarker data
   if (remove.outlier.plates) {
@@ -253,26 +264,39 @@ remove_technical_variation <- function(x, remove.outlier.plates=TRUE) {
 
   # Convert back to wide format
   bio <- dcast(bio, eid + visit_index ~ Biomarker, value.var="adj")
-  bio_qc <- dcast(bio_qc, eid + visit_index ~ Biomarker, value.var="value")
+  if (!skip.biomarker.qc.flags) {
+    bio_qc <- dcast(bio_qc, eid + visit_index ~ Biomarker, value.var="value")
+  }
 
   # Compute derived biomarkers and ratios
   bio <- nightingale_composite_biomarker_compute(bio)
   bio <- nightingale_ratio_compute(bio)
   bio <- extended_ratios_compute(bio)
 
-  bio_qc <- nightingale_composite_biomarker_flags(bio_qc)
-  bio_qc <- nightingale_ratio_flags(bio_qc)
-  bio_qc <- extended_ratios_flags(bio_qc)
+  if (!skip.biomarker.qc.flags) {
+    bio_qc <- nightingale_composite_biomarker_flags(bio_qc)
+    bio_qc <- nightingale_ratio_flags(bio_qc)
+    bio_qc <- extended_ratios_flags(bio_qc)
 
-  # Add back in samples with no QC flags for any biomarkers
-  bio_qc <- bio_qc[bio[, list(eid, visit_index)], on = list(eid, visit_index)]
+    # Add back in samples with no QC flags for any biomarkers
+    bio_qc <- bio_qc[bio[, list(eid, visit_index)], on = list(eid, visit_index)]
+  }
 
   # Return list
-  return(list(
-    biomarkers=returnDT(bio),
-    biomarker_qc_flags=returnDT(bio_qc),
-    sample_processing=returnDT(sinfo),
-    log_offset=returnDT(log_offset[Log.Offset != 0 | Right.Shift != 0]),
-    outlier_plate_detection=returnDT(outlier_lim)
-  ))
+  if (!skip.biomarker.qc.flags) {
+    return(list(
+      biomarkers=returnDT(bio),
+      biomarker_qc_flags=returnDT(bio_qc),
+      sample_processing=returnDT(sinfo),
+      log_offset=returnDT(log_offset[Log.Offset != 0 | Right.Shift != 0]),
+      outlier_plate_detection=returnDT(outlier_lim)
+    ))
+  } else {
+    return(list(
+      biomarkers=returnDT(bio),
+      sample_processing=returnDT(sinfo),
+      log_offset=returnDT(log_offset[Log.Offset != 0 | Right.Shift != 0]),
+      outlier_plate_detection=returnDT(outlier_lim)
+    ))
+  }
 }

@@ -67,6 +67,7 @@ process_data <- function(x, type) {
     empty_flags_with_biomarkers[ukbnmr::nmr_info, on = list(UKB.Field.ID), QC.Flag.Field.ID := QC.Flag.Field.ID]
     empty_flags_with_biomarkers <- empty_flags_with_biomarkers[QC.Flag.Field.ID %in% empty_qc_fields]
     field_ids <- rbind(qc_flags_present, empty_flags_with_biomarkers[,list(UKB.Field.ID=QC.Flag.Field.ID)])
+    field_ids <- unique(field_ids) # in case empty fields become non-empty in later releases
   } else if (type == "sample_qc_flags") {
     field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::sample_qc_info$UKB.Field.ID)]
   } else {

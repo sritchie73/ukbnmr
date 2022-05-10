@@ -1,4 +1,11 @@
 # NEWS
+
+## Version 0.6.3
+
+- `extract_biomarker_qc_flags()` no longer relies on list of hard coded field 
+  IDs it expects not to be present due to no data in UK Biobank, making code
+  more robust to differences between UK Biobank data releases.
+
 ## Version 0.6.2
 
 - `remove_technical_variation()` now gains a `skip.biomarker.qc.flags` argument

@@ -16,14 +16,13 @@
 # instances where there are multiple QC Flags for a biomarker measurement (at
 # a single time point for a single person), these are collated into a single
 # comma separated entry. Fields are renamed with the short biomarker variable
-# name typically provided by Nightingale Health, listed in the Biomarker column i
+# name typically provided by Nightingale Health, listed in the Biomarker column
 # in the nmr_info data sheet included with this package
 #
 process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
-  value <- Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <-
-    repeat_index <- integer_rep <- flag <- variable <- Name <- Shipment.Plate <-
-    QC.Field.Empty <- Well.Position.Within.Plate <- NULL
+  Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <- repeat_index <-
+    Name <- Shipment.Plate <- Well.Position.Within.Plate <- NULL
 
   # Determine format of data
   data_format <- detect_format(x, type)
@@ -62,12 +61,13 @@ process_data <- function(x, type) {
   } else if (type == "biomarker_qc_flags") {
     # Not all biomarkers have QC flags, but we need to know where the column is
     # missing due to this, or due to the user not having access.
-    qc_flags_present <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$QC.Flag.Field.ID)]
-    empty_flags_with_biomarkers <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::nmr_info$UKB.Field.ID)]
-    empty_flags_with_biomarkers[ukbnmr::nmr_info, on = list(UKB.Field.ID), QC.Flag.Field.ID := QC.Flag.Field.ID]
-    empty_flags_with_biomarkers <- empty_flags_with_biomarkers[QC.Flag.Field.ID %in% empty_qc_fields]
+    biomarker_fields <- na.omit(ukbnmr::nmr_info$UKB.Field.ID)
+    biomarkers_present <- field_ids[UKB.Field.ID %in% biomarker_fields]
+    biomarkers_present[ukbnmr::nmr_info, on = list(UKB.Field.ID), QC.Flag.Field.ID := QC.Flag.Field.ID]
+    qc_flag_fields <- na.omit(ukbnmr::nmr_info$QC.Flag.Field.ID)
+    qc_flags_present <- field_ids[UKB.Field.ID %in% qc_flag_fields]
+    empty_flags_with_biomarkers <- biomarkers_present[!(QC.Flag.Field.ID %in% qc_flags_present$UKB.Field.ID)]
     field_ids <- rbind(qc_flags_present, empty_flags_with_biomarkers[,list(UKB.Field.ID=QC.Flag.Field.ID)])
-    field_ids <- unique(field_ids) # in case empty fields become non-empty in later releases
   } else if (type == "sample_qc_flags") {
     field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::sample_qc_info$UKB.Field.ID)]
   } else {

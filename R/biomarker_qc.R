@@ -196,7 +196,7 @@ remove_technical_variation <- function(
   bio[log_offset, on = list(Biomarker), log_value := log(value + Log.Offset)]
 
   # Adjust for time between sample prep and sample measurement
-  bio[, adj := MASS::rlm(log_value ~ Prep.to.Measure.Duration)$residuals, by=Biomarker]
+  bio[, adj := MASS::rlm(log_value ~ log(Prep.to.Measure.Duration))$residuals, by=Biomarker]
 
   # Adjust for within plate structure across 96-well plate rows A-H
   bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Row))$residuals, by=Biomarker]

@@ -26,7 +26,7 @@ This applies a multistep process as described in Ritchie *et al.* 2021:
 
   1. First biomarker data is filtered to the 107 biomarkers that cannot be derived from any combination of other biomarkers.
   2. Absolute concentrations are log transformed, with a small offset applied to biomarkers with concentrations of 0.
-  3. Each biomarker is adjusted for the time between sample preparation and sample measurement (hours).
+  3. Each biomarker is adjusted for the time between sample preparation and sample measurement (hours) on a log scale.
   4. Each biomarker is adjusted for systematic differences between rows (A-H) on the 96-well shipment plates.
   5. Each biomarker is adjusted for remaining systematic differences between columns (1-12) on the 96-well shipment plates.
   6. Each biomarker is adjusted for drift over time within each of the six spectrometers. To do so, samples are grouped into 10

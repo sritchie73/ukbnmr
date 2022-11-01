@@ -1,5 +1,13 @@
 # NEWS
 
+## Version 0.7
+
+- `biomarker_qc()` now corrects for sample degradation time on a log scale 
+  instead of a linear scale to model exponential decay. This mainly impacts
+  histidine concentrations, whose new post-QC values have Pearson correlation
+  of 0.974 with those assuming linear decay, while all other biomarkers have
+  Pearson correlation > 0.99.
+
 ## Version 0.6.3
 
 - `extract_biomarker_qc_flags()` no longer relies on list of hard coded field 

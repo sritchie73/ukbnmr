@@ -78,13 +78,13 @@ This applies a multistep process as described in Ritchie \emph{et al.} 2021:
 Further details can be found in the preprint: Ritchie S. C. \emph{et al.},
 Quality control and removal of technical variation of NMR metabolic biomarker
 data in ~120,000 UK Biobank participants, \strong{medRxiv} (2021). doi:
-\href{https://www.medrxiv.org/content/early/2021/09/27/2021.09.24.21264079}{10.1101/2021.09.24.21264079}
+\href{https://www.medrxiv.org/content/10.1101/2021.09.24.21264079v1}{10.1101/2021.09.24.21264079v1}
 }
 
 \section{Methods for computing biomarker ratios}{
 
 The \code{\link{compute_nightingale_ratios}()} function will compute the
-\href{https://nightingalehealth.com/biomarkers}{81 Nightingale Health biomarker ratios}
+\href{https://research.nightingalehealth.com/biomarkers/}{81 Nightingale Health biomarker ratios}
 that were missing prior to the August 2021 update of
 \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank}.
 A companion function, \code{\link{compute_nightingale_ratio_qc_flags}()} will

@@ -17,7 +17,7 @@ a \code{data.frame} with the additional computed biomarker ratios.
 }
 \description{
 The Nightingale Health NMR metabolomics biomarker platform quantifies
-\href{https://nightingalehealth.com/biomarkers}{249 biomarkers}, including 81
+\href{https://research.nightingalehealth.com/biomarkers/}{249 biomarkers}, including 81
 biomarker ratios. Prior to the August update, UK Biobank only provided the 168
 biomarkers that are not ratios for
 \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{download}.

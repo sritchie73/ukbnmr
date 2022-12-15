@@ -14,7 +14,7 @@ remove_technical_variation(
 \item{x}{\code{data.frame} containing a dataset extracted by
 \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 with \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank fields}
-containing the \href{https://nightingalehealth.com/biomarkers}{Nightingale Health NMR metabolomics biomarker} data.}
+containing the \href{https://research.nightingalehealth.com/biomarkers/}{Nightingale Health NMR metabolomics biomarker} data.}
 
 \item{remove.outlier.plates}{logical, when set to \code{FALSE} biomarker
 concentrations on outlier shipment plates (see details) are not set to
@@ -112,7 +112,7 @@ largest sample size as reference in the regression.
 Further details can be found in the preprint: Ritchie S. C. \emph{et al.},
 Quality control and removal of technical variation of NMR metabolic biomarker
 data in ~120,000 UK Biobank participants, \strong{medRxiv} (2021). doi:
-\href{https://www.medrxiv.org/content/early/2021/09/27/2021.09.24.21264079}{10.1101/2021.09.24.21264079}
+\href{https://www.medrxiv.org/content/10.1101/2021.09.24.21264079v1}{10.1101/2021.09.24.21264079v1}
 
 This function takes 10-15 minutes to run and requires at least 14 GB of RAM.
 }

@@ -4,7 +4,7 @@
 #' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 #' extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank fields}
 #' corresponding to the
-#' \href{https://nightingalehealth.com/biomarkers}{Nightingale Health NMR metabolomics biomarkers}
+#' \href{https://research.nightingalehealth.com/biomarkers/}{Nightingale Health NMR metabolomics biomarkers}
 #' giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
 #' available in this package.
 #'

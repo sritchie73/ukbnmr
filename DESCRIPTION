@@ -1,7 +1,7 @@
 Package: ukbnmr
 Type: Package
 Title: Tools for processing Nightingale NMR biomarker data in UK Biobank
-Version: 0.7
+Version: 1.0
 Author: Scott C. Ritchie <sritchie73@gmail.com>
 Maintainer: Scott C. Ritchie <sritchie73@gmail.com>
 Description: A suite of utilities for working with the NMR metabolomics data in
@@ -20,4 +20,4 @@ Imports:
   MASS
 Suggests:
   roxygen2
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3

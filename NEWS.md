@@ -1,5 +1,10 @@
 # NEWS
 
+## Version 1.0
+
+- Minor changes to DESCRIPTION, README, and inst/CITATION to prepare for CRAN
+  submission following paper acceptance.
+
 ## Version 0.7
 
 - `biomarker_qc()` now corrects for sample degradation time on a log scale 

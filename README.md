@@ -57,5 +57,3 @@ This package can be installed from GitHub with the remotes package:
 ```
 remotes::install_github("sritchie73/ukbnmr")
 ```
-
-The package will be submitted to CRAN subsequent to preprint peer review.

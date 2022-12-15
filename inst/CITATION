@@ -1,10 +1,7 @@
 bibentry(
   bibtype = "Article",
-  journal = "medRxiv",
-  publisher = "Cold Spring Harbor Laboratory Press",
-  year = "2021",
-  doi = "10.1101/2021.09.24.21264079",
-  url = "https://www.medrxiv.org/content/early/2021/09/27/2021.09.24.21264079",
+  journal = "Scientific Data",
+  year = "2023",
   title = "Quality control and removal of technical variation of {NMR} metabolic biomarker data in ~120,000 {UK} Biobank participants",
   author = c(
       person("Scott C.", "Ritchie"),

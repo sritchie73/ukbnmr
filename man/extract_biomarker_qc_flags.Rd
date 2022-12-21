@@ -2,7 +2,7 @@
 % Please edit documentation in R/extractor_functions.R
 \name{extract_biomarker_qc_flags}
 \alias{extract_biomarker_qc_flags}
-\title{Extract QC Flags for Nightingale biomarkers from a data.frame of UK Biobank fields}
+\title{Extract NMR biomarker QC flags from a data.frame of UK Biobank fields}
 \usage{
 extract_biomarker_qc_flags(x)
 }
@@ -20,7 +20,7 @@ Given an input \code{data.frame} loaded from a dataset extracted by
 \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{UK Biobank fields}
 corresponding to the
-\href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{Nightingale Health NMR metabolomics biomarker QC Flags}
+\href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{quality control (QC) flags for the NMR metaolomics biomarkers}
 giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
 available in this package. QC Flags are separated by "; " in each column where
 there are multiple QC Flags for a single measurement.
@@ -46,4 +46,15 @@ by the combination of entries in columns "eid" and "visit_index".
 If your UK Biobank project only has access to a subset of biomarkers, then
 this function will only return the subset of ratios that can be computed from
 the biomarker data provided.
+}
+\examples{
+\dontrun{
+# Workflow for extracting NMR metabolomic biomarkers quality control flags
+# from a csv file output by the ukbconv tool and saving it to a new file to
+# be loaded in future R sessions.
+ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+biomarker_qc_flags <- extract_biomarker_qc_flags(ukb_data)
+fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
+}
+
 }

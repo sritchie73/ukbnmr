@@ -1,8 +1,9 @@
-#' Tools for processing Nightingale NMR biomarker data in UK Biobank
+#' Tools for processing the UK Biobank NMR metabolomics biomarker data
 #'
 #'  @description
-#' This package provides utilities for working with the NMR metabolomics data
-#' in \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank}.
+#' This package provides utilities for working with the
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank MR metabolomics data}.
+#' Details are provided below, and in the package vignette (type \code{vignette("ukbnmr")} to view).
 #'
 #' @details
 #' There are three groups of functions in this package: (1) data extraction,
@@ -48,7 +49,7 @@
 #'   \item{Absolute concentrations are log transformed, with a small offset
 #'   applied to biomarkers with concentrations of 0.}
 #'   \item{Each biomarker is adjusted for the time between sample preparation
-#'   and sample measurement (hours).}
+#'   and sample measurement (hours) on a log scale.}
 #'   \item{Each biomarker is adjusted for systematic differences between rows
 #'   (A-H) on the 96-well shipment plates.}
 #'   \item{Each biomarker is adjusted for remaining systematic differences

@@ -1,10 +1,10 @@
-#' Extract Nightingale biomarkers from a data.frame of UK Biobank fields
+#' Extract NMR metabolomic biomarkers from a data.frame of UK Biobank fields
 #'
 #' Given an input \code{data.frame} loaded from a dataset extracted by
 #' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 #' extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank fields}
 #' corresponding to the
-#' \href{https://research.nightingalehealth.com/biomarkers/}{Nightingale Health NMR metabolomics biomarkers}
+#' \href{https://research.nightingalehealth.com/biomarkers/}{NMR metabolomics biomarkers}
 #' giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
 #' available in this package.
 #'
@@ -42,6 +42,16 @@
 #'         and "visit_index", followed by columns for each biomarker
 #'        e.g. "bOHbutyrate", \dots, "Valine".
 #'
+#' @examples
+#' \dontrun{
+#' # Workflow for extracting UK Biobank NMR metabolomic biomarkers from a csv
+#' # file output by the ukbconv tool and saving it to a new file to be loaded
+#' # in future R sessions.
+#' ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+#' nmr <- extract_biomarkers(ukb_data)
+#' fwrite(ukb_data, file="path/to/nmr_biomarker_data.csv")
+#' }
+#'
 #' @export
 extract_biomarkers <- function(x) {
   if (detect_format(x, type="biomarkers") == "processed") {
@@ -51,13 +61,13 @@ extract_biomarkers <- function(x) {
   }
 }
 
-#' Extract QC Flags for Nightingale biomarkers from a data.frame of UK Biobank fields
+#' Extract NMR biomarker QC flags from a data.frame of UK Biobank fields
 #'
 #' Given an input \code{data.frame} loaded from a dataset extracted by
 #' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 #' extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{UK Biobank fields}
 #' corresponding to the
-#' \href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{Nightingale Health NMR metabolomics biomarker QC Flags}
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{quality control (QC) flags for the NMR metaolomics biomarkers}
 #' giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
 #' available in this package. QC Flags are separated by "; " in each column where
 #' there are multiple QC Flags for a single measurement.
@@ -90,6 +100,16 @@ extract_biomarkers <- function(x) {
 #'        and "visit_index" followed by columns for each biomarker
 #'        e.g. "bOHbutyrate", \dots, "Valine".
 #'
+#' @examples
+#' \dontrun{
+#' # Workflow for extracting NMR metabolomic biomarkers quality control flags
+#' # from a csv file output by the ukbconv tool and saving it to a new file to
+#' # be loaded in future R sessions.
+#' ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+#' biomarker_qc_flags <- extract_biomarker_qc_flags(ukb_data)
+#' fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
+#' }
+#'
 #' @export
 extract_biomarker_qc_flags <- function(x) {
   if (detect_format(x, type="biomarker_qc_flags") == "processed") {
@@ -99,13 +119,13 @@ extract_biomarker_qc_flags <- function(x) {
   }
 }
 
-#' Extract Nightingale sample QC Flags from a data.frame of UK Biobank fields
+#' Extract NMR sample QC flags from a data.frame of UK Biobank fields
 #'
 #' Given an input \code{data.frame} loaded from a dataset extracted by
 #' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 #' extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{UK Biobank fields}
 #' corresponding to the
-#' \href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{Nightingale Health NMR metabolomics sample QC Flags}
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{sample quality control flags for the NMR metabolomics biomarker data}
 #' giving them short variable names.
 #'
 #' @details
@@ -133,6 +153,16 @@ extract_biomarker_qc_flags <- function(x) {
 #' @return a \code{data.frame} or \code{data.table} with column names "eid"
 #'        and "visit_index", followed by columns for each sample
 #'        QC tag, e.g. "Shipment.Plate", \dots, "Low.Protein".
+#'
+#' @examples
+#' \dontrun{
+#' # Workflow for extracting NMR metabolomic sample quality control flags
+#' # from a csv file output by the ukbconv tool and saving it to a new file to
+#' # be loaded in future R sessions.
+#' ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+#' sample_qc_flags <- extract_sample_qc_flags(ukb_data)
+#' fwrite(sample_qc_flags, file="path/to/nmr_sample_qc_flags.csv")
+#' }
 #'
 #' @export
 extract_sample_qc_flags <- function(x) {

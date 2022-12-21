@@ -18,7 +18,7 @@ a \code{data.frame} with the additional computed biomarker ratios.
 \description{
 The Nightingale Health NMR metabolomics biomarker platform quantifies
 \href{https://research.nightingalehealth.com/biomarkers/}{249 biomarkers}, including 81
-biomarker ratios. Prior to the August update, UK Biobank only provided the 168
+biomarker ratios. Prior to the August 2021 update, UK Biobank only provided the 168
 biomarkers that are not ratios for
 \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{download}.
 This function will compute the 81 missing ratios.
@@ -30,6 +30,22 @@ the biomarker data provided.
 
 All biomarkers in the input data are also returned alongside the ratios computed
 by this function.
+}
+\examples{
+\dontrun{
+# Workflow for computing the 81 biomarker ratios missing prior to the August
+# 2021 update of the UK Biobank NMR metabolomics biomarker data.
+ukb_data <- fread("path/to/extracted.csv")
+nmr <- compute_nightingale_ratios(ukb_data)
+fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
+
+# You may also want to aggregate and save the quality control flags for each
+# sample from the biomarkers underlying each ratio, adding them as additional
+# columns to the input data (see help("compute_nightingale_ratio_qc_flags")).
+biomarker_qc_flags <- compute_nightingale_ratio_qc_flags(nmr)
+fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
+}
+
 }
 \seealso{
 \code{\link{nmr_info}} for list of computed biomarker ratios,

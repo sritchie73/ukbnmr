@@ -30,6 +30,27 @@ the biomarker data provided.
 Biomarker QC Flags in the input data are also returned alongside those
 aggregated by this function for the computed biomarker ratios.
 }
+\examples{
+\dontrun{
+# Subsequent to using the compute_biomarker_ratios function you may wish to
+# collate into a single field for each biomarker and sample any and all
+# quality control flags from the biomarkers underlying the ratio for that
+# sample.
+
+# First, if we haven't already done so, we can compute the 81 biomarker
+# ratios missing prior to the August 2021 update of the UK Biobank NMR
+# metabolomics biomarker data (see help("compute_nightingale_ratios"))
+ukb_data <- fread("path/to/extracted.csv")
+nmr <- compute_nightingale_ratios(ukb_data)
+fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
+
+# Now we can aggregate the QC flags, adding them as additional columns to the
+# input data
+biomarker_qc_flags <- compute_nightingale_ratio_qc_flags(nmr)
+fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
+}
+
+}
 \seealso{
 \code{\link{nmr_info}} for list of computed biomarker ratios and
   \code{\link{extract_biomarkers}()} for details on how raw data from

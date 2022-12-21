@@ -19,8 +19,7 @@ a \code{data.frame} with the additional computed biomarker ratios.
 Computes 76 additional ratios not provided by the Nightingale platform. These
 include lipid fractions in HDL, LDL, VLDL, and total serum, as well as
 cholesterol fractions, and omega to polyunsaturated fatty acid ratios. See
-\code{\link{nmr_info}} for details. Also computes Nightingale biomarker
-ratios if missing (see \code{\link{compute_nightingale_ratios}()}).
+\code{\link{nmr_info}} for details.
 }
 \details{
 If your UK Biobank project only has access to a subset of biomarkers, then
@@ -29,6 +28,26 @@ the biomarker data provided.
 
 All biomarkers in the input data are also returned alongside the ratios computed
 by this function.
+}
+\examples{
+\dontrun{
+# Example workflow for computing the extended set of ratios added by this
+# package to the 249 biomarkers and ratios in the UK Biobank dataset. Note
+# no correction for unwanted technical variation takes place here, this is
+# only useful if you want to compare their values before and after removal
+# of unwanted technical variation.
+ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+nmr <- compute_extended_ratios(ukb_data)
+fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
+
+# You may also want to aggregate and save the quality control flags for each
+# sample from the biomarkers underlying each ratio, adding them as additional
+# columns to the input data (see help("compute_nightingale_ratio_qc_flags")).
+biomarker_qc_flags <- compute_extended_ratio_qc_flags(nmr)
+fwrite(biomarker_qc_flags, file="path/to/biomarker_qc_flags.csv")
+}
+
+
 }
 \seealso{
 \code{\link{nmr_info}} for list of computed biomarker ratios,

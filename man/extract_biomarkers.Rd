@@ -2,7 +2,7 @@
 % Please edit documentation in R/extractor_functions.R
 \name{extract_biomarkers}
 \alias{extract_biomarkers}
-\title{Extract Nightingale biomarkers from a data.frame of UK Biobank fields}
+\title{Extract NMR metabolomic biomarkers from a data.frame of UK Biobank fields}
 \usage{
 extract_biomarkers(x)
 }
@@ -20,7 +20,7 @@ Given an input \code{data.frame} loaded from a dataset extracted by
 \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank fields}
 corresponding to the
-\href{https://research.nightingalehealth.com/biomarkers/}{Nightingale Health NMR metabolomics biomarkers}
+\href{https://research.nightingalehealth.com/biomarkers/}{NMR metabolomics biomarkers}
 giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
 available in this package.
 }
@@ -51,4 +51,15 @@ the biomarker data provided.
 
 A \code{data.table} will be returned instead of a \code{data.frame} if the
 the user has loaded the package into their R session.
+}
+\examples{
+\dontrun{
+# Workflow for extracting UK Biobank NMR metabolomic biomarkers from a csv
+# file output by the ukbconv tool and saving it to a new file to be loaded
+# in future R sessions.
+ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+nmr <- extract_biomarkers(ukb_data)
+fwrite(ukb_data, file="path/to/nmr_biomarker_data.csv")
+}
+
 }

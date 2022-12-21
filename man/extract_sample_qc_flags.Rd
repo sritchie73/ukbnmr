@@ -2,7 +2,7 @@
 % Please edit documentation in R/extractor_functions.R
 \name{extract_sample_qc_flags}
 \alias{extract_sample_qc_flags}
-\title{Extract Nightingale sample QC Flags from a data.frame of UK Biobank fields}
+\title{Extract NMR sample QC flags from a data.frame of UK Biobank fields}
 \usage{
 extract_sample_qc_flags(x)
 }
@@ -20,7 +20,7 @@ Given an input \code{data.frame} loaded from a dataset extracted by
 \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
 extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{UK Biobank fields}
 corresponding to the
-\href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{Nightingale Health NMR metabolomics sample QC Flags}
+\href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{sample quality control flags for the NMR metabolomics biomarker data}
 giving them short variable names.
 }
 \details{
@@ -42,4 +42,15 @@ so no repeat_index column is returned.
 
 This function will also work with data extracted by the \code{ukbtools} R
 package.
+}
+\examples{
+\dontrun{
+# Workflow for extracting NMR metabolomic sample quality control flags
+# from a csv file output by the ukbconv tool and saving it to a new file to
+# be loaded in future R sessions.
+ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+sample_qc_flags <- extract_sample_qc_flags(ukb_data)
+fwrite(sample_qc_flags, file="path/to/nmr_sample_qc_flags.csv")
+}
+
 }

@@ -1,6 +1,6 @@
 Package: ukbnmr
 Type: Package
-Title: Tools for processing UK Biobank NMR metabolomics biomarker data
+Title: Tools for Processing UK Biobank NMR Metabolomics Biomarker Data
 Version: 1.1
 Author: Scott C. Ritchie <sritchie73@gmail.com>
 Maintainer: Scott C. Ritchie <sritchie73@gmail.com>

@@ -1,11 +1,11 @@
 Package: ukbnmr
 Type: Package
-Title: Tools for processing Nightingale NMR biomarker data in UK Biobank
+Title: Tools for processing UK Biobank NMR metabolomics biomarker data
 Version: 1.1
 Author: Scott C. Ritchie <sritchie73@gmail.com>
 Maintainer: Scott C. Ritchie <sritchie73@gmail.com>
-Description: A suite of utilities for working with the NMR metabolomics data in
-    UK Biobank. Includes functions for extracting biomarkers from raw UK Biobank 
+Description: A suite of utilities for working with the UK Biobank NMR metabolomics 
+    data. Includes functions for extracting biomarkers from decoded UK Biobank 
     field data, removing unwanted technical variation from biomarker concentrations,
     computing an extended set of lipid, fatty acid, and cholesterol fractions, and 
     for re-deriving composite biomarkers and ratios after adjusting data for 

@@ -1,5 +1,16 @@
 # NEWS
 
+## Version 1.1
+
+- Minor changes to fix NOTES and WARNINGS thrown by CRAN: 
+
+  - URLs which have been moved since the initial documentation was written have 
+    been fixed.
+    
+  - Examples have been added to the documentation for each package function.
+  
+  - A vignette including the most relevant example workflows has been added.
+
 ## Version 1.0
 
 - Minor changes to DESCRIPTION, README, and inst/CITATION to prepare for CRAN

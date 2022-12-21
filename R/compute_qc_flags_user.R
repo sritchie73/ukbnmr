@@ -177,9 +177,11 @@ compute_extended_ratio_qc_flags <- function(x) {
 #' fwrite(processed$log_offset, file="path/to/nmr_biomarker_log_offset.csv")
 #' fwrite(processed$outlier_plate_detection, file="path/to/outlier_plate_info.csv")
 #'
-#' # Otherwise assuming we load 'tech_qc' from "path/to/mr_biomarker_data.csv",
-#' # We now run code to adjust biomarkers for biological covariates (code not
-#' # supplied by this package)
+#' # Otherwise assuming we load 'tech_qc' from "path/to/mr_biomarker_data.csv".
+#'
+#' # We now run code to adjust biomarkers for biological covariates. This code is
+#' # not supplied by this package, but for illustrative purposes we assume the user
+#' # has written a function to do this:
 #' bio_qc <- user_function_to_adjust_biomarkers_for_covariates(tech_qc)
 #'
 #' # Now we recompute the composite biomarkers and derived ratios after

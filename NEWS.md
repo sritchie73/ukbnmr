@@ -1,5 +1,13 @@
 # NEWS
 
+## Version 1.3
+ 
+ - Fixed URL in DESCRIPTION
+
+## Version 1.2
+
+ - Minor changes to fix DESCRIPTION based on feedback from CRAN maintainers 
+
 ## Version 1.1
 
 - Minor changes to fix NOTES and WARNINGS thrown by CRAN: 

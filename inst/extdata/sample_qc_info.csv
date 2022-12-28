@@ -1,0 +1,20 @@
+Name,Description,UKB.Field.ID
+Shipment.Plate,96-well plate samples were shipped on from UK Biobank,23649
+Spectrometer,Spectrometer the sample was measured on by Nightingale Health,23650
+Measurement.Quality.Flagged,Nightingale sample QC Flag indicating not enough material for sample measurement,23651
+High.Lactate,Nightingale sample QC Flag indicating unexpectedly high lactate in sample,23652
+High.Pyruvate,Nightingale sample QC Flag indicating unexpectedly high pyruvate in sample,23653
+Low.Glucose,Nightingale sample QC Flag indicating unexpectedly low glucose in sample,23654
+Low.Protein,Nightingale sample QC Flag indicating unexpectedly low protein in sample,23655
+Sample.Measured.Date.and.Time,Date and time sample was measured at by Nightingale Health,23658
+Sample.Prepared.Date.and.Time,Date and time sample was prepared for measurement by Nightingale Health,23659
+Well.Position.Within.Plate,"Location of the sample on the 96-well shipment plate (row A-H, columns 1-12)",23660
+Well.Row,Row (A-H) of the sample on the 96-well shipment plate,
+Well.Column,Column (1-12) of the sample on the 96-well shipment plate,
+Sample.Measured.Date,Date of sample measurement,
+Sample.Measured.Time,Time of day of sample measurement,
+Sample.Prepared.Date,Date of sample preparation,
+Sample.Prepared.Time,Time of day of sample preparation,
+Prep.to.Measure.Duration,Time between sample preparation and sample measurement in hours,
+Plate.Measured.Date,"Date majority samples on the given shipment plate were measured, used to group samples into bins when adjusting for drift over time",
+Spectrometer.Date.Bin,Bin assigned to each sample when adjusting for drift over time within each spectrometer,

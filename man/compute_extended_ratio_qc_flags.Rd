@@ -31,24 +31,8 @@ Biomarker QC Flags in the input data are also returned alongside those
 aggregated by this function for the computed biomarker ratios.
 }
 \examples{
-\dontrun{
-# Subsequent to using the compute_extended_ratios function you may wish to
-# collate into a single field for each biomarker and sample any and all
-# quality control flags from the biomarkers underlying the ratio for that
-# sample.
-
-# First, if we haven't already done so, we can compute the 76 additional
-# biomarker ratios that are not part of the UK Biobank data release using the
-# compute_extended_ratios function (see help("compute_extended_ratios"))
-ukb_data <- fread("path/to/extracted.csv")
-nmr <- compute_extended_ratios(ukb_data)
-fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
-
-# Now we can aggregate the QC flags, adding them as additional columns to the
-# input data
-biomarker_qc_flags <- compute_extended_ratio_qc_flags(nmr)
-fwrite(biomarker_qc_flags, file="path/to/biomarker_qc_flags.csv")
-}
+ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
+biomarker_qc_flags <- compute_extended_ratio_qc_flags(ukb_data)
 
 }
 \seealso{

@@ -32,19 +32,8 @@ All biomarkers in the input data are also returned alongside the ratios computed
 by this function.
 }
 \examples{
-\dontrun{
-# Workflow for computing the 81 biomarker ratios missing prior to the August
-# 2021 update of the UK Biobank NMR metabolomics biomarker data.
-ukb_data <- fread("path/to/extracted.csv")
+ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 nmr <- compute_nightingale_ratios(ukb_data)
-fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
-
-# You may also want to aggregate and save the quality control flags for each
-# sample from the biomarkers underlying each ratio, adding them as additional
-# columns to the input data (see help("compute_nightingale_ratio_qc_flags")).
-biomarker_qc_flags <- compute_nightingale_ratio_qc_flags(nmr)
-fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
-}
 
 }
 \seealso{

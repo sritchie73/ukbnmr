@@ -43,14 +43,8 @@
 #'        e.g. "bOHbutyrate", \dots, "Valine".
 #'
 #' @examples
-#' \dontrun{
-#' # Workflow for extracting UK Biobank NMR metabolomic biomarkers from a csv
-#' # file output by the ukbconv tool and saving it to a new file to be loaded
-#' # in future R sessions.
-#' ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+#' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 #' nmr <- extract_biomarkers(ukb_data)
-#' fwrite(ukb_data, file="path/to/nmr_biomarker_data.csv")
-#' }
 #'
 #' @export
 extract_biomarkers <- function(x) {
@@ -101,14 +95,8 @@ extract_biomarkers <- function(x) {
 #'        e.g. "bOHbutyrate", \dots, "Valine".
 #'
 #' @examples
-#' \dontrun{
-#' # Workflow for extracting NMR metabolomic biomarkers quality control flags
-#' # from a csv file output by the ukbconv tool and saving it to a new file to
-#' # be loaded in future R sessions.
-#' ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+#' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 #' biomarker_qc_flags <- extract_biomarker_qc_flags(ukb_data)
-#' fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
-#' }
 #'
 #' @export
 extract_biomarker_qc_flags <- function(x) {
@@ -155,14 +143,8 @@ extract_biomarker_qc_flags <- function(x) {
 #'        QC tag, e.g. "Shipment.Plate", \dots, "Low.Protein".
 #'
 #' @examples
-#' \dontrun{
-#' # Workflow for extracting NMR metabolomic sample quality control flags
-#' # from a csv file output by the ukbconv tool and saving it to a new file to
-#' # be loaded in future R sessions.
-#' ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+#' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 #' sample_qc_flags <- extract_sample_qc_flags(ukb_data)
-#' fwrite(sample_qc_flags, file="path/to/nmr_sample_qc_flags.csv")
-#' }
 #'
 #' @export
 extract_sample_qc_flags <- function(x) {

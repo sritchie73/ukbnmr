@@ -34,3 +34,19 @@
 #'   processing information derived from these fields and returned by \code{\link{remove_technical_variation}}.}
 #' }
 "sample_qc_info"
+
+#' Data for testing package functions
+#'
+#' Dataset mimicking structure of decoded UK Biobank dataset of NMR metabolomics
+#' biomarker concentrations and associated processing variables for testing
+#' package functions.
+#'
+#' @format A data table with 50 rows and 735 columns with column names "eid"
+#' followed by extracted UK Biobank field data of the format "23649-0.0",
+#' "23649-1.0", \dots, "23655-1.0".
+#'
+#' @source Data in each column has been randomly drawn from the distribution
+#' present in the UK Biobank dataset. Importantly, random sampling was performed
+#' for each column separately, thus no rows represent real observations or
+#' participants in UK Biobank.
+"test_data"

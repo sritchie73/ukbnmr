@@ -39,12 +39,24 @@ library(ukbnmr)
 decoded <- fread("path/to/decoded_ukbiobank_data.csv") # file save by ukbconv tool
 
 nmr <- extract_biomarkers(decoded)
-biomarker_qc_flags <- extract_biomarker_qc_flags(nmr)
-sample_qc_flags <- extract_sample_qc_flags(nmr)
+biomarker_qc_flags <- extract_biomarker_qc_flags(decoded)
+sample_qc_flags <- extract_sample_qc_flags(decoded)
 
 fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
 fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
 fwrite(sample_qc_flags, file="path/to/nmr_sample_qc_flags.csv")
+```
+
+You can try this out using the test dataset bundled with the `ukbnmr` package:
+
+```{r}
+library(ukbnmr)
+
+decoded <- ukbnmr::test_data # see help("test_data") for more details
+
+nmr <- extract_biomarkers(decoded)
+biomarker_qc_flags <- extract_biomarker_qc_flags(decoded)
+sample_qc_flags <- extract_sample_qc_flags(decoded)
 ```
 
 ## Removal of technical variation
@@ -82,6 +94,16 @@ fwrite(processed$biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
 fwrite(processed$sample_processing, file="path/to/nmr_sample_qc_flags.csv")
 fwrite(processed$log_offset, file="path/to/nmr_biomarker_log_offset.csv")
 fwrite(processed$outlier_plate_detection, file="path/to/outlier_plate_info.csv")
+```
+
+You can try this out using the test dataset bundled with the `ukbnmr` package:
+
+```{r}
+library(ukbnmr)
+
+decoded <- ukbnmr::test_data # see help("test_data") for more details
+
+processed <- remove_technical_variation(decoded)
 ```
 
 ## Methods for computing derived biomarkers and ratios

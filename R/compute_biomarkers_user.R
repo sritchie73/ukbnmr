@@ -31,19 +31,8 @@
 #'   is processed.
 #'
 #' @examples
-#' \dontrun{
-#' # Workflow for computing the 81 biomarker ratios missing prior to the August
-#' # 2021 update of the UK Biobank NMR metabolomics biomarker data.
-#' ukb_data <- fread("path/to/extracted.csv")
+#' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 #' nmr <- compute_nightingale_ratios(ukb_data)
-#' fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
-#'
-#' # You may also want to aggregate and save the quality control flags for each
-#' # sample from the biomarkers underlying each ratio, adding them as additional
-#' # columns to the input data (see help("compute_nightingale_ratio_qc_flags")).
-#' biomarker_qc_flags <- compute_nightingale_ratio_qc_flags(nmr)
-#' fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
-#' }
 #'
 #' @export
 compute_nightingale_ratios <- function(x) {
@@ -88,23 +77,8 @@ compute_nightingale_ratios <- function(x) {
 #'   is processed.
 #'
 #' @examples
-#' \dontrun{
-#' # Example workflow for computing the extended set of ratios added by this
-#' # package to the 249 biomarkers and ratios in the UK Biobank dataset. Note
-#' # no correction for unwanted technical variation takes place here, this is
-#' # only useful if you want to compare their values before and after removal
-#' # of unwanted technical variation.
-#' ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+#' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 #' nmr <- compute_extended_ratios(ukb_data)
-#' fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
-#'
-#' # You may also want to aggregate and save the quality control flags for each
-#' # sample from the biomarkers underlying each ratio, adding them as additional
-#' # columns to the input data (see help("compute_nightingale_ratio_qc_flags")).
-#' biomarker_qc_flags <- compute_extended_ratio_qc_flags(nmr)
-#' fwrite(biomarker_qc_flags, file="path/to/biomarker_qc_flags.csv")
-#' }
-#'
 #'
 #' @export
 compute_extended_ratios <- function(x) {
@@ -161,38 +135,8 @@ compute_extended_ratios <- function(x) {
 #'   is processed.
 #'
 #' @examples
-#' \dontrun{
-#' # Example of a typical workflow for adjusting NMR metabolomics biomarkers for
-#' # biological covariates
-#'
-#' # First, if we haven't corrected for unwanted technical variation we do so
-#' # using the appropriate function (see help("remove_technical_variation")).
-#' ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
-#' processed <- remove_technical_variation(ukb_data)
-#' tech_qc <- processed$biomarkers
-#' fwrite(tech_qc, file="path/to/nmr_biomarker_data.csv")
-#' fwrite(processed$biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
-#' fwrite(processed$sample_processing, file="path/to/nmr_sample_qc_flags.csv")
-#' fwrite(processed$log_offset, file="path/to/nmr_biomarker_log_offset.csv")
-#' fwrite(processed$outlier_plate_detection, file="path/to/outlier_plate_info.csv")
-#'
-#' # Otherwise assuming we load 'tech_qc' from "path/to/mr_biomarker_data.csv",
-#' # We now run code to adjust biomarkers for biological covariates (code not
-#' # supplied by this package)
-#' bio_qc <- user_function_to_adjust_biomarkers_for_covariates(tech_qc)
-#'
-#' # Now we recompute the composite biomarkers and derived ratios after
-#' # adjustment for additional biological covariates
-#' bio_qc <- recompute_derived_biomarkers(bio_qc)
-#' fwrite(bio_qc, file="path/to/nmr_biomarkers_adjusted_for_covariates.csv")
-#'
-#' # You may also want to aggregate and save the quality control flags for each
-#' # sample from the biomarkers underlying each derived biomarker or ratio,
-#' # adding them as additional columns to the input data (see
-#' # help("recompute_derived_biomarker_qc_flags")).
-#' biomarker_qc_flags <- recompute_derived_biomarker_qc_flags(nmr)
-#' fwrite(biomarker_qc_flags, file="path/to/biomarker_qc_flags.csv")
-#' }
+#' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
+#' bio_qc <- recompute_derived_biomarkers(ukb_data)
 #'
 #' @export
 recompute_derived_biomarkers <- function(x) {

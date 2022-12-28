@@ -44,13 +44,7 @@ This function will also work with data extracted by the \code{ukbtools} R
 package.
 }
 \examples{
-\dontrun{
-# Workflow for extracting NMR metabolomic sample quality control flags
-# from a csv file output by the ukbconv tool and saving it to a new file to
-# be loaded in future R sessions.
-ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 sample_qc_flags <- extract_sample_qc_flags(ukb_data)
-fwrite(sample_qc_flags, file="path/to/nmr_sample_qc_flags.csv")
-}
 
 }

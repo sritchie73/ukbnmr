@@ -174,7 +174,7 @@ get_biomarker_qc_flag_values <- function(x) {
   value <- visit_index <- repeat_index <- integer_rep <- flag <- variable <-
     eid <- NULL
 
-  x <- melt(x, id.vars=c("eid", "visit_index", "repeat_index"))
+  x <- suppressWarnings(melt(x, id.vars=c("eid", "visit_index", "repeat_index")))
 
   # Sometimes the integer representations have already been mapped to their
   # character representations, e.g. when loading data using the Rscript made by

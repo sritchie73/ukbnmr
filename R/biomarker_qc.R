@@ -100,26 +100,14 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' # Workflow for extracting UK Biobank NMR metabolomic biomarkers and correcting
-#' # them for unwanted technical variation. Starting with a csv file output by the
-#' # ukbconv tool, we load the data into R, use the remove_technical_variation
-#' # function, then save the five output tables to files for loading into future
-#' # R sessions.
-#' ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+#' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 #' processed <- remove_technical_variation(ukb_data)
-#' fwrite(processed$biomarkers, file="path/to/nmr_biomarker_data.csv")
-#' fwrite(processed$biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
-#' fwrite(processed$sample_processing, file="path/to/nmr_sample_qc_flags.csv")
-#' fwrite(processed$log_offset, file="path/to/nmr_biomarker_log_offset.csv")
-#' fwrite(processed$outlier_plate_detection, file="path/to/outlier_plate_info.csv")
-#' }
-
+#'
 #' @importFrom stats coef
 #' @importFrom stats sd
-#' @importFrom stats median
 #' @importFrom stats qnorm
 #' @importFrom stats ppoints
+#' @importFrom stats median
 #' @importFrom MASS rlm
 #' @export
 remove_technical_variation <- function(

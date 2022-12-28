@@ -53,13 +53,7 @@ A \code{data.table} will be returned instead of a \code{data.frame} if the
 the user has loaded the package into their R session.
 }
 \examples{
-\dontrun{
-# Workflow for extracting UK Biobank NMR metabolomic biomarkers from a csv
-# file output by the ukbconv tool and saving it to a new file to be loaded
-# in future R sessions.
-ukb_data <- fread("path/to/decoded_ukbiobank_data.csv")
+ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 nmr <- extract_biomarkers(ukb_data)
-fwrite(ukb_data, file="path/to/nmr_biomarker_data.csv")
-}
 
 }

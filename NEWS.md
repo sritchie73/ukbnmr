@@ -1,5 +1,12 @@
 # NEWS
 
+## Version 1.4
+
+ - Created example toy dataset for testing package functions and updated 
+   documentation
+ 
+ - Removed GitHub README page from package bundle
+
 ## Version 1.3
  
  - Fixed URL in DESCRIPTION

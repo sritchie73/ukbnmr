@@ -1,10 +1,11 @@
 Package: ukbnmr
 Type: Package
 Title: Removal of Unwanted Technical Variation from UK Biobank NMR Metabolomics Biomarker Data
-Version: 1.3
+Version: 1.4
 Authors@R: 
     person(given=c("Scott", "C"), family="Ritchie", email="sritchie73@gmail.com", 
            role=c("aut", "cre"), comment=(ORCID="0000-0002-8454-9548"))
+BugReports: https://github.com/sritchie73/ukbnmr/issues
 Description: A suite of utilities for working with the UK Biobank 
     <https://www.ukbiobank.ac.uk/> Nuclear Magnetic Resonance spectroscopy (NMR) 
     metabolomics data <https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220>. 

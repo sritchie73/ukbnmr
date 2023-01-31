@@ -63,7 +63,7 @@ sample_qc_flags <- extract_sample_qc_flags(decoded)
 
 The `remove_technical_variation()` function will take a raw dataset output by [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide), remove the effects of technical variation on biomarker concentrations, and return a list containing the adjusted NMR biomarker data, biomarker QC flags, and sample quality control and processing information.
 
-This applies a multistep process as described in Ritchie *et al.* 2021:
+This applies a multistep process as described in Ritchie *et al.* 2023:
 
   1. First biomarker data is filtered to the 107 biomarkers that cannot be derived from any combination of other biomarkers.
   2. Absolute concentrations are log transformed, with a small offset applied to biomarkers with concentrations of 0.
@@ -77,7 +77,7 @@ This applies a multistep process as described in Ritchie *et al.* 2021:
   9. The 61 composite biomarkers and 81 biomarker ratios are recomputed from their adjusted parts.
   10. An additional 76 biomarker ratios of potential biological significance are computed.
 
-Further details can be found in the preprint Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **medRxiv** (2021). doi: [10.1101/2021.09.24.21264079](https://www.medrxiv.org/content/10.1101/2021.09.24.21264079v1).
+Further details can be found in Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **Sci Data** *10* 64 (2023). doi: [10.1038/s41597-023-01949-y](https://www.nature.com/articles/s41597-023-01949-y).
 
 This function takes 10-15 minutes to run, and requires at least 16 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
 
@@ -112,7 +112,7 @@ Analysts may wish to further adjust data for biological covariates. We provide a
 
 Note these functions assume the data has been returned to absolute units after adjusting for technical covariates. For example the ratio of two biomarkers A and B is computed as A/B, which may not be true if the two biomarkers are on different scales (e.g. regression residuals) after adjustment.
 
-If using these functions, please cite Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **medRxiv** (2021). doi: [10.1101/2021.09.24.21264079](https://www.medrxiv.org/content/10.1101/2021.09.24.21264079v1).
+If using these functions, please cite Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **Sci Data** *10* 64 (2023). doi: [10.1038/s41597-023-01949-y](https://www.nature.com/articles/s41597-023-01949-y).
 
 An example workflow:
 

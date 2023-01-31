@@ -44,10 +44,10 @@
 #' sample measurement date bin are treated as factors, using the group with the
 #' largest sample size as reference in the regression.
 #'
-#' Further details can be found in the preprint: Ritchie S. C. \emph{et al.},
-#' Quality control and removal of technical variation of NMR metabolic biomarker
-#' data in ~120,000 UK Biobank participants, \strong{medRxiv} (2021). doi:
-#' \href{https://www.medrxiv.org/content/10.1101/2021.09.24.21264079v1}{10.1101/2021.09.24.21264079v1}
+#' Further details can be found in Ritchie S. C. \emph{et al.} Quality control
+#' and removal of technical variation of NMR metabolic biomarker data in
+#' ~120,000 UK Biobank participants, \emph{Sci Data} \strong{10}, 64 (2023). doi:
+#' \href{https://www.nature.com/articles/s41597-023-01949-y}{10.1038/s41597-023-01949-y}
 #'
 #' This function takes 10-15 minutes to run and requires at least 14 GB of RAM.
 #'
@@ -87,7 +87,7 @@
 #'         concentrations: this should be at least one order of magnitude
 #'         smaller than the smallest non-zero value (i.e. the offset added
 #'         should amount to noise in numeric precision for all samples). See
-#'         preprint for more details.}
+#'         publication for more details.}
 #'   \item{outlier_plate_detection}{A \code{data.frame} containing diagnostic
 #'         information and details of outlier plate detection. For each of the
 #'         107 non-derived biomarkers, the median concentration on each of the
@@ -96,7 +96,7 @@
 #'         medians. "Mean.Plate.Medians" gives the mean of the plate medians for
 #'         each biomarker. "Lower.Limit" and "Upper.Limit" give the values below
 #'         and above which plates are flagged as outliers based on their plate
-#'         median. See preprint for more details.}
+#'         median. See publication for more details.}
 #' }
 #'
 #' @examples

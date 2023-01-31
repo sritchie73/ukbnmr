@@ -1,5 +1,10 @@
 # NEWS
 
+## Version 1.5
+
+ - Updated citations in documentation to reflect article publication in 
+   Scientific Data
+
 ## Version 1.4
 
  - Created example toy dataset for testing package functions and updated 

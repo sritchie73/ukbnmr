@@ -41,7 +41,7 @@
 #' containing the adjusted NMR biomarker data, biomarker QC flags, and sample quality control
 #' and processing information.
 #'
-#' This applies a multistep process as described in Ritchie \emph{et al.} 2021:
+#' This applies a multistep process as described in Ritchie \emph{et al.} 2023:
 #'
 #' \enumerate{
 #'   \item{First biomarker data is filtered to the 107 biomarkers that
@@ -68,10 +68,10 @@
 #'   significance are computed.}
 #' }
 #'
-#' Further details can be found in the preprint: Ritchie S. C. \emph{et al.},
-#' Quality control and removal of technical variation of NMR metabolic biomarker
-#' data in ~120,000 UK Biobank participants, \strong{medRxiv} (2021). doi:
-#' \href{https://www.medrxiv.org/content/10.1101/2021.09.24.21264079v1}{10.1101/2021.09.24.21264079v1}
+#' Further details can be found in Ritchie S. C. \emph{et al.} Quality control
+#' and removal of technical variation of NMR metabolic biomarker data in
+#' ~120,000 UK Biobank participants, \emph{Sci Data} \strong{10}, 64 (2023). doi:
+#' \href{https://www.nature.com/articles/s41597-023-01949-y}{10.1038/s41597-023-01949-y}
 #'
 #' @section  Methods for computing biomarker ratios:
 #' The \code{\link{compute_nightingale_ratios}()} function will compute the

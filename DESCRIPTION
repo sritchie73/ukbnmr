@@ -1,7 +1,7 @@
 Package: ukbnmr
 Type: Package
 Title: Removal of Unwanted Technical Variation from UK Biobank NMR Metabolomics Biomarker Data
-Version: 1.4
+Version: 1.5
 Authors@R: 
     person(given=c("Scott", "C"), family="Ritchie", email="sritchie73@gmail.com", 
            role=c("aut", "cre"), comment=(ORCID="0000-0002-8454-9548"))
@@ -14,7 +14,7 @@ Description: A suite of utilities for working with the UK Biobank
     computing an extended set of lipid, fatty acid, and cholesterol fractions, 
     and for re-deriving composite biomarkers and ratios after adjusting data 
     for unwanted biological variation. For further details on methods see
-    Ritchie SC et al. medRxiv (2021) <doi:10.1101/2021.09.24.21264079>.
+    Ritchie SC et al. Sci Data (2023) <doi:10.1038/s41597-023-01949-y>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

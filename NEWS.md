@@ -1,5 +1,16 @@
 # NEWS
 
+## Version 1.5.1
+
+ - Fixed error in GitHub README example code, which has now been made consistent 
+   with the vignette.
+ 
+ - plate ID and timestamp columns in the package test data have now been set as 
+   character class instead of data.table specific representations of the 
+   integer64 class (from the bit64 package) and POSIXt to safeguard against 
+   intermittent errors arising from incorrect type conversion when running the
+   example code without first loading the data.table package.
+ 
 ## Version 1.5
 
  - Updated citations in documentation to reflect article publication in 

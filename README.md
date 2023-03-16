@@ -24,8 +24,8 @@ library(ukbnmr)
 decoded <- fread("path/to/decoded_ukbiobank_data.csv") # file save by ukbconv tool
 
 nmr <- extract_biomarkers(decoded)
-biomarker_qc_flags <- extract_biomarker_qc_flags(nmr)
-sample_qc_flags <- extract_sample_qc_flags(nmr)
+biomarker_qc_flags <- extract_biomarker_qc_flags(decoded)
+sample_qc_flags <- extract_sample_qc_flags(decoded)
 
 fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
 fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")

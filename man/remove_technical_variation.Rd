@@ -7,7 +7,8 @@
 remove_technical_variation(
   x,
   remove.outlier.plates = TRUE,
-  skip.biomarker.qc.flags = FALSE
+  skip.biomarker.qc.flags = FALSE,
+  version = 2L
 )
 }
 \arguments{
@@ -23,6 +24,11 @@ in the returned \code{list}.}
 
 \item{skip.biomarker.qc.flags}{logical, when set to \code{TRUE} biomarker QC
 flags are not processed or returned.}
+
+\item{version}{version of the QC algorithm to apply. Set to 1 to use the
+algorithm as described in Ritchie S. C. \emph{et al.} 2023. Defaults to 2, to
+run the updated algorithm modified after examining the phase 2 NMR biomarker
+data released by UK Biobank in July 2023 (see details).}
 }
 \value{
 a \code{list} containing three \code{data.frames}: \describe{
@@ -77,8 +83,8 @@ a \code{list} containing three \code{data.frames}: \describe{
 Remove technical variation from NMR biomarker data in UK Biobank.
 }
 \details{
-A multi-step procedure is applied to the raw biomarker data to remove the
-effects of technical variation:
+A multi-step procedure (version 1) is applied to the raw biomarker data to
+remove the effects of technical variation:
 \enumerate{
   \item{First biomarker data is filtered to the 107 biomarkers that
   cannot be derived from any combination of other biomarkers.}
@@ -113,6 +119,25 @@ Further details can be found in Ritchie S. C. \emph{et al.} Quality control
 and removal of technical variation of NMR metabolic biomarker data in
 ~120,000 UK Biobank participants, \emph{Sci Data} \strong{10}, 64 (2023). doi:
 \href{https://www.nature.com/articles/s41597-023-01949-y}{10.1038/s41597-023-01949-y}
+
+Version 2 of the algorithm (the default) modifies the above procedure to (1)
+adjust for well and column within each shipment batch separately in steps 4
+and 5, and (2) in step 6 instead of splitting samples into 10 bins per
+spectrometer uses a fixed bin size of approximately 2,000 samples per bin,
+ensuring samples measured on the same plate and plates measured on the same
+day are grouped into the same bin.
+
+The first modification was made as applying version 1 of the algorithm
+revealed introduced stratification by well position when examining the
+corrected concentrations in each data release separately.
+
+The second modification was made to ensure consistent bin sizes across data
+releases when correcting for drift over time. Otherwise, spectrometers used
+in multiple data releases would have different bin sizes when adjusting
+different releases. A bin split is also hard coded on spectrometer 5 between
+plates 490000006726 and 490000006714 which correspond to a large change in
+concentrations akin to a spectrometer recalibration event most strongly
+observed for alanine concentrations.
 
 This function takes 10-15 minutes to run and requires at least 14 GB of RAM.
 }

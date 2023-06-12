@@ -10,10 +10,14 @@
 #' in the returned \code{list}.
 #' @param skip.biomarker.qc.flags logical, when set to \code{TRUE} biomarker QC
 #' flags are not processed or returned.
+#' @param version version of the QC algorithm to apply. Set to 1 to use the
+#' algorithm as described in Ritchie S. C. \emph{et al.} 2023. Defaults to 2, to
+#' run the updated algorithm modified after examining the phase 2 NMR biomarker
+#' data released by UK Biobank in July 2023 (see details).
 #'
 #' @details
-#' A multi-step procedure is applied to the raw biomarker data to remove the
-#' effects of technical variation:
+#' A multi-step procedure (version 1) is applied to the raw biomarker data to
+#' remove the effects of technical variation:
 #' \enumerate{
 #'   \item{First biomarker data is filtered to the 107 biomarkers that
 #'   cannot be derived from any combination of other biomarkers.}
@@ -48,6 +52,25 @@
 #' and removal of technical variation of NMR metabolic biomarker data in
 #' ~120,000 UK Biobank participants, \emph{Sci Data} \strong{10}, 64 (2023). doi:
 #' \href{https://www.nature.com/articles/s41597-023-01949-y}{10.1038/s41597-023-01949-y}
+#'
+#' Version 2 of the algorithm (the default) modifies the above procedure to (1)
+#' adjust for well and column within each shipment batch separately in steps 4
+#' and 5, and (2) in step 6 instead of splitting samples into 10 bins per
+#' spectrometer uses a fixed bin size of approximately 2,000 samples per bin,
+#' ensuring samples measured on the same plate and plates measured on the same
+#' day are grouped into the same bin.
+#'
+#' The first modification was made as applying version 1 of the algorithm
+#' revealed introduced stratification by well position when examining the
+#' corrected concentrations in each data release separately.
+#'
+#' The second modification was made to ensure consistent bin sizes across data
+#' releases when correcting for drift over time. Otherwise, spectrometers used
+#' in multiple data releases would have different bin sizes when adjusting
+#' different releases. A bin split is also hard coded on spectrometer 5 between
+#' plates 490000006726 and 490000006714 which correspond to a large change in
+#' concentrations akin to a spectrometer recalibration event most strongly
+#' observed for alanine concentrations.
 #'
 #' This function takes 10-15 minutes to run and requires at least 14 GB of RAM.
 #'
@@ -113,7 +136,8 @@
 remove_technical_variation <- function(
   x,
   remove.outlier.plates=TRUE,
-  skip.biomarker.qc.flags=FALSE
+  skip.biomarker.qc.flags=FALSE,
+  version=2L
 ) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   Well.Position.Within.Plate <- Well.Row <- Well.Column <- Sample.Measured.Date.and.Time <-
@@ -123,7 +147,11 @@ remove_technical_variation <- function(
     Shipment.Plate <- value <- Log.Offset <- Minimum <- Minimum.Non.Zero <-
     log_value <- adj <- Right.Shift <- outlier <- Lower.Limit <- Upper.Limit <-
     Name <- UKB.Field.ID <- N <- Plate.Measured.Date <- i.Sample.Measured.Date <-
+    Shipment.Batch <- Spectrometer.Group <- max_bin <- i.offset <-
     NULL
+
+  # Check for valid algorithm version
+  if (version != 1L && version != 2L) stop("'version' must be 1 or 2")
 
   # Check relevant fields exist
   f1 <- detect_format(x, type="biomarkers")
@@ -133,7 +161,7 @@ remove_technical_variation <- function(
   # Make sure its not a "processed" dataset returned by extract_biomarkers() and
   # related functions.
   if (f1 == "processed" || f2 == "processed" || f3 == "processed") {
-    stop("'x' should be a 'data.frame' containg UK Biobank field ID columns, not one extracted by extract_biomarkers() or related functions'")
+    stop("'x' should be a 'data.frame' containing UK Biobank field ID columns, not one extracted by extract_biomarkers() or related functions'")
   }
 
   # Extract biomarkers, biomarker QC flags, and sample processing information
@@ -152,6 +180,11 @@ remove_technical_variation <- function(
     err_txt <- err_txt[, sprintf("%s (Field: %s)", Name, UKB.Field.ID)]
     err_txt <- paste(err_txt, collapse=", ")
     stop("Missing required sample processing fields: ", err_txt, ".")
+  }
+
+  if (version == 2L && !("Shipment.Batch" %in% names(sinfo))) {
+    warning("Shipment.Batch information missing, reverting to algorithm version 1")
+    version <- 1L
   }
 
   # Split out row and column information from 96-well plate information
@@ -175,21 +208,49 @@ remove_technical_variation <- function(
   plate_measure_dates <- plate_measure_dates[,.SD[which.max(N)],by=Shipment.Plate]
   sinfo[plate_measure_dates, on = list(Shipment.Plate), Plate.Measured.Date := i.Sample.Measured.Date]
 
-  # Split sample measurement date into 10 equal size bins per spectrometer
-  sinfo[, Spectrometer.Date.Bin := bin_dates(Plate.Measured.Date), by=Spectrometer]
+  # For version 2 of the algorithm, we need to hard code a bin split. The easiest way
+  # to do this is by creating a dummy spectrometer column to split on, by giving the
+  # spectrometer before and after the split a different name
+  sinfo[, Spectrometer.Group := Spectrometer]
+  if (version == 2L && "490000006726" %in% sinfo[["Shipment.Plate"]]) {
+    sinfo <- sinfo[order(Plate.Measured.Date)][order(Spectrometer)]
+    sinfo[, Spectrometer.Group := as.character(Spectrometer.Group)]
+    spec_to_split <- sinfo[Shipment.Plate == "490000006726", Spectrometer.Group][1]
+    sinfo[, row := .I]
+    idx_to_split <- sinfo[Shipment.Plate == "490000006726", max(row)]
+    sinfo[Spectrometer.Group == spec_to_split & row > idx_to_split,
+          Spectrometer.Group := paste(Spectrometer.Group, "Group 2")]
+    sinfo[, row := NULL]
+  }
 
-  # Offset date bin by spectrometer number to reduce potential confusion by users
-  # in output
-  sinfo[, Spectrometer.Date.Bin := Spectrometer.Date.Bin + 10 * as.integer(gsub(".* ", "", Spectrometer)) - 1]
+  # Bin samples into either 10 equal size bins per spectrometer (algorithm
+  # version 1) or into bins of roughly 2000 samples each (algorithm version 2)
+  sinfo[, Spectrometer.Date.Bin := bin_dates(Plate.Measured.Date, version), by=Spectrometer.Group]
+
+  # Offset date bin by spectrometer number to make bin allocation unique across
+  # all spectrometers
+  offset <- sinfo[, list(max_bin=max(Spectrometer.Date.Bin)), by=Spectrometer.Group]
+  offset <- offset[order(Spectrometer.Group)]
+  offset[-1, offset := offset[, cumsum(max_bin)[-.N]]]
+  offset[1, offset := 0]
+  sinfo[offset, on = list(Spectrometer.Group), Spectrometer.Date.Bin := Spectrometer.Date.Bin + i.offset]
 
   # Melt to long, filtering to non-derived biomarkers and dropping missing values
   bio <- melt(bio, id.vars=c("eid", "visit_index"), variable.name="Biomarker", na.rm=TRUE,
     measure.vars=intersect(names(bio), ukbnmr::nmr_info[Type == "Non-derived", Biomarker]))
 
   # add in relevant sample processing information
-  bio <- sinfo[, list(eid, visit_index, Prep.to.Measure.Duration, Well.Row,
-    Well.Column, Spectrometer.Date.Bin, Spectrometer, Shipment.Plate)][
-      bio, on = list(eid, visit_index), nomatch=0]
+  if (version == 1L) {
+    bio <- sinfo[, list(eid, visit_index, Prep.to.Measure.Duration, Well.Row,
+                        Well.Column, Spectrometer.Date.Bin, Spectrometer,
+                        Spectrometer.Group, Shipment.Plate)][
+                          bio, on = list(eid, visit_index), nomatch=0]
+  } else if (version == 2L) {
+    bio <- sinfo[, list(eid, visit_index, Prep.to.Measure.Duration, Well.Row,
+                        Well.Column, Spectrometer.Date.Bin, Spectrometer,
+                        Spectrometer.Group, Shipment.Batch, Shipment.Plate)][
+                          bio, on = list(eid, visit_index), nomatch=0]
+  }
 
   # Determine offset for log transformation (required for variables with measurements == 0):
   # Acetate, Acetoacetate, Albumin, bOHbutyrate, Clinical_LDL_C, Gly, Ile, L_LDL_CE, L_LDL_FC, M_LDL_CE
@@ -203,13 +264,21 @@ remove_technical_variation <- function(
   bio[, adj := MASS::rlm(log_value ~ log(Prep.to.Measure.Duration))$residuals, by=Biomarker]
 
   # Adjust for within plate structure across 96-well plate rows A-H
-  bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Row))$residuals, by=Biomarker]
+  if (version == 1L) {
+    bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Row))$residuals, by=Biomarker]
+  } else if (version == 2L) {
+    bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Row))$residuals, by=list(Shipment.Batch, Biomarker)]
+  }
 
   # Adjust for within plate structure across 96-well plate columns 1-12
-  bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Column))$residuals, by=Biomarker]
+  if (version == 1L) {
+    bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Column))$residuals, by=Biomarker]
+  } else if (version == 2L) {
+    bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Column))$residuals, by=list(Shipment.Batch, Biomarker)]
+  }
 
   # Adjust for drift over time within spectrometer
-  bio[, adj := MASS::rlm(adj ~ factor_by_size(Spectrometer.Date.Bin))$residuals, by=list(Biomarker, Spectrometer)]
+  bio[, adj := MASS::rlm(adj ~ factor_by_size(Spectrometer.Date.Bin))$residuals, by=list(Biomarker, Spectrometer.Group)]
 
   # Rescale to absolute units. First, shift the residuals to have the same central
   # parameter estimate (e.g. mean, estimated via robust linear regression) as the
@@ -286,6 +355,9 @@ remove_technical_variation <- function(
     bio_qc <- bio_qc[bio[, list(eid, visit_index)], on = list(eid, visit_index)]
   }
 
+  # Remove dummy Spectrometer.Group column from returned output
+  sinfo[, Spectrometer.Group := NULL]
+
   # Return list
   if (!skip.biomarker.qc.flags) {
     return(list(
@@ -293,14 +365,16 @@ remove_technical_variation <- function(
       biomarker_qc_flags=returnDT(bio_qc),
       sample_processing=returnDT(sinfo),
       log_offset=returnDT(log_offset[Log.Offset != 0 | Right.Shift != 0]),
-      outlier_plate_detection=returnDT(outlier_lim)
+      outlier_plate_detection=returnDT(outlier_lim),
+      algorithm_version=version
     ))
   } else {
     return(list(
       biomarkers=returnDT(bio),
       sample_processing=returnDT(sinfo),
       log_offset=returnDT(log_offset[Log.Offset != 0 | Right.Shift != 0]),
-      outlier_plate_detection=returnDT(outlier_lim)
+      outlier_plate_detection=returnDT(outlier_lim),
+      algorithm_version=version
     ))
   }
 }

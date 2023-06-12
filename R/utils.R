@@ -103,10 +103,21 @@ factor_by_size <- function(x) {
   factor(x, levels=group_sizes$x)
 }
 
-# Split a series of dates into 10 equal size bins, ordered by date
-bin_dates <- function(date, n=10) {
+# Split a series of dates into equal size bins, ordered by date
+bin_dates <- function(date, version) {
+  # Suppress CRAN warnings for data.table columns
+  bin <- NULL
+
   date_as_int <- as.integer(date)
   date_order <- as.integer(factor(date_as_int))
-  bin_size <- max(date_order)/n
-  as.integer(ceiling(date_order/bin_size))
+  if (version == 1L) {
+    bin_size <- max(date_order)/10
+    return(as.integer(ceiling(date_order/bin_size)))
+  } else if (version == 2L) {
+    n_bins <- floor(length(date)/2000)
+    if (n_bins < 2) n_bins <- 2 # test_data not big enough to bin into groups of 2,000 samples, so just bin into 2
+    bins <- cut(unique(date_order), n_bins, labels=FALSE)
+    bin_map <- data.table(date=unique(date_order), bin=bins)
+    return(bin_map[data.table(date=date_order), on=list(date), bin])
+  }
 }

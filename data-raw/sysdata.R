@@ -75,13 +75,22 @@ test_data[1:10, c("23660-1.0") := mkwell(10)]
 test_data[3:50, c("23650-0.0") := 3L]
 test_data[1:10, c("23650-1.0") := 3L]
 
+# Set dummy data for Shipment batch (field number to be confirmed)
+test_data[!is.na(`23649-0.0`), c("23661-0.0") := 1L]
+test_data[!is.na(`23649-1.0`), c("23661-1.0") := 1L]
+
 # Create fake sample identifiers and shuffle rows
 test_data[, eid := sample(1001:2001, 50)]
 test_data <- test_data[sample(1:50, 50, replace=FALSE)]
 
+# Order columns
+name_order <- data.table(names=names(test_data))
+name_order[, field_num := as.integer(gsub("-.*", "", names))]
+name_order[, visit_num := as.integer(gsub(".*-", "", gsub("\\..*", "", names)))]
+name_order[, instance_num := as.integer(gsub(".*\\.", "", names))]
+name_order[names == "eid", c("field_num", "visit_num", "instance_num") := .(0, 0, 0)]
+name_order <- name_order[order(instance_num)][order(visit_num)][order(field_num)]
+test_data <- test_data[,.SD,.SDcols=name_order$names]
+
 # Save
 save(test_data, version=2, compress="bzip2", file="~/test_data.rda")
-
-
-
-

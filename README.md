@@ -2,26 +2,50 @@
 
 This package provides utilities for working with the [UK Biobank NMR metabolomics data](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220).
 
-There are three groups of functions in this package: (1) data extraction, (2) removal of technical variation, and (3) recomputing derived biomarkers and biomarker ratios.
+There are three groups of functions in this package: (1) data extraction, (2) removal of additional technical variation, and (3) recomputing derived biomarkers and biomarker ratios.
 
-All functions can be applied directly to raw data extracted from UK Biobank.
+All functions can be applied directly to UK Biobank data that has been decrypted and converted into a .csv or .txt file using the [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide) tool or processed with the [ukbtools](https://cran.r-project.org/package=ukbtools) R package.
 
 This package also provides a `data.frame` of biomarker information, loaded as `nmr_info`, and a `data.frame` of sample processing information, loaded as `sample_qc_info`. See `help("nmr_info")` and `help("sample_qc_info")` for details on column contents.
 
+## Installation
+
+The latest version of this package can be installed from CRAN:
+
+```R
+install.packages("ukbnmr")
+```
+
+Or from this GitHub repository with the remotes package:
+
+```R
+remotes::install_github("sritchie73/ukbnmr", dependencies = TRUE, build_vignettes = TRUE)
+```
+
+## Citation
+
+If using this package to remove additional technical variation or compute additional biomarker ratios, please cite:
+
+Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **Sci Data** *10* 64 (2023). doi: [10.1038/s41597-023-01949-y](https://www.nature.com/articles/s41597-023-01949-y).
+
+Citation is appreciated, but not expected, if simply using the data extraction functions for convenience to extract the NMR biomarker data and associated information as-is into analysis-ready data.frames. 
+
 ## Data Extraction Functions
 
-The `extract_biomarkers()` function will take a decoded UK Biobank dataset output by [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide), extract the [NMR metabolomics biomarker fields](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220) and give them short comprehensible column names as described in `nmr_info`. Measurements are also split into multiple rows where a participant has measurements at both baseline and first repeat assessment.
+Three data extraction functions are supplied by this package for extracting the UK Biobank NMR data and associated processing information and quality control tags into an analysis-ready format from UK Biobank data that has been decrypted and converted into a .csv or .txt file using the [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide) tool or processed with the [ukbtools](https://cran.r-project.org/package=ukbtools) R package.
 
-The `extract_biomarker_qc_flags()` function will take a decoded UK Biobank dataset output by [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide), extract the [per-biomarker measurement quality control flags](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221) for each biomarker measurement, returning a single column per biomarker (corresponding to respective columns output by `extract_biomarkers()`).
+The `extract_biomarkers()` function returns a `data.frame` with one column for each [NMR metabolomics biomarker fields](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220), which are given short comprehensible and analysis friendly column names as described in the `nmr_info` `data.frame` supplied by this package. Each row of the `data.frame` corresponds to a single observation for a participant at a given timepoint: the `"eid"` column gives the participant ID in your UK Biobank application, and the `"visit_index"` column indicates the UK Biobank assessment corresponding to the observation: either `0` for baseline assessment (2006-2010) or `1` for the first repeat assessment (2012-2013)). 
 
-The `extract_sample_qc_flags()` function will take a decoded UK Biobank dataset output by [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide) and extract the [sample quality control tags](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222) for the NMR metabolomics data.
+The `extract_biomarker_qc_flags()` function similarly returns a `data.frame` with one column for each biomarker, with observations containing the [quality control flags](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221) for the measurement of the respective biomarker for the UK Biobank participant and timepoint indicated in the `"eid"` and `"visit_index"` columns. Observations with no quality control flags contain `NA`. In instances where there were multiple quality control flags, the individual flags are separated by `"; "`.
+
+The `extract_sample_qc_flags()` function returns a `data.frame` with one column for each of the [NMR sample processing flags and quality control flags](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222) for each sample for the respective UK Biobank participant (`"eid"`) and timepoint (`"visit_index"`).
 
 An example workflow for extracting these data and saving them for later use:
 
 ```R
 library(ukbnmr)
 
-decoded <- fread("path/to/decoded_ukbiobank_data.csv") # file save by ukbconv tool
+decoded <- fread("path/to/decoded_ukbiobank_data.csv") # file saved by ukbconv tool
 
 nmr <- extract_biomarkers(decoded)
 biomarker_qc_flags <- extract_biomarker_qc_flags(decoded)
@@ -113,12 +137,4 @@ fwrite(bio_qc, file="path/to/nmr_biomarkers_adjusted_for_covariates.csv")
 # help("recompute_derived_biomarker_qc_flags")).
 biomarker_qc_flags <- recompute_derived_biomarker_qc_flags(nmr)
 fwrite(biomarker_qc_flags, file="path/to/biomarker_qc_flags.csv")
-```
-
-## Installation
-
-This package can be installed from GitHub with the remotes package:
-
-```R
-remotes::install_github("sritchie73/ukbnmr", dependencies = TRUE, build_vignettes = TRUE)
 ```

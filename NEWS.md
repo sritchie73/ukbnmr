@@ -1,5 +1,18 @@
 # NEWS
 
+## Version 1.5.2
+
+ - Added support for new sample quality control field 20283 "Resolved plate swaps" 
+ 
+ - Returned data.tables now behave as expected with respect to printing contents:
+   i.e. running a function without storing the result will now show the contents
+   of the returned table, and typing the name of the variable storing the result
+   and hitting enter will show the contents on first try.
+   
+ - Fixed bug where columns corresponding to UK Biobank fields not available to
+   the user would be filled with NAs rather than missing from the returned 
+   results.
+ 
 ## Version 1.5.1
 
  - Fixed error in GitHub README example code, which has now been made consistent 

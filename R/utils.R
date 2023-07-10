@@ -33,6 +33,8 @@ getDT <- function(x) {
 returnDT <- function(x) {
   if (is.data.table(x) && !("data.table" %in% .packages())) {
     setDF(x)
+  } else {
+    x[,] # Otherwise the first show() call will be empty
   }
   return(x)
 }

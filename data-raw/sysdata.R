@@ -79,9 +79,13 @@ test_data[1:10, c("23650-1.0") := 3L]
 test_data[, eid := sample(1001:2001, 50)]
 test_data <- test_data[sample(1:50, 50, replace=FALSE)]
 
+# Add in some resolved plate swaps
+test_data[, c("20283-0.0") := NA_integer_]
+test_data[, c("20283-1.0") := NA_integer_]
+
+test_data[!is.na(`23650-0.0`), c("20283-0.0") := sample(c(1L, NA_integer_), .N, replace=TRUE, prob=c(0.2, 0.8))]
+test_data[!is.na(`23650-1.0`), c("20283-1.0") := sample(c(1L, NA_integer_), .N, replace=TRUE, prob=c(0.2, 0.8))]
+
 # Save
 save(test_data, version=2, compress="bzip2", file="~/test_data.rda")
-
-
-
 

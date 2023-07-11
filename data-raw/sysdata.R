@@ -83,6 +83,13 @@ test_data[!is.na(`23649-1.0`), c("23661-1.0") := 1L]
 test_data[, eid := sample(1001:2001, 50)]
 test_data <- test_data[sample(1:50, 50, replace=FALSE)]
 
+# Add in some resolved plate swaps
+test_data[, c("20283-0.0") := NA_integer_]
+test_data[, c("20283-1.0") := NA_integer_]
+
+test_data[!is.na(`23650-0.0`), c("20283-0.0") := sample(c(1L, NA_integer_), .N, replace=TRUE, prob=c(0.2, 0.8))]
+test_data[!is.na(`23650-1.0`), c("20283-1.0") := sample(c(1L, NA_integer_), .N, replace=TRUE, prob=c(0.2, 0.8))]
+
 # Order columns
 name_order <- data.table(names=names(test_data))
 name_order[, field_num := as.integer(gsub("-.*", "", names))]
@@ -91,6 +98,10 @@ name_order[, instance_num := as.integer(gsub(".*\\.", "", names))]
 name_order[names == "eid", c("field_num", "visit_num", "instance_num") := .(0, 0, 0)]
 name_order <- name_order[order(instance_num)][order(visit_num)][order(field_num)]
 test_data <- test_data[,.SD,.SDcols=name_order$names]
+
+# Ensure plate columns are character, not integer64, when saving object
+test_data[, c("23649-0.0") := as.character(`23649-0.0`)]
+test_data[, c("23649-1.0") := as.character(`23649-1.0`)]
 
 # Save
 save(test_data, version=2, compress="bzip2", file="~/test_data.rda")

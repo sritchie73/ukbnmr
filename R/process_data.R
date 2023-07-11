@@ -206,12 +206,18 @@ get_sample_qc_flag_values <- function(x) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   Spectrometer <- Shipment.Plate <- High.Lactate <- High.Pyruvate <-
     Low.Glucose <- Low.Protein <- Measurement.Quality.Flagged <- integer_rep <-
-    flag <- NULL
+    flag <- Resolved.Plate.Swaps <- NULL
 
-  tryAssign(x[, High.Lactate := ifelse(is.na(High.Lactate), NA_character_, "Yes")])
-  tryAssign(x[, High.Pyruvate := ifelse(is.na(High.Pyruvate), NA_character_, "Yes")])
-  tryAssign(x[, Low.Glucose := ifelse(is.na(Low.Glucose), NA_character_, "Yes")])
-  tryAssign(x[, Low.Protein := ifelse(is.na(Low.Protein), NA_character_, "Yes")])
+  if (exists("High.Lactate", where=x))
+    x[, High.Lactate := ifelse(is.na(High.Lactate), NA_character_, "Yes")]
+  if (exists("High.Pyruvate", where=x))
+    x[, High.Pyruvate := ifelse(is.na(High.Pyruvate), NA_character_, "Yes")]
+  if (exists("Low.Glucose", where=x))
+    x[, Low.Glucose := ifelse(is.na(Low.Glucose), NA_character_, "Yes")]
+  if (exists("Low.Protein", where=x))
+    x[, Low.Protein := ifelse(is.na(Low.Protein), NA_character_, "Yes")]
+  if (exists("Resolved.Plate.Swaps", where=x))
+    x[, Resolved.Plate.Swaps := ifelse(is.na(Resolved.Plate.Swaps), NA_character_, "Yes")]
 
   if ("Spectrometer" %in% names(x)) {
     if (is.integer(x$Spectrometer)) {

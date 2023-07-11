@@ -146,6 +146,7 @@ extract_biomarker_qc_flags <- function(x) {
 #' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 #' sample_qc_flags <- extract_sample_qc_flags(ukb_data)
 #'
+#' @import bit64
 #' @export
 extract_sample_qc_flags <- function(x) {
   if (detect_format(x, type="sample_qc_flags") == "processed") {

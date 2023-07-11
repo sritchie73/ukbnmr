@@ -1,5 +1,10 @@
 # NEWS
 
+## Version 1.5.3
+
+ - Added dependency to bit64 package to ensure the Shipment.Plate column is always
+   correctly interpreted by internal package functions.
+ 
 ## Version 1.5.2
 
  - Added support for new sample quality control field 20283 "Resolved plate swaps" 

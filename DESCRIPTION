@@ -1,7 +1,7 @@
 Package: ukbnmr
 Type: Package
 Title: Removal of Unwanted Technical Variation from UK Biobank NMR Metabolomics Biomarker Data
-Version: 1.5.2
+Version: 1.5.3
 Authors@R: 
     person(given=c("Scott", "C"), family="Ritchie", email="sritchie73@gmail.com", 
            role=c("aut", "cre"), comment=(ORCID="0000-0002-8454-9548"))
@@ -22,6 +22,7 @@ Depends:
   R (>= 2.10)
 Imports:
   data.table,
+  bit64,
   MASS
 Suggests:
     knitr,

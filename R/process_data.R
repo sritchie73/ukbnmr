@@ -237,6 +237,9 @@ get_sample_qc_flag_values <- function(x) {
   }
 
   if ("Shipment.Plate" %in% names(x)) {
+    if (bit64::is.integer64(x$Shipment.Plate)) {
+      x[, Shipment.Plate := as.character(Shipment.Plate)]
+    }
     if (!is.character(x$Shipment.Plate) | !grepl("^Plate", stats::na.omit(x$Shipment.Plate)[1])) {
       x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", Shipment.Plate))]
     }

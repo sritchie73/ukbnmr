@@ -1,4 +1,5 @@
 Name,Description,UKB.Field.ID
+Processing.Batch,Processing batch from Nightingale Health data,20282
 Resolved.Plate.Swaps,Resolved plate swaps,20283
 Shipment.Plate,96-well plate samples were shipped on from UK Biobank,23649
 Spectrometer,Spectrometer the sample was measured on by Nightingale Health,23650
@@ -10,7 +11,6 @@ Low.Protein,Nightingale sample QC Flag indicating unexpectedly low protein in sa
 Sample.Measured.Date.and.Time,Date and time sample was measured at by Nightingale Health,23658
 Sample.Prepared.Date.and.Time,Date and time sample was prepared for measurement by Nightingale Health,23659
 Well.Position.Within.Plate,"Location of the sample on the 96-well shipment plate (row A-H, columns 1-12)",23660
-Shipment.Batch,Shipment batch samples were shipped from UK Biobank on 96-well plates,23661
 Well.Row,Row (A-H) of the sample on the 96-well shipment plate,
 Well.Column,Column (1-12) of the sample on the 96-well shipment plate,
 Sample.Measured.Date,Date of sample measurement,

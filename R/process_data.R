@@ -245,5 +245,11 @@ get_sample_qc_flag_values <- function(x) {
     }
   }
 
+  if ("Processing.Batch" %in% names(x)) {
+    if (!is.character(x$Processing.Batch) | !grepl("^Plate", stats::na.omit(x$Processing.Batch)[1])) {
+      x[, Processing.Batch := ifelse(is.na(Processing.Batch), NA_character_, paste("Batch", Processing.Batch))]
+    }
+  }
+
   return(x)
 }

@@ -54,7 +54,7 @@
 #' \href{https://www.nature.com/articles/s41597-023-01949-y}{10.1038/s41597-023-01949-y}
 #'
 #' Version 2 of the algorithm (the default) modifies the above procedure to (1)
-#' adjust for well and column within each shipment batch separately in steps 4
+#' adjust for well and column within each processing batch separately in steps 4
 #' and 5, and (2) in step 6 instead of splitting samples into 10 bins per
 #' spectrometer uses a fixed bin size of approximately 2,000 samples per bin,
 #' ensuring samples measured on the same plate and plates measured on the same
@@ -120,6 +120,8 @@
 #'         each biomarker. "Lower.Limit" and "Upper.Limit" give the values below
 #'         and above which plates are flagged as outliers based on their plate
 #'         median. See publication for more details.}
+#'   \item{algorithm_version}{Version of the algorithm run, currently either 1
+#'         or 2.}
 #' }
 #'
 #' @examples
@@ -147,7 +149,7 @@ remove_technical_variation <- function(
     Shipment.Plate <- value <- Log.Offset <- Minimum <- Minimum.Non.Zero <-
     log_value <- adj <- Right.Shift <- outlier <- Lower.Limit <- Upper.Limit <-
     Name <- UKB.Field.ID <- N <- Plate.Measured.Date <- i.Sample.Measured.Date <-
-    Shipment.Batch <- Spectrometer.Group <- max_bin <- i.offset <-
+    Processing.Batch <- Spectrometer.Group <- max_bin <- i.offset <-
     NULL
 
   # Check for valid algorithm version
@@ -182,8 +184,8 @@ remove_technical_variation <- function(
     stop("Missing required sample processing fields: ", err_txt, ".")
   }
 
-  if (version == 2L && !("Shipment.Batch" %in% names(sinfo))) {
-    warning("Shipment.Batch information missing, reverting to algorithm version 1")
+  if (version == 2L && !("Processing.Batch" %in% names(sinfo))) {
+    warning("Processing.Batch information missing, reverting to algorithm version 1")
     version <- 1L
   }
 
@@ -248,7 +250,7 @@ remove_technical_variation <- function(
   } else if (version == 2L) {
     bio <- sinfo[, list(eid, visit_index, Prep.to.Measure.Duration, Well.Row,
                         Well.Column, Spectrometer.Date.Bin, Spectrometer,
-                        Spectrometer.Group, Shipment.Batch, Shipment.Plate)][
+                        Spectrometer.Group, Processing.Batch, Shipment.Plate)][
                           bio, on = list(eid, visit_index), nomatch=0]
   }
 
@@ -267,14 +269,14 @@ remove_technical_variation <- function(
   if (version == 1L) {
     bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Row))$residuals, by=Biomarker]
   } else if (version == 2L) {
-    bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Row))$residuals, by=list(Shipment.Batch, Biomarker)]
+    bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Row))$residuals, by=list(Processing.Batch, Biomarker)]
   }
 
   # Adjust for within plate structure across 96-well plate columns 1-12
   if (version == 1L) {
     bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Column))$residuals, by=Biomarker]
   } else if (version == 2L) {
-    bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Column))$residuals, by=list(Shipment.Batch, Biomarker)]
+    bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Column))$residuals, by=list(Processing.Batch, Biomarker)]
   }
 
   # Adjust for drift over time within spectrometer

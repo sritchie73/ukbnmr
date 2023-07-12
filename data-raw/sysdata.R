@@ -75,9 +75,9 @@ test_data[1:10, c("23660-1.0") := mkwell(10)]
 test_data[3:50, c("23650-0.0") := 3L]
 test_data[1:10, c("23650-1.0") := 3L]
 
-# Set dummy data for Shipment batch (field number to be confirmed)
-test_data[!is.na(`23649-0.0`), c("23661-0.0") := 1L]
-test_data[!is.na(`23649-1.0`), c("23661-1.0") := 1L]
+# Set dummy data for Processing Batch
+test_data[!is.na(`23649-0.0`), c("20282-0.0") := 1L]
+test_data[!is.na(`23649-1.0`), c("20282-1.0") := 1L]
 
 # Create fake sample identifiers and shuffle rows
 test_data[, eid := sample(1001:2001, 50)]

@@ -10,16 +10,16 @@ This package also provides a `data.frame` of biomarker information, loaded as `n
 
 ## Installation
 
-The latest version of this package can be installed from CRAN:
-
-```R
-install.packages("ukbnmr")
-```
-
-Or from this GitHub repository with the remotes package:
+The most up to date version of this package can be installed from this GitHub repository using the remotes package:
 
 ```R
 remotes::install_github("sritchie73/ukbnmr", dependencies = TRUE, build_vignettes = TRUE)
+```
+
+And major releases can also be installed directly from CRAN:
+
+```R
+install.packages("ukbnmr")
 ```
 
 ## Citation

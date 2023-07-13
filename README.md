@@ -77,6 +77,8 @@ fwrite(processed$log_offset, file="path/to/nmr_biomarker_log_offset.csv")
 fwrite(processed$outlier_plate_detection, file="path/to/outlier_plate_info.csv")
 ```
 
+### Details
+
 The algorithm used for removing this technical variation is based on our previously described approach published in [Ritchie *et al.* 2023](https://www.nature.com/articles/s41597-023-01949-y). Two versions of the algorithm are currently implemented: version 1, which was developed based on the characterisation of the variation present in the phase 1 public release of the UK Biobank NMR data and is as described in the publication, and version 2, which has been developed based on our subsequent characterisation of the technical variation present in the phase 2 public release data (see below for details).
 
 Version 1 of the algorithm applies a multistep process to remove unwanted technical variation: 
@@ -93,12 +95,15 @@ Version 1 of the algorithm applies a multistep process to remove unwanted techni
   9. The 61 composite biomarkers and 81 biomarker ratios are recomputed from their adjusted parts.
   10. An additional 76 biomarker ratios of potential biological significance are computed.
 
-Version 2 of the algorithm, the default, modifies this algorithm:
+Version 2 of the algorithm (the default) modifies this algorithm:
 
-  - Steps 4 and 5 above are performed within each processing batch separately
+  - Steps 4 and 5 above are performed within each processing batch
   - Step 6 above is modified to:
-      (1) group samples into bins of ~2,000 samples each to ensure consistent bin sizes across data releases and between spectrometers of different sizes,
-      (2) hard codes a bin split on spectrometer 5 between plates 490000006726 and 490000006714 to better correct for a large change in plate concentrations most strongly observed for alanine.
+
+      1.  group samples into bins of ~2,000 samples 
+      2. hard codes a bin split on spectrometer 5 between plates 490000006726 and 490000006714
+   
+These changes have been made based on our exploration of the technical variation in the phase 2 release (July 2023) of the UK Biobank NMR data.
 
 ## Methods for computing derived biomarkers and ratios after adjusting for biological variation
 

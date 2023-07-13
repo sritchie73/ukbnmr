@@ -58,9 +58,28 @@ fwrite(sample_qc_flags, file="path/to/nmr_sample_qc_flags.csv")
 
 ## Removal of technical variation
 
-The `remove_technical_variation()` function will take a raw dataset output by [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide), remove the effects of technical variation on biomarker concentrations, and return a list containing the adjusted NMR biomarker data, biomarker QC flags, and sample quality control and processing information.
+The `remove_technical_variation()` function removes technical variation present in the UK Biobank NMR data, returning a `list` containing the corrected NMR biomarker data, biomarker QC flags, and sample processing information in analysis-ready `data.frame`s. 
 
-This applies a multistep process as described in Ritchie *et al.* 2021:
+This function takes 10-15 minutes to run, and requires at least 16 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
+      
+An example workflow for using this function and saving the output for loading into future R sessions or other programs:
+
+```R
+library(ukbnmr)
+decoded <- fread("path/to/decoded_ukbiobank_data.csv") # file save by ukbconv tool
+
+processed <- remove_technical_variation(decoded) 
+
+fwrite(processed$biomarkers, file="path/to/nmr_biomarker_data.csv")
+fwrite(processed$biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
+fwrite(processed$sample_processing, file="path/to/nmr_sample_qc_flags.csv")
+fwrite(processed$log_offset, file="path/to/nmr_biomarker_log_offset.csv")
+fwrite(processed$outlier_plate_detection, file="path/to/outlier_plate_info.csv")
+```
+
+The algorithm used for removing this technical variation is based on our previously described approach published in [Ritchie *et al.* 2023](https://www.nature.com/articles/s41597-023-01949-y). Two versions of the algorithm are currently implemented: version 1, which was developed based on the characterisation of the variation present in the phase 1 public release of the UK Biobank NMR data and is as described in the publication, and version 2, which has been developed based on our subsequent characterisation of the technical variation present in the phase 2 public release data (see below for details).
+
+Version 1 of the algorithm applies a multistep process to remove unwanted technical variation: 
 
   1. First biomarker data is filtered to the 107 biomarkers that cannot be derived from any combination of other biomarkers.
   2. Absolute concentrations are log transformed, with a small offset applied to biomarkers with concentrations of 0.
@@ -74,30 +93,18 @@ This applies a multistep process as described in Ritchie *et al.* 2021:
   9. The 61 composite biomarkers and 81 biomarker ratios are recomputed from their adjusted parts.
   10. An additional 76 biomarker ratios of potential biological significance are computed.
 
-Further details can be found in the preprint Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **medRxiv** (2021). doi: [10.1101/2021.09.24.21264079](https://www.medrxiv.org/content/10.1101/2021.09.24.21264079v1).
+Version 2 of the algorithm, the default, modifies this algorithm:
 
-This function takes 10-15 minutes to run, and requires at least 16 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
+  - Steps 4 and 5 above are performed within each processing batch separately
+  - Step 6 above is modified to:
+      (1) group samples into bins of ~2,000 samples each to ensure consistent bin sizes across data releases and between spectrometers of different sizes,
+      (2) hard codes a bin split on spectrometer 5 between plates 490000006726 and 490000006714 to better correct for a large change in plate concentrations most strongly observed for alanine.
 
-An example workflow for using this function and saving the output for loading into future R sessions or other programs:
-
-```R
-library(ukbnmr)
-decoded <- fread("path/to/decoded_ukbiobank_data.csv") # file save by ukbconv tool
-
-processed <- remove_technical_variation(decoded)
-
-fwrite(processed$biomarkers, file="path/to/nmr_biomarker_data.csv")
-fwrite(processed$biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
-fwrite(processed$sample_processing, file="path/to/nmr_sample_qc_flags.csv")
-fwrite(processed$log_offset, file="path/to/nmr_biomarker_log_offset.csv")
-fwrite(processed$outlier_plate_detection, file="path/to/outlier_plate_info.csv")
-```
-
-## Methods for computing derived biomarkers and ratios
+## Methods for computing derived biomarkers and ratios after adjusting for biological variation
 
 Analysts may wish to further adjust data for biological covariates. We provide an additional function, `recompute_derived_biomarkers()` to recompute all composite biomarkers and ratios from 107 non-derived biomarkers, which is useful for ensuring data consistency when adjusting for unwanted biological variation. A companion function, `recompute_derived_biomarker_qc_flags()` will aggregate the QC flags for the biomarkers underlying each composite biomarker and ratio.
 
-Note these functions assume the data has been returned to absolute units after adjusting for technical covariates. For example the ratio of two biomarkers A and B is computed as A/B, which may not be true if the two biomarkers are on different scales (e.g. regression residuals) after adjustment.
+Note these functions assume the data has been returned to absolute units after adjusting for covariates. For example the ratio of two biomarkers A and B is computed as A/B, which may not be true if the two biomarkers are on different scales (e.g. regression residuals) after adjustment.
 
 If using these functions, please cite Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **Sci Data** *10* 64 (2023). doi: [10.1038/s41597-023-01949-y](https://www.nature.com/articles/s41597-023-01949-y).
 
@@ -119,7 +126,7 @@ fwrite(processed$sample_processing, file="path/to/nmr_sample_qc_flags.csv")
 fwrite(processed$log_offset, file="path/to/nmr_biomarker_log_offset.csv")
 fwrite(processed$outlier_plate_detection, file="path/to/outlier_plate_info.csv")
 
-# Otherwise assuming we load 'tech_qc' from "path/to/mr_biomarker_data.csv".
+# Otherwise assuming we load 'tech_qc' from "path/to/nmr_biomarker_data.csv".
 
 # We now run code to adjust biomarkers for biological covariates. This code is
 # not supplied by this package, but for illustrative purposes we assume the user

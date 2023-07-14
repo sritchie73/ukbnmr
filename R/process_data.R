@@ -206,7 +206,7 @@ get_sample_qc_flag_values <- function(x) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   Spectrometer <- Shipment.Plate <- High.Lactate <- High.Pyruvate <-
     Low.Glucose <- Low.Protein <- Measurement.Quality.Flagged <- integer_rep <-
-    flag <- Resolved.Plate.Swaps <- NULL
+    flag <- Resolved.Plate.Swaps <- Processing.Batch <- NULL
 
   if (exists("High.Lactate", where=x))
     x[, High.Lactate := ifelse(is.na(High.Lactate), NA_character_, "Yes")]

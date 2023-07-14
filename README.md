@@ -170,10 +170,12 @@ The July 2023 release of the UK Biobank NMR data covers ~275,000 UK Biobank part
 
 The following figures below summarise the impact of the possible sources of variation on this updated dataset, and the impact of applying version 2 of our algorithm for removing technical variation, similar to what was shown in Figure 2 of [Ritchie *et al.* 2023](https://www.nature.com/articles/s41597-023-01949-y) for the phase 1 release data: 
 
-![](man/figure/r2_explained_v2.png)
+<img src="man/figure/r2_explained_v2.png", width=98%>
+
 Boxplots showing variance explained (r<sup>2</sup> in linear regression) across the 249 NMR metabolic biomarkers by each possible technical covariate in the July 2023 release of the UK Biobank NMR data (left) and after application of version 2 of the algorithm for removing technical variation. The vertical red dashed line indicates 1% variance explained.
 
-![](man/figure/repeatability_v2.png)
+<img src="man/figure/repeatability_v2.png", width=98%>
+
 Repeatability improves amongst 6,811 blind duplicates (samples measured twice or thrice (N=4) with randomised sample identifier so that Nightingale Health were blinded to the identity of the repeated samples at time of sample measurement)]
 
 Extended diagnostic plots for all biomarkers are available to download on FigShare at [10.6084/m9.figshare.23686407](https://doi.org/10.6084/m9.figshare.23686407).
@@ -184,11 +186,11 @@ Our exploration of this updated data release (advance access under UK Biobank ap
 
 First, we observed that correcting for systematic differences in well position (steps 4 and 5 of the algorithm) over all 275,000 participants introduced systematic differences between the phase 1 and phase 2 data release samples:
 
-![](man/figure/well_position_adjustment_v1.png)
+<img src="man/figure/well_position_adjustment_v1.png", width=80%>
 
 Further exploration revealed that the systematic differences in well position differed between processing batches, and we therefore modified our algorithm to correct for well position within each processing batch separately:
 
-![](man/figure/well_position_adjustment_v2.png)
+<img src="man/figure/well_position_adjustment_v2.png", width=80%>
 
 Second, we found that the method for correcting for drift over time (step 6 of the algorithm) needed updating for two reasons:
 
@@ -199,12 +201,10 @@ These issues were fixed as described above by setting a fixed bin size when corr
 
 The following figure illustrates the result of applying version 1 of the algorithm to the alanine concentrations in the July 2023 release of the UK Biobank NMR data covers ~275,000 UK Biobank participants:
 
-![](man/figure/drift_over_time_correction_v1.png)
-
+<img src="man/figure/drift_over_time_correction_v1.png", width=80%>
 
 And how this changes with version 2 of the algorithm:
 
-
-![](man/figure/drift_over_time_correction_v2.png)
+<img src="man/figure/drift_over_time_correction_v2.png", width=80%>
 
 

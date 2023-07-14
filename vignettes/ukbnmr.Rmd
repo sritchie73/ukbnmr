@@ -190,16 +190,14 @@ These changes have been made based on our exploration of the technical variation
 
 The July 2023 release of the UK Biobank NMR data covers ~275,000 UK Biobank participants, including ~122,000 measured as part of the phase 1 release (June 2021).
 
-The following figure summarises the impact of the possible sources of variation on the NMR data before and after applying version 2 of our algorithm for removing technical variation:
+The following figures below summarise the impact of the possible sources of variation on this updated dataset, and the impact of applying version 2 of our algorithm for removing technical variation, similar to what was shown in Figure 2 of [Ritchie *et al.* 2023](https://www.nature.com/articles/s41597-023-01949-y) for the phase 1 release data: 
 
 ![Boxplots showing variance explained (r<sup>2</sup> in linear regression) across the 249 NMR metabolic biomarkers by each possible technical covariate in the July 2023 release of the UK Biobank NMR data (left) and after application of version 2 of the algorithm for removing technical variation. The vertical red dashed line indicates 1% variance explained.](img/r2_explained_v2.png){width=98%}
 
-The following figure shows how measurement repeatability improves amongst 6,811 blind duplicates (samples measured twice or thrice (N=4) with randomised sample identifier so that Nightingale Health were blinded to the identity of the repeated samples at time of sample measurement):
 
-<center>
-![](img/repeatability_v2.png){width=80%}
-</center>
+![Repeatability improves amongst 6,811 blind duplicates (samples measured twice or thrice (N=4) with randomised sample identifier so that Nightingale Health were blinded to the identity of the repeated samples at time of sample measurement)](img/repeatability_v2.png){width=98%}
 
+Extended diagnostic plots for all biomarkers are available to download on FigShare at [10.6084/m9.figshare.23686407](https://doi.org/10.6084/m9.figshare.23686407).
 
 ### Justification for algorithm updates
 

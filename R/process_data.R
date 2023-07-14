@@ -67,7 +67,7 @@ process_data <- function(x, type) {
     qc_flag_fields <- na.omit(ukbnmr::nmr_info$QC.Flag.Field.ID)
     qc_flags_present <- field_ids[UKB.Field.ID %in% qc_flag_fields]
     empty_flags_with_biomarkers <- biomarkers_present[!(QC.Flag.Field.ID %in% qc_flags_present$UKB.Field.ID)]
-    field_ids <- rbind(qc_flags_present, empty_flags_with_biomarkers[,list(UKB.Field.ID=QC.Flag.Field.ID)])
+    field_ids <- rbind(qc_flags_present, empty_flags_with_biomarkers[,list(UKB.Field.ID=na.omit(QC.Flag.Field.ID))])
   } else if (type == "sample_qc_flags") {
     field_ids <- field_ids[UKB.Field.ID %in% na.omit(ukbnmr::sample_qc_info$UKB.Field.ID)]
   } else {

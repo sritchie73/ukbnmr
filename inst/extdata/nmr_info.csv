@@ -324,3 +324,5 @@ XS_VLDL_FC_pct_C,Free Cholesterol to Cholesterol in Very Small VLDL percentage,%
 XXL_VLDL_CE_pct_C,Cholesteryl Esters to Cholesterol in Chylomicrons and Extremely Large VLDL percentage,%,Relative lipoprotein cholesterol concentrations,Chylomicrons and extremely large VLDL ratios,Percentage,FALSE,,,XXL_VLDL_CE / (XXL_VLDL_CE + XXL_VLDL_FC) * 100,XXL_VLDL_CE / XXL_VLDL_C * 100
 XXL_VLDL_FC_by_CE,Free Cholesterol to Cholesteryl Esters in Chylomicrons and Extremely Large VLDL ratio,ratio,Relative lipoprotein lipid concentrations,Chylomicrons and extremely large VLDL ratios,Ratio,FALSE,,,XXL_VLDL_FC / XXL_VLDL_CE,XXL_VLDL_FC / XXL_VLDL_CE
 XXL_VLDL_FC_pct_C,Free Cholesterol to Cholesterol in Chylomicrons and Extremely Large VLDL percentage,%,Relative lipoprotein cholesterol concentrations,Chylomicrons and extremely large VLDL ratios,Percentage,FALSE,,,XXL_VLDL_FC / (XXL_VLDL_CE + XXL_VLDL_FC) * 100,XXL_VLDL_FC / XXL_VLDL_C * 100
+Corrected_Ala,Spectrometer-corrected alanine,mmol/L,Amino acids,"",Non-derived,TRUE,20281,,"",""
+Glucose_Lactate,Glucose-lactate,mmol/L,Glycolysis related metabolites,"",Non-derived,TRUE,20280,,"",""

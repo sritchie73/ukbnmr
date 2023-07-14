@@ -90,6 +90,16 @@ test_data[, c("20283-1.0") := NA_integer_]
 test_data[!is.na(`23650-0.0`), c("20283-0.0") := sample(c(1L, NA_integer_), .N, replace=TRUE, prob=c(0.2, 0.8))]
 test_data[!is.na(`23650-1.0`), c("20283-1.0") := sample(c(1L, NA_integer_), .N, replace=TRUE, prob=c(0.2, 0.8))]
 
+# Add in new biomarkers "Spectrometer corrected alanine" and "Glucose-Lactate"
+test_data[!is.na(`23460-0.0`), c("20281-0.0") := sample(`23460-0.0`, .N)]
+test_data[!is.na(`23460-1.0`), c("20281-1.0") := sample(`23460-1.0`, .N)]
+
+# For Glucose-lactate we don't have the data available yet to simulate realistic distribution of values,
+# but based on the showcase it seems to be a not-quite linear combination of Glucose and lactate (i.e.
+# both glucose and lactate have median concentrations of 3.X, whereas Glucose-lactate has median of 5.X)
+test_data[!is.na(`23470-0.0`) & !is.na(`23471-0.0`), c("20280-0.0") := (`23470-0.0` + `23471-0.0`)*sample(seq(0.65, 0.75, by=0.01), .N, replace=TRUE)]
+test_data[!is.na(`23470-1.0`) & !is.na(`23471-1.0`), c("20280-1.0") := (`23470-1.0` + `23471-1.0`)*sample(seq(0.65, 0.75, by=0.01), .N, replace=TRUE)]
+
 # Order columns
 name_order <- data.table(names=names(test_data))
 name_order[, field_num := as.integer(gsub("-.*", "", names))]
@@ -98,10 +108,6 @@ name_order[, instance_num := as.integer(gsub(".*\\.", "", names))]
 name_order[names == "eid", c("field_num", "visit_num", "instance_num") := .(0, 0, 0)]
 name_order <- name_order[order(instance_num)][order(visit_num)][order(field_num)]
 test_data <- test_data[,.SD,.SDcols=name_order$names]
-
-# Ensure plate columns are character, not integer64, when saving object
-test_data[, c("23649-0.0") := as.character(`23649-0.0`)]
-test_data[, c("23649-1.0") := as.character(`23649-1.0`)]
 
 # Save
 save(test_data, version=2, compress="bzip2", file="~/test_data.rda")

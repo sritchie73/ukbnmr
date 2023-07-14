@@ -1,5 +1,21 @@
 # NEWS
 
+## Version 2.0
+
+ - Added updated version of algorithm for removing technical variation, which has
+   been modified after exploration of the July 2023 release of the second tranche
+   of UK Biobank NMR data covering ~275,000 participants.  
+   
+ - Updated GitHub README and package vignette to provide details and justification
+   for the update algorithm
+   
+ - Added support for additional sample quality control field 20282 "Processing
+   batch from Nightingale Health data", which is used as part of the updated
+   algorithm for removing technical variation
+   
+ - Added support for new biomarker fields 20281 "Spectrometer-corrected alanine"
+   and 20280 "Glucose-lactate"
+
 ## Version 1.5.3
 
  - Added dependency to bit64 package to ensure the Shipment.Plate column is always

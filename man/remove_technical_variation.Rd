@@ -77,6 +77,8 @@ a \code{list} containing three \code{data.frames}: \describe{
         each biomarker. "Lower.Limit" and "Upper.Limit" give the values below
         and above which plates are flagged as outliers based on their plate
         median. See publication for more details.}
+  \item{algorithm_version}{Version of the algorithm run, currently either 1
+        or 2.}
 }
 }
 \description{
@@ -121,7 +123,7 @@ and removal of technical variation of NMR metabolic biomarker data in
 \href{https://www.nature.com/articles/s41597-023-01949-y}{10.1038/s41597-023-01949-y}
 
 Version 2 of the algorithm (the default) modifies the above procedure to (1)
-adjust for well and column within each shipment batch separately in steps 4
+adjust for well and column within each processing batch separately in steps 4
 and 5, and (2) in step 6 instead of splitting samples into 10 bins per
 spectrometer uses a fixed bin size of approximately 2,000 samples per bin,
 ensuring samples measured on the same plate and plates measured on the same

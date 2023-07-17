@@ -1,5 +1,9 @@
 # NEWS
 
+## Version 2.0.1
+
+ - Reduced image filesizes to address CRAN NOTE
+
 ## Version 2.0
 
  - Added updated version of algorithm for removing technical variation, which has

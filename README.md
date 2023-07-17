@@ -8,6 +8,8 @@ All functions can be applied directly to UK Biobank data that has been decrypted
 
 This package also provides a `data.frame` of biomarker information, loaded as `nmr_info`, and a `data.frame` of sample processing information, loaded as `sample_qc_info`. See `help("nmr_info")` and `help("sample_qc_info")` for details on column contents. 
 
+## Updates for July 2023 UK Biobank NMR data release
+
 Note several updates have been made to the package to reflect the new tranche of NMR data released by UK Biobank in July 2023 covering ~275,000 UK Biobank participants. See the sections below on (1) [updates made to the algorithm for removing technical varation](#algorithms-for-removing-technical-variation), (2) [justification for algorithm modifications based on our exploration of the new tranche of data](#justification-for-algorithm-updates), and (3) [an overview of the impact of technical varation and its removal on the new tranche of data](#technical-variation-in-the-phase-2-release-of-uk-biobank-nmr-data).
 
 ## Installation

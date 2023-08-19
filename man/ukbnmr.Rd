@@ -3,6 +3,7 @@
 \docType{package}
 \name{ukbnmr}
 \alias{ukbnmr}
+\alias{ukbnmr-package}
 \title{Tools for processing the UK Biobank NMR metabolomics biomarker data}
 \description{
 @description
@@ -104,4 +105,15 @@ aggregate the QC flags for the biomarkers underlying each composite biomarker
 and ratio.
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item Report bugs at \url{https://github.com/sritchie73/ukbnmr/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Scott C Ritchie \email{sritchie73@gmail.com} (0000-0002-8454-9548)
+
+}
 \keyword{package}

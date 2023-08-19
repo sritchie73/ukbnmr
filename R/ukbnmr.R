@@ -93,9 +93,8 @@
 #' aggregate the QC flags for the biomarkers underlying each composite biomarker
 #' and ratio.
 #'
-#' @docType package
 #' @name ukbnmr
 #' @import data.table
 #' @importFrom stats na.omit
 #' @keywords package
-NULL
+"_PACKAGE"

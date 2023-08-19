@@ -1,5 +1,19 @@
 # NEWS
 
+## Version 2.1
+
+ - Processing.Batch now inferred from Shipment.Plate if Processing.Batch missing
+   (UK Biobank field #20282) in input data and algorithm version 2 used in 
+   remove_technical_variation().
+
+ - Package overview help file is now correctly documented as requested by CRAN
+   following breaking changes in Roxygen 7.0.0 that changed the way this help 
+   file was internally tagged in the source code.
+   
+ - Reduced test_data from 50 to 10 rows to (hopefully) get around CRAN NOTE 
+   blocking publication on CRAN due to test code exceeding 5s on some very 
+   slow CRAN debian servers 
+
 ## Version 2.0.1
 
  - Reduced image filesizes to address CRAN NOTE

@@ -149,7 +149,7 @@ remove_technical_variation <- function(
     Shipment.Plate <- value <- Log.Offset <- Minimum <- Minimum.Non.Zero <-
     log_value <- adj <- Right.Shift <- outlier <- Lower.Limit <- Upper.Limit <-
     Name <- UKB.Field.ID <- N <- Plate.Measured.Date <- i.Sample.Measured.Date <-
-    Processing.Batch <- Spectrometer.Group <- max_bin <- i.offset <-
+    Processing.Batch <- Spectrometer.Group <- max_bin <- i.offset <- i.Processing.Batch <-
     NULL
 
   # Check for valid algorithm version
@@ -185,8 +185,12 @@ remove_technical_variation <- function(
   }
 
   if (version == 2L && !("Processing.Batch" %in% names(sinfo))) {
-    warning("Processing.Batch information missing, reverting to algorithm version 1")
-    version <- 1L
+    warning("Processing.Batch missing (Field 20282), inferring from Shipment.Plate (Field 23649)")
+    sinfo[ukbnmr:::plate_batch_map, on = .(Shipment.Plate), Processing.Batch := i.Processing.Batch]
+    if (any(is.na(sinfo$Processing.Batch))) {
+      warning("Inference of Processing.Batch from Shipment.Plate failed, reverting to algorithm version 1")
+      version <- 1L
+    }
   }
 
   # Split out row and column information from 96-well plate information

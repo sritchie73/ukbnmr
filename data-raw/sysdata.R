@@ -17,7 +17,10 @@ measure_quality_map <- data.table(
   flag = c("Not enough sample material for measurement", "Solid material")
 )
 
-save(biomarker_flag_map, measure_quality_map,
+# Hand curated mapping between Shipment.Plate and Processing.Batch in phase 1 + 2 data release
+plate_batch_map <- fread("~/Clusters/CSD3/batch_map.csv") # Stored on CSD3
+
+save(biomarker_flag_map, measure_quality_map, plate_batch_map,
      version=2, compress="bzip2", file="R/sysdata.rda")
 
 # Random sampling to create test dataset from real UK data.

@@ -118,4 +118,4 @@ test_data <- test_data[,.SD,.SDcols=name_order$names]
 test_data <- test_data[c(25L, 35L, 14L, 13L, 6L, 26L, 9L, 12L, 46L, 43L)]
 
 # Save
-save(test_data, version=2, compress="bzip2", file="~/test_data.rda")
+save(test_data, version=2, compress="bzip2", file="data/test_data.rda")

@@ -1,5 +1,16 @@
 # NEWS
 
+## Version 2.1.1
+
+ - Reverted test_data back to 50 row version after cutting down size did not
+   resolve the problematic CRAN NOTE (see version 2.1 below)
+   
+ - R-package-devel suggested CRAN NOTE issue may be due to misconfiguration of
+   CRAN's server making data.table use too many threads while running examples.
+   As a work around, remove_technical_variation() now explicitly sets the number
+   of threads data.table can use to 1 if it is running on ukbnmr::test_data 
+   (thanks to Ivan Krylov and Dirk Eddelbuettel if this does solve the issue) 
+   
 ## Version 2.1
 
  - Processing.Batch now inferred from Shipment.Plate if Processing.Batch missing

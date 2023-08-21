@@ -166,6 +166,15 @@ remove_technical_variation <- function(
     stop("'x' should be a 'data.frame' containing UK Biobank field ID columns, not one extracted by extract_biomarkers() or related functions'")
   }
 
+  # Check if running on package test_data, and if so, force data.table to be
+  # single threaded so that we can avoid a NOTE on CRAN submission due to their
+  # misconfigured debian server
+  if (isTRUE(all.equal(x, ukbnmr::test_data))) {
+    registered_threads <- getDTthreads()
+    setDTthreads(1)
+    on.exit({ setDTthreads(registered_threads) }) # re-register so no unintended side effects for users
+  }
+
   # Extract biomarkers, biomarker QC flags, and sample processing information
   bio <- process_data(x, type="biomarkers")
   if (!skip.biomarker.qc.flags) {

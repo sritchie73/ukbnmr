@@ -112,10 +112,26 @@ name_order[names == "eid", c("field_num", "visit_num", "instance_num") := .(0, 0
 name_order <- name_order[order(instance_num)][order(visit_num)][order(field_num)]
 test_data <- test_data[,.SD,.SDcols=name_order$names]
 
-# Extract smaller set of rows that won't cause rlm to to fail to converge in order
-# to make testing code faster for very slow CRAN debian server that blocks CRAN
-# publication
+# Extract smaller set of rows that won't cause rlm to to fail to converge to
+# make testing code faster
 test_data <- test_data[c(25L, 35L, 14L, 13L, 6L, 26L, 9L, 12L, 46L, 43L)]
+
+# Extract smaller subset of columns for illustrative purposes
+sinfo_tag_cols <- c(20282, 23658, 23659, 23649, 23650, 23660)
+nmr_cols <- c(23465, 23466, 23467, 23464, 23444, 23445, 23446, 23459)
+qc_cols <- c(23746, 23751, 23752, 23759, 23764, 23765, 23766, 23767)
+fields <- sort(c(sinfo_tag_cols, nmr_cols, qc_cols))
+fields <- as.vector(sapply(fields, function(fid) { c(paste0(fid, "-0.0"), paste0(fid, "-1.0")) }))
+test_data <- test_data[,.SD,.SDcols=intersect(c("eid", fields), names(test_data))]
+
+# Manually add in some QC flags so they're not all empty
+test_data[1, `23765-0.0` := 1L]
+test_data[10, `23765-1.0` := 1L]
+test_data[c(2,3), `23744-0.0` := 9L]
+test_data[7, `23744-0.0` := 8L]
+test_data[, `23764-0.0` := as.integer(`23764-0.0`) ]
+test_data[, `23767-0.0` := as.integer(`23767-0.0`) ]
+test_data[c(1, 4), c("23764-0.0", "23767-0.0") := 4L]
 
 # Save
 save(test_data, version=2, compress="bzip2", file="data/test_data.rda")

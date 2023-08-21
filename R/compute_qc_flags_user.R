@@ -76,6 +76,15 @@ compute_nightingale_ratio_qc_flags <- function(x) {
 #'
 #' @export
 compute_extended_ratio_qc_flags <- function(x) {
+  # Check if running on package test_data, and if so, force data.table to be
+  # single threaded so that we can avoid a NOTE on CRAN submission due to their
+  # misconfigured debian server
+  if (isTRUE(all.equal(x, ukbnmr::test_data))) {
+    registered_threads <- getDTthreads()
+    setDTthreads(1)
+    on.exit({ setDTthreads(registered_threads) }) # re-register so no unintended side effects for users
+  }
+
   # Process data to correct format
   x <- process_data(x, type="biomarker_qc_flags") # copy of x created if already in right format
 
@@ -130,6 +139,15 @@ compute_extended_ratio_qc_flags <- function(x) {
 #'
 #' @export
 recompute_derived_biomarker_qc_flags <- function(x) {
+  # Check if running on package test_data, and if so, force data.table to be
+  # single threaded so that we can avoid a NOTE on CRAN submission due to their
+  # misconfigured debian server
+  if (isTRUE(all.equal(x, ukbnmr::test_data))) {
+    registered_threads <- getDTthreads()
+    setDTthreads(1)
+    on.exit({ setDTthreads(registered_threads) }) # re-register so no unintended side effects for users
+  }
+
   # Process data to correct format
   x <- process_data(x, type="biomarker_qc_flags") # copy of x created if already in right format
 

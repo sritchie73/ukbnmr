@@ -48,6 +48,15 @@
 #'
 #' @export
 extract_biomarkers <- function(x) {
+  # Check if running on package test_data, and if so, force data.table to be
+  # single threaded so that we can avoid a NOTE on CRAN submission due to their
+  # misconfigured debian server
+  if (isTRUE(all.equal(x, ukbnmr::test_data))) {
+    registered_threads <- getDTthreads()
+    setDTthreads(1)
+    on.exit({ setDTthreads(registered_threads) }) # re-register so no unintended side effects for users
+  }
+
   if (detect_format(x, type="biomarkers") == "processed") {
     return(x) # return as is; process_data() would make a copy first
   } else {
@@ -100,6 +109,15 @@ extract_biomarkers <- function(x) {
 #'
 #' @export
 extract_biomarker_qc_flags <- function(x) {
+  # Check if running on package test_data, and if so, force data.table to be
+  # single threaded so that we can avoid a NOTE on CRAN submission due to their
+  # misconfigured debian server
+  if (isTRUE(all.equal(x, ukbnmr::test_data))) {
+    registered_threads <- getDTthreads()
+    setDTthreads(1)
+    on.exit({ setDTthreads(registered_threads) }) # re-register so no unintended side effects for users
+  }
+
   if (detect_format(x, type="biomarker_qc_flags") == "processed") {
     return(x) # return as is; process_data() would make a copy first
   } else {
@@ -149,6 +167,15 @@ extract_biomarker_qc_flags <- function(x) {
 #' @import bit64
 #' @export
 extract_sample_qc_flags <- function(x) {
+  # Check if running on package test_data, and if so, force data.table to be
+  # single threaded so that we can avoid a NOTE on CRAN submission due to their
+  # misconfigured debian server
+  if (isTRUE(all.equal(x, ukbnmr::test_data))) {
+    registered_threads <- getDTthreads()
+    setDTthreads(1)
+    on.exit({ setDTthreads(registered_threads) }) # re-register so no unintended side effects for users
+  }
+
   if (detect_format(x, type="sample_qc_flags") == "processed") {
     return(x) # return as is; process_data() would make a copy first
   } else {

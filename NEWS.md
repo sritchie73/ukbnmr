@@ -1,5 +1,18 @@
 # NEWS
 
+## Version 2.1.3
+
+ - Dramatically reduced test_data size in part due to unsuccessful attempts to 
+   address a CRAN NOTE. Test data has now been reduced to 10 rows as before, and
+   39 columns covering a subset of 8 biomarkers and 6 required sample processing
+   flags - this also makes example output easier to visually inspect.
+ 
+## Version 2.1.2
+
+ - CRAN NOTE resolved for remove_technical_variation() using solution below, but
+   similar NOTE was generated for other functions on submission of version 2.1.1
+   to CRAN. Work-around code has now been added to all user-facing functions.
+
 ## Version 2.1.1
 
  - Reverted test_data back to 50 row version after cutting down size did not

@@ -64,7 +64,7 @@ fwrite(sample_qc_flags, file="path/to/nmr_sample_qc_flags.csv")
 
 The `remove_technical_variation()` function removes additional technical variation present in the UK Biobank NMR data (see [section below](#algorithms-for-removing-technical-variation) for details), returning a `list` containing the corrected NMR biomarker data, biomarker QC flags, and sample processing information in analysis-ready `data.frame`s.
 
-This function takes 10-15 minutes to run, and requires at least 16 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
+This function takes 20-30 minutes to run, and requires at least 16 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
       
 An example workflow for using this function and saving the output for loading into future R sessions or other programs:
 

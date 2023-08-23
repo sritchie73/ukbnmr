@@ -72,7 +72,7 @@
 #' concentrations akin to a spectrometer recalibration event most strongly
 #' observed for alanine concentrations.
 #'
-#' This function takes 10-15 minutes to run and requires at least 14 GB of RAM.
+#' This function takes 20-30 minutes to run and requires at least 14 GB of RAM.
 #'
 #' @return a \code{list} containing three \code{data.frames}: \describe{
 #'   \item{biomarkers}{A \code{data.frame} with column names "eid",

@@ -141,7 +141,7 @@ plates 0490000006726 and 0490000006714 which correspond to a large change in
 concentrations akin to a spectrometer recalibration event most strongly
 observed for alanine concentrations.
 
-This function takes 10-15 minutes to run and requires at least 14 GB of RAM.
+This function takes 20-30 minutes to run and requires at least 14 GB of RAM.
 }
 \examples{
 ukb_data <- ukbnmr::test_data # Toy example dataset for testing package

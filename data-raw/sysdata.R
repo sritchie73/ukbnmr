@@ -133,5 +133,9 @@ test_data[, `23764-0.0` := as.integer(`23764-0.0`) ]
 test_data[, `23767-0.0` := as.integer(`23767-0.0`) ]
 test_data[c(1, 4), c("23764-0.0", "23767-0.0") := 4L]
 
+# Manually add in some zeros so log_offset table can be returned
+test_data[1, `23465-0.0` := 0]
+test_data[10, `23465-1.0` := 0]
+
 # Save
 save(test_data, version=2, compress="bzip2", file="data/test_data.rda")

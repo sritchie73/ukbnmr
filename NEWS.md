@@ -1,5 +1,11 @@
 # NEWS
 
+## Version 2.2
+
+ - Fixed issue where plate numbers only sometimes had a leading zero included in
+   their identifier. For consistency with the data released in UK Biobank, plate 
+   identifiers now always include a leading 0.
+
 ## Version 2.1.3
 
  - Dramatically reduced test_data size in part due to unsuccessful attempts to 

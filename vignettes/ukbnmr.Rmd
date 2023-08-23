@@ -182,7 +182,7 @@ Version 2 of the algorithm (the default) modifies this algorithm:
   - Step 6 above is modified to:
 
       1. group samples into bins of ~2,000 samples 
-      2. hard codes a bin split on spectrometer 5 between plates 490000006726 and 490000006714
+      2. hard codes a bin split on spectrometer 5 between plates 0490000006726 and 0490000006714
 
 These changes have been made based on our exploration of the technical variation in the phase 2 release (July 2023) of the UK Biobank NMR data (see [section below](#justification-for-algorithm-updates) for details).
 
@@ -220,7 +220,7 @@ Second, we found that the method for correcting for drift over time (step 6 of t
   1. Partitioning spectrometers into 10 bins meant that the bin sizes would differ between data releases, and that as the sample size increased within each spectrometer, more unwanted variation was being retained.
   2. A large change in concentrations between sequential sets of plates on spectrometer 5 was not being appropriately account for.
 
-These issues were fixed as described above by setting a fixed bin size when correcting for drift over time, and hard-coding as a bin boundary the large change in concentrations observed on spectrometer 5 between plates 490000006726 and 490000006714. The fixed bin size chosen was 2,000 samples, matching the median bin size when applying version 1 of the algorithm to the phase 1 data release. This bin size is approximate, and differs between spectrometers. The number of bins each spectrometer is divided into is set as the total number of samples divided by 2,000. When allocating samples to bins, samples on the same plate or date are always allocated to the same bin.
+These issues were fixed as described above by setting a fixed bin size when correcting for drift over time, and hard-coding as a bin boundary the large change in concentrations observed on spectrometer 5 between plates 0490000006726 and 0490000006714. The fixed bin size chosen was 2,000 samples, matching the median bin size when applying version 1 of the algorithm to the phase 1 data release. This bin size is approximate, and differs between spectrometers. The number of bins each spectrometer is divided into is set as the total number of samples divided by 2,000. When allocating samples to bins, samples on the same plate or date are always allocated to the same bin.
 
 The following figure illustrates the result of applying version 1 of the algorithm to the alanine concentrations in the July 2023 release of the UK Biobank NMR data covers ~275,000 UK Biobank participants:
 

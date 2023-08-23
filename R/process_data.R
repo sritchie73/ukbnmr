@@ -243,6 +243,8 @@ get_sample_qc_flag_values <- function(x) {
     if (!is.character(x$Shipment.Plate) | !grepl("^Plate", stats::na.omit(x$Shipment.Plate)[1])) {
       x[, Shipment.Plate := ifelse(is.na(Shipment.Plate), NA_character_, paste("Plate", Shipment.Plate))]
     }
+    # Sometimes the leading 0 gets dropped (e.g. if loaded as integer64), add these back in to match UK Biobank release
+    x[!(Shipment.Plate %like% "^Plate 0"), Shipment.Plate := gsub("^Plate ", "Plate 0", Shipment.Plate)]
   }
 
   if ("Processing.Batch" %in% names(x)) {

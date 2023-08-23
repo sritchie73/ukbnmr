@@ -137,7 +137,7 @@ The second modification was made to ensure consistent bin sizes across data
 releases when correcting for drift over time. Otherwise, spectrometers used
 in multiple data releases would have different bin sizes when adjusting
 different releases. A bin split is also hard coded on spectrometer 5 between
-plates 490000006726 and 490000006714 which correspond to a large change in
+plates 0490000006726 and 0490000006714 which correspond to a large change in
 concentrations akin to a spectrometer recalibration event most strongly
 observed for alanine concentrations.
 

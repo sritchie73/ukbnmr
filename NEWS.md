@@ -1,5 +1,11 @@
 # NEWS
 
+## Version 2.2.1
+
+ - Fixed unexpected warning about NAs arising due to mislabelling of well 
+   position by UK Biobank to use lowercase instead of uppercase letters for
+   the row position (see https://github.com/sritchie73/ukbnmr/issues/6)
+
 ## Version 2.2
 
  - Fixed issue where plate numbers only sometimes had a leading zero included in

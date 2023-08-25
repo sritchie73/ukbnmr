@@ -139,6 +139,12 @@ process_data <- function(x, type) {
       this_x[Well.Position.Within.Plate == "", Well.Position.Within.Plate := NA_character_]
     }
 
+    # Well.Position.Within.Plate may have lowercase row letters in the July 2023
+    # UKB data release, fix:
+    if ("Well.Position.Within.Plate" %in% names(this_x)) {
+      this_x[, Well.Position.Within.Plate := toupper(Well.Position.Within.Plate)]
+    }
+
     # Drop instance and array index combinations with all missing data
     # eid, visit_index, and array_index always non-missing
     this_x <- this_x[apply(this_x, 1, function(row) { sum(!is.na(row)) > 3L })]

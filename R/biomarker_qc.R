@@ -155,6 +155,8 @@ remove_technical_variation <- function(
   # Check for valid algorithm version
   if (version != 1L && version != 2L) stop("'version' must be 1 or 2")
 
+  message("Checking for revelant UKB fields...")
+
   # Check relevant fields exist
   f1 <- detect_format(x, type="biomarkers")
   f2 <- if (skip.biomarker.qc.flags) { "skipped" } else { detect_format(x, type="biomarker_qc_flags") }
@@ -175,12 +177,16 @@ remove_technical_variation <- function(
     on.exit({ setDTthreads(registered_threads) }) # re-register so no unintended side effects for users
   }
 
+  message("Extracting and pre-processing data...")
+
   # Extract biomarkers, biomarker QC flags, and sample processing information
   bio <- process_data(x, type="biomarkers")
   if (!skip.biomarker.qc.flags) {
     bio_qc <- process_data(x, type="biomarker_qc_flags")
   }
   sinfo <- process_data(x, type="sample_qc_flags")
+
+  message("Checking for required sample processing fields needed for QC procedure...")
 
   # Check required sample processing fields exist
   req <- c("Well.Position.Within.Plate", "Sample.Measured.Date.and.Time",
@@ -201,6 +207,8 @@ remove_technical_variation <- function(
       version <- 1L
     }
   }
+
+  message("Processing sample processing fields for QC procedure...")
 
   # Split out row and column information from 96-well plate information
   sinfo[, Well.Row := gsub("[0-9]", "", Well.Position.Within.Plate)]
@@ -267,6 +275,8 @@ remove_technical_variation <- function(
                           bio, on = list(eid, visit_index), nomatch=0]
   }
 
+  message("Determining log offsets for biomarker concentrations...")
+
   # Determine offset for log transformation (required for variables with measurements == 0):
   # Acetate, Acetoacetate, Albumin, bOHbutyrate, Clinical_LDL_C, Gly, Ile, L_LDL_CE, L_LDL_FC, M_LDL_CE
   log_offset <- bio[!is.na(value), list(Minimum=min(value), Minimum.Non.Zero=min(value[value != 0])),by=Biomarker]
@@ -275,8 +285,12 @@ remove_technical_variation <- function(
   # Get log transformed raw value
   bio[log_offset, on = list(Biomarker), log_value := log(value + Log.Offset)]
 
+  message("Adjusting for time between sample prep and sample measurement...")
+
   # Adjust for time between sample prep and sample measurement
   bio[, adj := MASS::rlm(log_value ~ log(Prep.to.Measure.Duration))$residuals, by=Biomarker]
+
+  message("Adjusting for within plate structure across 96-well plate rows A-H...")
 
   # Adjust for within plate structure across 96-well plate rows A-H
   if (version == 1L) {
@@ -285,6 +299,8 @@ remove_technical_variation <- function(
     bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Row))$residuals, by=list(Processing.Batch, Biomarker)]
   }
 
+  message("Adjusting for within plate structure across 96-well plate columns 1-12...")
+
   # Adjust for within plate structure across 96-well plate columns 1-12
   if (version == 1L) {
     bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Column))$residuals, by=Biomarker]
@@ -292,8 +308,12 @@ remove_technical_variation <- function(
     bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Column))$residuals, by=list(Processing.Batch, Biomarker)]
   }
 
+  message("Adjusting for drift over time within spectrometer...")
+
   # Adjust for drift over time within spectrometer
   bio[, adj := MASS::rlm(adj ~ factor_by_size(Spectrometer.Date.Bin))$residuals, by=list(Biomarker, Spectrometer.Group)]
+
+  message("Rescaling adjusted biomarkers to absolute concentrations...")
 
   # Rescale to absolute units. First, shift the residuals to have the same central
   # parameter estimate (e.g. mean, estimated via robust linear regression) as the
@@ -312,6 +332,8 @@ remove_technical_variation <- function(
   shift <- bio[, list(Right.Shift=-pmin(0, min(adj))), by=Biomarker]
   log_offset <- log_offset[shift, on = list(Biomarker)]
   bio[log_offset, on = list(Biomarker), adj := adj + Right.Shift]
+
+  message("Identifying outlier plates and setting their concentrations to NA...")
 
   # Identify and remove outlier plates.
   # Model plate medians as a normal distribution (across all 1,352 plates), then
@@ -334,6 +356,8 @@ remove_technical_variation <- function(
 
   # Add outlier plate tags to biomarker qc tags
   if (!skip.biomarker.qc.flags) {
+    message("Adding outlier plates to measurement QC tags...")
+
     bio_qc <- melt(bio_qc, id.vars=c("eid", "visit_index"), variable.name="Biomarker", na.rm=TRUE,
                    measure.vars=intersect(names(bio_qc), ukbnmr::nmr_info[Type == "Non-derived", Biomarker]))
 
@@ -356,12 +380,16 @@ remove_technical_variation <- function(
     bio_qc <- dcast(bio_qc, eid + visit_index ~ Biomarker, value.var="value")
   }
 
+  message("Recalculating derived biomarkers...")
+
   # Compute derived biomarkers and ratios
   bio <- nightingale_composite_biomarker_compute(bio)
   bio <- nightingale_ratio_compute(bio)
   bio <- extended_ratios_compute(bio)
 
   if (!skip.biomarker.qc.flags) {
+    message("Collating measurement QC tags for derived biomarkers...")
+
     bio_qc <- nightingale_composite_biomarker_flags(bio_qc)
     bio_qc <- nightingale_ratio_flags(bio_qc)
     bio_qc <- extended_ratios_flags(bio_qc)
@@ -372,6 +400,8 @@ remove_technical_variation <- function(
 
   # Remove dummy Spectrometer.Group column from returned output
   sinfo[, Spectrometer.Group := NULL]
+
+  message("Returning result...")
 
   # Return list
   if (!skip.biomarker.qc.flags) {

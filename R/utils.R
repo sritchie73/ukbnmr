@@ -97,9 +97,12 @@ bin_dates <- function(date, version) {
     return(as.integer(ceiling(date_order/bin_size)))
   } else if (version == 2L) {
     n_bins <- floor(length(date)/2000)
-    if (n_bins < 2) n_bins <- 2 # test_data not big enough to bin into groups of 2,000 samples, so just bin into 2
-    bins <- cut(unique(date_order), n_bins, labels=FALSE)
-    bin_map <- data.table(date=unique(date_order), bin=bins)
-    return(bin_map[data.table(date=date_order), on=list(date), bin])
+    if (n_bins < 2) {
+      return(rep(1, length(date)))
+    } else {
+      bins <- cut(unique(date_order), n_bins, labels=FALSE)
+      bin_map <- data.table(date=unique(date_order), bin=bins)
+      return(bin_map[data.table(date=date_order), on=list(date), bin])
+    }
   }
 }

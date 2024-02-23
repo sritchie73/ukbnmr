@@ -310,8 +310,10 @@ remove_technical_variation <- function(
 
   message("Adjusting for drift over time within spectrometer...")
 
-  # Adjust for drift over time within spectrometer
-  bio[, adj := MASS::rlm(adj ~ factor_by_size(Spectrometer.Date.Bin))$residuals, by=list(Biomarker, Spectrometer.Group)]
+  # Adjust for drift over time within spectrometer (only applicable to spectrometers with > 1 bin)
+  to_adjust <- sinfo[, list(N=length(unique(Spectrometer.Date.Bin))), by=list(Spectrometer)]
+  to_adjust <- to_adjust[N > 1, Spectrometer]
+  bio[Spectrometer %in% to_adjust, adj := MASS::rlm(adj ~ factor_by_size(Spectrometer.Date.Bin))$residuals, by=list(Biomarker, Spectrometer.Group)]
 
   message("Rescaling adjusted biomarkers to absolute concentrations...")
 

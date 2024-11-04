@@ -22,7 +22,7 @@
 process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <- repeat_index <-
-    Name <- Shipment.Plate <- Well.Position.Within.Plate <- NULL
+    Name <- Shipment.Plate <- Well.Position.Within.Plate <- tmp_cname <- NULL
 
   # Determine format of data
   data_format <- detect_format(x, type)
@@ -139,10 +139,11 @@ process_data <- function(x, type) {
       this_x[Shipment.Plate == "", Shipment.Plate := NA_character_]
     }
 
-    # Well.Position.Within.Plate may have "" instead of NA_character_ for
-    # samples without NMR data, fix
-    if ("Well.Position.Within.Plate" %in% names(this_x)) {
-      this_x[Well.Position.Within.Plate == "", Well.Position.Within.Plate := NA_character_]
+    # Some columns may have "" instead of NA_character_ for samples without NMR data, fix
+    for (this_col in names(this_x)[which(sapply(this_x, is.character))]) {
+      setnames(this_x, this_col, "tmp_cname")
+      this_x[tmp_cname == "", tmp_cname := NA_character_]
+      setnames(this_x, "tmp_cname", this_col)
     }
 
     # Well.Position.Within.Plate may have lowercase row letters in the July 2023

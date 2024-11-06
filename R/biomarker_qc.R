@@ -128,12 +128,14 @@
 #' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 #' processed <- remove_technical_variation(ukb_data)
 #'
+#' @importFrom lubridate ymd_hms
 #' @importFrom stats coef
 #' @importFrom stats sd
 #' @importFrom stats qnorm
 #' @importFrom stats ppoints
 #' @importFrom stats median
 #' @importFrom MASS rlm
+#'
 #' @export
 remove_technical_variation <- function(
   x,
@@ -215,10 +217,8 @@ remove_technical_variation <- function(
   sinfo[, Well.Column := as.integer(gsub("[A-Z]", "", Well.Position.Within.Plate))]
 
   # Split out date and time for sample measurement and sample prep
-  sinfo[, Sample.Measured.Date := as.IDate(gsub(" .*$", "", Sample.Measured.Date.and.Time))]
-  sinfo[, Sample.Measured.Time := as.ITime(gsub("^.* ", "", Sample.Measured.Date.and.Time))]
-  sinfo[, Sample.Prepared.Date := as.IDate(gsub(" .*$", "", Sample.Prepared.Date.and.Time))]
-  sinfo[, Sample.Prepared.Time := as.ITime(gsub("^.* ", "", Sample.Prepared.Date.and.Time))]
+  sinfo[, c("Sample.Measured.Date", "Sample.Measured.Time") := IDateTime(ymd_hms(Sample.Measured.Date.and.Time))]
+  sinfo[, c("Sample.Prepared.Date", "Sample.Prepared.Time") := IDateTime(ymd_hms(Sample.Prepared.Date.and.Time))]
 
   # Compute hours between sample prep and sample measurement
   sinfo[, Prep.to.Measure.Duration := duration_hours(

@@ -2,8 +2,8 @@
 % Please edit documentation in R/ukbnmr.R
 \docType{package}
 \name{ukbnmr}
-\alias{ukbnmr}
 \alias{ukbnmr-package}
+\alias{ukbnmr}
 \title{Tools for processing the UK Biobank NMR metabolomics biomarker data}
 \description{
 @description

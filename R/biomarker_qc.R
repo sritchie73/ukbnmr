@@ -129,6 +129,7 @@
 #' processed <- remove_technical_variation(ukb_data)
 #'
 #' @importFrom lubridate ymd_hms
+#' @importFrom lubridate ymd
 #' @importFrom stats coef
 #' @importFrom stats sd
 #' @importFrom stats qnorm

@@ -6,8 +6,8 @@
 \title{Data for testing package functions}
 \format{
 A data table with 50 rows and 735 columns with column names "eid"
-followed by extracted UK Biobank field data of the format "23649-0.0",
-"23649-1.0", \dots, "23655-1.0".
+followed by extracted UK Biobank field data of the format "p23649_i0",
+"p23649_i1", \dots, "p23655_i1".
 }
 \source{
 Data in each column has been randomly drawn from the distribution

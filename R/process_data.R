@@ -1,12 +1,13 @@
 # Helper function for processing user input data
 #
-# Columns in the raw UK Biobank data are <field_id>-<instance>.<array_index>,
-# where <field_id> corresponds to the biomarker, e.g. 23474 for 3-Hydroxybutyrate
-# (given the variable name bOHbutyrate). <instance> corresponds to the timepoint
-# of biomarker quantification, in the NMR data, either 0 for baseline assessment,
-# or 1 for first repeat. <array_index> is usually used for repeated measures at
-# the same timepoint. Currently, they are used where there are multiple biomarker
-# QC Flags for a given measurement.
+# Columns in the UK Biobank data extracted on the Research Analysis Platform
+# following the naming scheme p<field_id>_i<instance> where <field_id>
+# corresponds to the biomarker, e.g. 23474 for 3-Hydroxybutyrate (given the variable
+# name bOHbutyrate). <instance> corresponds to the timepoint of biomarker quantification,
+# in the NMR data, either 0 for baseline assessment, or 1 for first repeat. The
+# column names may also optionally have an addition _a<array_index> component
+# reserved for multiple measures at the same timepoint, or in the case of the NMR
+# biomarker data, the presence of multiple QC flags for a given measurement.
 #
 # This function extracts from raw UK Biobank data the fields corresponding to
 # either (1) biomarker concentrations, (2) biomarker QC Flags, or (3) sample QC
@@ -18,6 +19,12 @@
 # comma separated entry. Fields are renamed with the short biomarker variable
 # name typically provided by Nightingale Health, listed in the Biomarker column
 # in the nmr_info data sheet included with this package
+#
+# This function also handles column naming schemes for datasets predating the
+# UKB Research Analysis Platform, e.g. those extracted by ukbconv which follow
+# the naming scheme <field_id>-<instance>.<array_index>, by ukbconv_r which
+# follow the naming scheme f<field_id>.<instance>.<array_index>, and the ukbtools
+# R package.
 #
 process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)

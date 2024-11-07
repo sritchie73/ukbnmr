@@ -1,9 +1,10 @@
 #' Extract NMR metabolomic biomarkers from a data.frame of UK Biobank fields
 #'
-#' Given an input \code{data.frame} loaded from a dataset extracted by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#' extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank fields}
-#' corresponding to the
+#' Given an input \code{data.frame} loaded from a dasaset of
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{NMR metabolomics fields}
+#' extracted by the Table Exporter tool on the
+#' \href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform},
+#' this function extracts the
 #' \href{https://research.nightingalehealth.com/biomarkers/}{NMR metabolomics biomarkers}
 #' giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
 #' available in this package.
@@ -70,10 +71,11 @@ extract_biomarkers <- function(x) {
 
 #' Extract NMR biomarker QC flags from a data.frame of UK Biobank fields
 #'
-#' Given an input \code{data.frame} loaded from a dataset extracted by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#' extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{UK Biobank fields}
-#' corresponding to the
+#' Given an input \code{data.frame} loaded from a dasaset of
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{NMR metabolomics QC indicator fields}
+#' extracted by the Table Exporter tool on the
+#' \href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform},
+#' this function extracts the
 #' \href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{quality control (QC) flags for the NMR metaolomics biomarkers}
 #' giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
 #' available in this package. QC Flags are separated by "; " in each column where
@@ -145,12 +147,13 @@ extract_biomarker_qc_flags <- function(x) {
 
 #' Extract NMR sample QC flags from a data.frame of UK Biobank fields
 #'
-#' Given an input \code{data.frame} loaded from a dataset extracted by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#' extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{UK Biobank fields}
-#' corresponding to the
-#' \href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{sample quality control flags for the NMR metabolomics biomarker data}
-#' giving them short variable names.
+#' Given an input \code{data.frame} loaded from a dasaset of
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{NMR metabolomics processing fields}
+#' extracted by the Table Exporter tool on the
+#' \href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform}, this function
+#' extracts the
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{sample quality control flags for the NMR metabolomics biomarker data} giving them short variable names as listed in the
+#' \code{\link{sample_qc_info}} information data sheet available in this package.
 #'
 #' @details
 #' Data sets extracted on the \href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform}

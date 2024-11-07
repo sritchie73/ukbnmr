@@ -16,12 +16,13 @@ a \code{data.frame} or \code{data.table} with column names "eid"
        QC tag, e.g. "Shipment.Plate", \dots, "Low.Protein".
 }
 \description{
-Given an input \code{data.frame} loaded from a dataset extracted by
-\href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{UK Biobank fields}
-corresponding to the
-\href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{sample quality control flags for the NMR metabolomics biomarker data}
-giving them short variable names.
+Given an input \code{data.frame} loaded from a dasaset of
+\href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{NMR metabolomics processing fields}
+extracted by the Table Exporter tool on the
+\href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform}, this function
+extracts the
+\href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{sample quality control flags for the NMR metabolomics biomarker data} giving them short variable names as listed in the
+\code{\link{sample_qc_info}} information data sheet available in this package.
 }
 \details{
 Data sets extracted on the \href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform}

@@ -16,10 +16,11 @@ a \code{data.frame} or \code{data.table} with column names "eid",
        e.g. "bOHbutyrate", \dots, "Valine".
 }
 \description{
-Given an input \code{data.frame} loaded from a dataset extracted by
-\href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank fields}
-corresponding to the
+Given an input \code{data.frame} loaded from a dasaset of
+\href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{NMR metabolomics fields}
+extracted by the Table Exporter tool on the
+\href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform},
+this function extracts the
 \href{https://research.nightingalehealth.com/biomarkers/}{NMR metabolomics biomarkers}
 giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
 available in this package.

@@ -16,10 +16,11 @@ a \code{data.frame} or \code{data.table} with column names "eid",
        e.g. "bOHbutyrate", \dots, "Valine".
 }
 \description{
-Given an input \code{data.frame} loaded from a dataset extracted by
-\href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{UK Biobank fields}
-corresponding to the
+Given an input \code{data.frame} loaded from a dasaset of
+\href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{NMR metabolomics QC indicator fields}
+extracted by the Table Exporter tool on the
+\href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform},
+this function extracts the
 \href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{quality control (QC) flags for the NMR metaolomics biomarkers}
 giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
 available in this package. QC Flags are separated by "; " in each column where

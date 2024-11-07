@@ -8,7 +8,7 @@ remove_technical_variation(
   x,
   remove.outlier.plates = TRUE,
   skip.biomarker.qc.flags = FALSE,
-  version = 2L
+  version = 3L
 )
 }
 \arguments{

@@ -142,7 +142,7 @@ remove_technical_variation <- function(
   x,
   remove.outlier.plates=TRUE,
   skip.biomarker.qc.flags=FALSE,
-  version=2L
+  version=3L
 ) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   Well.Position.Within.Plate <- Well.Row <- Well.Column <- Sample.Measured.Date.and.Time <-
@@ -156,7 +156,7 @@ remove_technical_variation <- function(
     NULL
 
   # Check for valid algorithm version
-  if (version != 1L && version != 2L) stop("'version' must be 1 or 2")
+  if (version != 1L && version != 2L && version != 3L) stop("'version' must be 1, 2, or 3")
 
   message("Checking for revelant UKB fields...")
 
@@ -202,7 +202,7 @@ remove_technical_variation <- function(
     stop("Missing required sample processing fields: ", err_txt, ".")
   }
 
-  if (version == 2L && !("Processing.Batch" %in% names(sinfo))) {
+  if (version > 1L && !("Processing.Batch" %in% names(sinfo))) {
     warning("Processing.Batch missing (Field 20282), inferring from Shipment.Plate (Field 23649)")
     sinfo[plate_batch_map, on = list(Shipment.Plate), Processing.Batch := i.Processing.Batch]
     if (any(is.na(sinfo$Processing.Batch))) {
@@ -249,7 +249,7 @@ remove_technical_variation <- function(
   # to do this is by creating a dummy spectrometer column to split on, by giving the
   # spectrometer before and after the split a different name
   sinfo[, Spectrometer.Group := Spectrometer]
-  if (version == 2L && "0490000006726" %in% sinfo[["Shipment.Plate"]]) {
+  if (version > 1L && "0490000006726" %in% sinfo[["Shipment.Plate"]]) {
     sinfo <- sinfo[order(Plate.Measured.Date)][order(Spectrometer)]
     sinfo[, Spectrometer.Group := as.character(Spectrometer.Group)]
     spec_to_split <- sinfo[Shipment.Plate == "0490000006726", Spectrometer.Group][1]
@@ -282,7 +282,7 @@ remove_technical_variation <- function(
                         Well.Column, Spectrometer.Date.Bin, Spectrometer,
                         Spectrometer.Group, Shipment.Plate)][
                           bio, on = list(eid, visit_index), nomatch=0]
-  } else if (version == 2L) {
+  } else {
     bio <- sinfo[, list(eid, visit_index, Prep.to.Measure.Duration, Well.Row,
                         Well.Column, Spectrometer.Date.Bin, Spectrometer,
                         Spectrometer.Group, Processing.Batch, Shipment.Plate)][
@@ -309,7 +309,7 @@ remove_technical_variation <- function(
   # Adjust for within plate structure across 96-well plate rows A-H
   if (version == 1L) {
     bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Row))$residuals, by=Biomarker]
-  } else if (version == 2L) {
+  } else {
     bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Row))$residuals, by=list(Processing.Batch, Biomarker)]
   }
 
@@ -318,16 +318,20 @@ remove_technical_variation <- function(
   # Adjust for within plate structure across 96-well plate columns 1-12
   if (version == 1L) {
     bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Column))$residuals, by=Biomarker]
-  } else if (version == 2L) {
+  } else {
     bio[, adj := MASS::rlm(adj ~ factor_by_size(Well.Column))$residuals, by=list(Processing.Batch, Biomarker)]
   }
 
   message("Adjusting for drift over time within spectrometer...")
 
-  # Adjust for drift over time within spectrometer (only applicable to spectrometers with > 1 bin)
-  to_adjust <- sinfo[, list(N=length(unique(Spectrometer.Date.Bin))), by=list(Spectrometer)]
-  to_adjust <- to_adjust[N > 1, Spectrometer]
-  bio[Spectrometer %in% to_adjust, adj := MASS::rlm(adj ~ factor_by_size(Spectrometer.Date.Bin))$residuals, by=list(Biomarker, Spectrometer.Group)]
+  if (version == 3L) {
+    # Adjust for drift over time within spectrometer (only applicable to spectrometers with > 1 bin)
+    to_adjust <- sinfo[, list(N=length(unique(Spectrometer.Date.Bin))), by=list(Spectrometer)]
+    to_adjust <- to_adjust[N > 1, Spectrometer]
+    bio[Spectrometer %in% to_adjust, adj := MASS::rlm(adj ~ factor_by_size(Spectrometer.Date.Bin))$residuals, by=list(Biomarker, Spectrometer.Group)]
+  } else {
+    bio[, adj := MASS::rlm(adj ~ factor_by_size(Spectrometer.Date.Bin))$residuals, by=list(Biomarker, Spectrometer.Group)]
+  }
 
   message("Rescaling adjusted biomarkers to absolute concentrations...")
 

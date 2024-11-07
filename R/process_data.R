@@ -1,12 +1,13 @@
 # Helper function for processing user input data
 #
-# Columns in the raw UK Biobank data are <field_id>-<instance>.<array_index>,
-# where <field_id> corresponds to the biomarker, e.g. 23474 for 3-Hydroxybutyrate
-# (given the variable name bOHbutyrate). <instance> corresponds to the timepoint
-# of biomarker quantification, in the NMR data, either 0 for baseline assessment,
-# or 1 for first repeat. <array_index> is usually used for repeated measures at
-# the same timepoint. Currently, they are used where there are multiple biomarker
-# QC Flags for a given measurement.
+# Columns in the UK Biobank data extracted on the Research Analysis Platform
+# following the naming scheme p<field_id>_i<instance> where <field_id>
+# corresponds to the biomarker, e.g. 23474 for 3-Hydroxybutyrate (given the variable
+# name bOHbutyrate). <instance> corresponds to the timepoint of biomarker quantification,
+# in the NMR data, either 0 for baseline assessment, or 1 for first repeat. The
+# column names may also optionally have an addition _a<array_index> component
+# reserved for multiple measures at the same timepoint, or in the case of the NMR
+# biomarker data, the presence of multiple QC flags for a given measurement.
 #
 # This function extracts from raw UK Biobank data the fields corresponding to
 # either (1) biomarker concentrations, (2) biomarker QC Flags, or (3) sample QC
@@ -19,10 +20,16 @@
 # name typically provided by Nightingale Health, listed in the Biomarker column
 # in the nmr_info data sheet included with this package
 #
+# This function also handles column naming schemes for datasets predating the
+# UKB Research Analysis Platform, e.g. those extracted by ukbconv which follow
+# the naming scheme <field_id>-<instance>.<array_index>, by ukbconv_r which
+# follow the naming scheme f<field_id>.<instance>.<array_index>, and the ukbtools
+# R package.
+#
 process_data <- function(x, type) {
   # Silence CRAN NOTES about undefined global variables (columns in data.tables)
   Biomarker <- UKB.Field.ID <- QC.Flag.Field.ID <- visit_index <- repeat_index <-
-    Name <- Shipment.Plate <- Well.Position.Within.Plate <- NULL
+    Name <- Shipment.Plate <- Well.Position.Within.Plate <- tmp_cname <- NULL
 
   # Determine format of data
   data_format <- detect_format(x, type)
@@ -48,6 +55,12 @@ process_data <- function(x, type) {
     setnames(x, gsub(".*_f", "", names(x)))
   } else if (data_format == "ukbconv_r") {
     setnames(x, gsub("\\.", "_", gsub("f\\.", "", names(x))))
+  } else if (data_format == "ukb_rap") {
+    missing_array_index <- names(x)[which(names(x) %like% "i[0-9]$")]
+    setnames(x, missing_array_index, paste0(missing_array_index, "_a0"))
+    setnames(x, gsub("_a", "_", names(x)))
+    setnames(x, gsub("_i", "_", names(x)))
+    setnames(x, gsub("^p", "", names(x)))
   }
 
   # Extract field IDs present
@@ -133,10 +146,11 @@ process_data <- function(x, type) {
       this_x[Shipment.Plate == "", Shipment.Plate := NA_character_]
     }
 
-    # Well.Position.Within.Plate may have "" instead of NA_character_ for
-    # samples without NMR data, fix
-    if ("Well.Position.Within.Plate" %in% names(this_x)) {
-      this_x[Well.Position.Within.Plate == "", Well.Position.Within.Plate := NA_character_]
+    # Some columns may have "" instead of NA_character_ for samples without NMR data, fix
+    for (this_col in names(this_x)[which(sapply(this_x, is.character))]) {
+      setnames(this_x, this_col, "tmp_cname")
+      this_x[tmp_cname == "", tmp_cname := NA_character_]
+      setnames(this_x, "tmp_cname", this_col)
     }
 
     # Well.Position.Within.Plate may have lowercase row letters in the July 2023

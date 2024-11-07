@@ -8,7 +8,7 @@ extract_sample_qc_flags(x)
 }
 \arguments{
 \item{x}{\code{data.frame} with column names "eid" followed by extracted
-fields e.g. "23649-0.0", "23649-1.0", \dots, "23655-1.0".}
+fields e.g. "p23649_i0", "p23649_i1", \dots, "p23655_i1".}
 }
 \value{
 a \code{data.frame} or \code{data.table} with column names "eid"
@@ -16,32 +16,45 @@ a \code{data.frame} or \code{data.table} with column names "eid"
        QC tag, e.g. "Shipment.Plate", \dots, "Low.Protein".
 }
 \description{
-Given an input \code{data.frame} loaded from a dataset extracted by
-\href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-extracts the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{UK Biobank fields}
-corresponding to the
-\href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{sample quality control flags for the NMR metabolomics biomarker data}
-giving them short variable names.
+Given an input \code{data.frame} loaded from a dasaset of
+\href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{NMR metabolomics processing fields}
+extracted by the Table Exporter tool on the
+\href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform}, this function
+extracts the
+\href{https://biobank.ndph.ox.ac.uk/showcase/showcase/docs/nmrm_app4.pdf}{sample quality control flags for the NMR metabolomics biomarker data} giving them short variable names as listed in the
+\code{\link{sample_qc_info}} information data sheet available in this package.
 }
 \details{
-Data sets extracted by
-\href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-have one row per UKB biobank participant whose project specific sample
+Data sets extracted on the \href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform}
+have one row per UK Biobank participant, whose project specific sample
 identifier is given in the first column named "eid". Columns following this
-have the format "<field_id>-<visit_index>.<repeat_index>", where here <field_id>
-corresponds to a sample QC flag, and <visit_index> corresponds to the assessment
-time point, e.g. 0 for baseline assessment, 1 for first repeat visit. For the
-UKB NMR data, the <repeat_index> column is reserved for cases where biomarker
+follow a \href{https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/accessing-data/accessing-phenotypic-data#database-columns}{naming scheme}
+based on the unique identifier of each field, assessment visit, and (optionally if relevant)
+repeated measurement of "p<field_id>_i<visit_index>_a<repeat_index>". For example,
+the Shipment Plate for each sample collected at baseline assessment has the
+column name "p23649_i0". For the UKB NMR data, measurements are available at
+baseline assessment and the first repeat assessment (e.g. "p23649_i1"). For the
+UKB NMR data, the <repeat_index> is reserved for cases where biomarker
 measurements have more than one QC Flag (see \code{\link{extract_biomarker_qc_flags}()}).
 
-In the returned \code{data.frame} there is single column for each QC Flag,
-with an additional column for the visit index. Rows are uniquely identifiable
-by the combination of entries in columns "eid" and "visit_index". There are
-currently no repeat measure data for the NMR biomarker data in UKB,
-so no repeat_index column is returned.
+The \code{data.frame} returned by this function gives each field a unique
+recognizable name, with measurements from baseline and repeat assessment
+given in separate rows. The "visit_index" column immediately after the "eid"
+column indicates whether the biomarker measurement was quantified from the
+blood samples taken at baseline assessment (visit_index == 0) or first repeat
+assessment (visit_index == 1). Rows are uniquely identifiable
+by the combination of entries in columns "eid" and "visit_index".
 
-This function will also work with data extracted by the \code{ukbtools} R
-package.
+This function will also work with data predating the Research Analysis Platform,
+including data sets extracted by the \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
+tool and/or the \code{ukbtools} R package.
+
+If your UK Biobank project only has access to a subset of biomarkers, then
+this function will only return the subset of ratios that can be computed from
+the biomarker data provided.
+
+A \code{data.table} will be returned instead of a \code{data.frame} if the
+the user has loaded the package into their R session.
 }
 \examples{
 ukb_data <- ukbnmr::test_data # Toy example dataset for testing package

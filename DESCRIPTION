@@ -23,10 +23,11 @@ Depends:
 Imports:
   data.table,
   bit64,
+  lubridate,
   MASS
 Suggests:
     knitr,
     rmarkdown,
     roxygen2
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr

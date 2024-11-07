@@ -128,12 +128,15 @@
 #' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
 #' processed <- remove_technical_variation(ukb_data)
 #'
+#' @importFrom lubridate ymd_hms
+#' @importFrom lubridate ymd
 #' @importFrom stats coef
 #' @importFrom stats sd
 #' @importFrom stats qnorm
 #' @importFrom stats ppoints
 #' @importFrom stats median
 #' @importFrom MASS rlm
+#'
 #' @export
 remove_technical_variation <- function(
   x,
@@ -215,10 +218,21 @@ remove_technical_variation <- function(
   sinfo[, Well.Column := as.integer(gsub("[A-Z]", "", Well.Position.Within.Plate))]
 
   # Split out date and time for sample measurement and sample prep
-  sinfo[, Sample.Measured.Date := as.IDate(gsub(" .*$", "", Sample.Measured.Date.and.Time))]
-  sinfo[, Sample.Measured.Time := as.ITime(gsub("^.* ", "", Sample.Measured.Date.and.Time))]
-  sinfo[, Sample.Prepared.Date := as.IDate(gsub(" .*$", "", Sample.Prepared.Date.and.Time))]
-  sinfo[, Sample.Prepared.Time := as.ITime(gsub("^.* ", "", Sample.Prepared.Date.and.Time))]
+  sinfo[, c("Sample.Measured.Date", "Sample.Measured.Time") := IDateTime(harmonize_datetime(Sample.Measured.Date.and.Time))]
+  sinfo[, c("Sample.Prepared.Date", "Sample.Prepared.Time") := IDateTime(harmonize_datetime(Sample.Prepared.Date.and.Time))]
+
+  # Handle the handful of samples missing a sample measurement time. In the above
+  # these default to 00:00:00, instead, impute these to the median time of measurement
+  # for that spectrometer on that day
+  if (version == 3L) {
+    missing_time <- sinfo[, which(is.na(suppressWarnings(ymd_hms(Sample.Measured.Date.and.Time))))]
+    for (idx in missing_time) {
+      this_date <- sinfo[idx, Sample.Measured.Date]
+      this_spectrometer <- sinfo[idx, Spectrometer]
+      median_measure_time <- sinfo[Sample.Measured.Date == this_date & Spectrometer == this_spectrometer, median(Sample.Measured.Time)]
+      sinfo[idx, Sample.Measured.Time := median_measure_time]
+    }
+  }
 
   # Compute hours between sample prep and sample measurement
   sinfo[, Prep.to.Measure.Duration := duration_hours(

@@ -17,27 +17,33 @@
 #' loaded as \code{\link{sample_qc_info}}.
 #'
 #' @section Data Extraction Functions:
-#' The \code{\link{extract_biomarkers}()} function will take a raw dataset output
-#' by \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv},
-#' extract the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{NMR biomarker fields}
-#' and give them short comprehensible column names as described in \code{\link{nmr_info}}. Measurements are also split
-#' into multiple rows where a participant has measurements at both baseline and first repeat assessment.
+#' The \code{\link{extract_biomarkers}()} function will take a phenotype dataset extracted on
+#' the UK Biobank Research Analysis Platform by the Table Exporter tool, extract the
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{NMR biomarker fields}
+#' and give them short comprehensible column names as described in \code{\link{nmr_info}}.
+#' Measurements are also split into multiple rows where a participant has measurements
+#' at both baseline and first repeat assessment.
 #'
-#' The \code{\link{extract_biomarker_qc_flags}()} function will take a raw dataset output
-#' by \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv},
-#' extract the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{Nightingale quality control flags}
+#' The \code{\link{extract_biomarker_qc_flags}()} function will take a phenotype
+#' dataset extracted on the UK Biobank Research Analysis Platform by the Table
+#' Exporter tool, extract the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{Nightingale quality control flags}
 #' for each biomarker measurement, returning a single column per biomarker
 #' (corresponding to respective columns output by \code{\link{extract_biomarkers}()}).
 #'
-#' The \code{\link{extract_sample_qc_flags}()}function will take a raw dataset output
-#' by \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv},
-#' and extract the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{sample quality control tags}
+#' The \code{\link{extract_sample_qc_flags}()} function will take a phenotype
+#' dataset extracted on the UK Biobank Research Analysis Platform by the Table
+#' Exporter tool and extract the \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{sample quality control tags}
 #' for the Nightingale NMR metabolomics data.
 #'
+#' These functions will also work with older datasets predating the UK Biobank
+#' Research Analysis Platform, e.g. those extracted by \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv},
+#' and/or by the ukbtools R package.
+#'
 #' @section Removal of technical variation:
-#' The \code{\link{remove_technical_variation}()} function will take a raw dataset output by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide)}{ukbconv},
-#' remove the effects of technical variation on biomarker concentrations, and return a list
+#' The \code{\link{remove_technical_variation}()} function  will take a phenotype
+#' dataset extracted on the UK Biobank Research Analysis Platform by the Table
+#' Exporter tool, extract all the biomarkers and QC flags, remove the effects of
+#' technical variation on biomarker concentrations, and return a list
 #' containing the adjusted NMR biomarker data, biomarker QC flags, and sample quality control
 #' and processing information.
 #'

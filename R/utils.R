@@ -106,3 +106,10 @@ bin_dates <- function(date, version) {
     }
   }
 }
+
+# Harmonize various date time formats so they can be passed to IDateTime
+harmonize_datetime <- function(x) {
+  y <- suppressWarnings(ymd_hms(x))
+  y[is.na(y)] <- suppressWarnings(ymd(x[is.na(y)]))
+  y
+}

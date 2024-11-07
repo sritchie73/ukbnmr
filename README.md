@@ -4,7 +4,9 @@ This package provides utilities for working with the [UK Biobank NMR metabolomic
 
 There are three groups of functions in this package: (1) data extraction, (2) removal of technical variation, and (3) recomputing derived biomarkers and computing additional biomarker ratios.
 
-All functions can be applied directly to UK Biobank data that has been decrypted and converted into a .csv or .txt file using the [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide) tool or processed with the [ukbtools](https://cran.r-project.org/package=ukbtools) R package.
+All functions are designed to be applied directly to the UK Biobank phenotype data on the [UK Biobank Research Analysis Platform](https://ukbiobank.dnanexus.com/landing) after the NMR metabolomics fields have been extracted using the [Table Exporter](https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/accessing-data/accessing-phenotypic-data#create-a-tsv-or-csv-file-using-table-exporter) tool. 
+
+This package also works with datasets predating the Research Analysis Platform, which have been extractedusing the [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide) tool or processed with the [ukbtools](https://cran.r-project.org/package=ukbtools) R package.
 
 This package also provides a `data.frame` of biomarker information, loaded as `nmr_info`, and a `data.frame` of sample processing information, loaded as `sample_qc_info`. See `help("nmr_info")` and `help("sample_qc_info")` for details on column contents. 
 
@@ -36,33 +38,42 @@ Citation is appreciated, but not expected, if simply using the data extraction f
 
 ## Data Extraction Functions
 
-Three data extraction functions are supplied by this package for extracting the UK Biobank NMR data and associated processing information and quality control tags into an analysis-ready format from UK Biobank data that has been decrypted and converted into a .csv or .txt file using the [ukbconv](https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide) tool or processed with the [ukbtools](https://cran.r-project.org/package=ukbtools) R package.
+Three data extraction functions are supplied by this package for extracting the UK Biobank NMR data and associated processing information and quality control tags into an analysis-ready format from the CSV or TSV files of field data saved by the [Table Exporter](https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/accessing-data/accessing-phenotypic-data#create-a-tsv-or-csv-file-using-table-exporter) tool on the [UK Biobank Research Analysis Platform](https://ukbiobank.dnanexus.com/landing).
 
-The `extract_biomarkers()` function returns a `data.frame` with one column for each [NMR metabolomics biomarker fields](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220), which are given short comprehensible and analysis friendly column names as described in the `nmr_info` `data.frame` supplied by this package. Each row of the `data.frame` corresponds to a single observation for a participant at a given timepoint: the `"eid"` column gives the participant ID in your UK Biobank application, and the `"visit_index"` column indicates the UK Biobank assessment corresponding to the observation: either `0` for baseline assessment (2006-2010) or `1` for the first repeat assessment (2012-2013)). 
+Exported field data saved by the [Table Exporter](https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/accessing-data/accessing-phenotypic-data#create-a-tsv-or-csv-file-using-table-exporter) has column names following a [naming scheme](https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/accessing-data/accessing-phenotypic-data#database-columns) with the format "p<field_id>_i<visit_index>_a<repeat_index>".   
+
+The `extract_biomarkers()` function extracts from this raw field data a `data.frame` that contains one column per [NMR biomarker](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220) which are labelled with short descriptive ( and analysis-friendly) column names for each biomarker. Each row of the extracted `data.frame` corresponds to a single observation for a UK Biobank participant at either baseline assessment (2006-2010) or the first repeat assessment (2012-2013): rows are uniquely identifiable by their combination of `"eid"` and `"visit_index"` columns. The `"eid"` column contains the project-specific identifier for each participant and the `"visit_index"` column contains either a 0 or 1 depending on whether the biomarker was quantified from blood samples taken at baseline assessemt (visit_index == 0) or at the first repeat assessment (visit_index == 1). Mappings between biomarker column names and UK Biobank field identifiers, along with detailed descriptions of each biomarker, are provided in the `nmr_info` `data.frame` that is bundled with this package.
 
 The `extract_biomarker_qc_flags()` function similarly returns a `data.frame` with one column for each biomarker, with observations containing the [quality control flags](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221) for the measurement of the respective biomarker for the UK Biobank participant and timepoint indicated in the `"eid"` and `"visit_index"` columns. Observations with no quality control flags contain `NA`. In instances where there were multiple quality control flags, the individual flags are separated by `"; "`.
 
-The `extract_sample_qc_flags()` function returns a `data.frame` with one column for each of the [NMR sample processing flags and quality control flags](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222) for each sample for the respective UK Biobank participant (`"eid"`) and timepoint (`"visit_index"`).
+The `extract_sample_qc_flags()` function similarly returns a `data.frame` with one column for each of the [NMR sample processing flags and quality control flags](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222) for each sample for the respective UK Biobank participant (`"eid"`) and timepoint (`"visit_index"`). Mappings between sample processing column names and UK Biobank field identifiers, along with detailed descriptions of each sample processing flag, are provided in the `sample_qc_info` `data.frame` that is bundled with this package.
 
 An example workflow for extracting these data and saving them for later use:
 
 ```R
 library(ukbnmr)
+library(data.table) # for fast reading and writing of csv files using fread() and fwrite()
 
-decoded <- fread("path/to/decoded_ukbiobank_data.csv") # file saved by ukbconv tool
+exported <- fread("path/to/exported_ukbiobank_phenotype_data.csv") # file saved by Table Exporter tool
 
-nmr <- extract_biomarkers(decoded)
-biomarker_qc_flags <- extract_biomarker_qc_flags(decoded)
-sample_qc_flags <- extract_sample_qc_flags(decoded)
+nmr <- extract_biomarkers(exported)
+biomarker_qc_flags <- extract_biomarker_qc_flags(exported)
+sample_qc_flags <- extract_sample_qc_flags(exported)
 
 fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
 fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
 fwrite(sample_qc_flags, file="path/to/nmr_sample_qc_flags.csv")
+
+# Remember to use the dx upload tool provided by the UK Biobank Research Analysis Platform
+# to save these files to your persistant project storage for later use. See:
+# https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/running-analysis-jobs/rstudio#uploading-local-files-to-the-project
 ```
 
 ## Removal of technical variation
 
 The `remove_technical_variation()` function removes additional technical variation present in the UK Biobank NMR data (see [section below](#algorithms-for-removing-technical-variation) for details), returning a `list` containing the corrected NMR biomarker data, biomarker QC flags, and sample processing information in analysis-ready `data.frame`s.
+
+Note that the no prefiltering of samples or columns should be performed prior to running this function: the algorithms used for removing technical variation expect all the data to be present.
 
 This function takes 20-30 minutes to run, and requires at least 16 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
       
@@ -70,15 +81,21 @@ An example workflow for using this function and saving the output for loading in
 
 ```R
 library(ukbnmr)
-decoded <- fread("path/to/decoded_ukbiobank_data.csv") # file save by ukbconv tool
+library(data.table) # for fast reading and writing of csv files using fread() and fwrite()
 
-processed <- remove_technical_variation(decoded) 
+exported <- fread("path/to/exported_ukbiobank_phenotype_data.csv") # file saved by Table Exporter tool
+
+processed <- remove_technical_variation(exported) 
 
 fwrite(processed$biomarkers, file="path/to/nmr_biomarker_data.csv")
 fwrite(processed$biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
 fwrite(processed$sample_processing, file="path/to/nmr_sample_qc_flags.csv")
 fwrite(processed$log_offset, file="path/to/nmr_biomarker_log_offset.csv")
 fwrite(processed$outlier_plate_detection, file="path/to/outlier_plate_info.csv")
+
+# Remember to use the dx upload tool provided by the UK Biobank Research Analysis Platform
+# to save these files to your persistant project storage for later use. See:
+# https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/running-analysis-jobs/rstudio#uploading-local-files-to-the-project
 ```
 
 ## Methods for computing derived biomarkers and ratios after adjusting for biological variation
@@ -95,12 +112,13 @@ An example workflow:
 
 ```R
 library(ukbnmr)
+library(data.table) # for fast reading and writing of csv files using fread() and fwrite()
 
 # First, if we haven't corrected for unwanted technical variation we do so
 # using the appropriate function (see help("remove_technical_variation")).
-decoded <- fread("path/to/decoded_ukbiobank_data.csv") # file save by ukbconv tool
+exported <- fread("path/to/exported_ukbiobank_phenotype_data.csv") # file saved by Table Exporter tool
 
-processed <- remove_technical_variation(decoded)
+processed <- remove_technical_variation(exported)
 tech_qc <- processed$biomarkers
 
 fwrite(tech_qc, file="path/to/nmr_biomarker_data.csv")
@@ -127,6 +145,10 @@ fwrite(bio_qc, file="path/to/nmr_biomarkers_adjusted_for_covariates.csv")
 # help("recompute_derived_biomarker_qc_flags")).
 biomarker_qc_flags <- recompute_derived_biomarker_qc_flags(nmr)
 fwrite(biomarker_qc_flags, file="path/to/biomarker_qc_flags.csv")
+
+# Remember to use the dx upload tool provided by the UK Biobank Research Analysis Platform
+# to save these files to your persistant project storage for later use. See:
+# https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/running-analysis-jobs/rstudio#uploading-local-files-to-the-project
 ```
 
 ## Algorithms for removing technical variation

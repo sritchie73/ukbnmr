@@ -230,6 +230,3 @@ The following figure illustrates the result of applying version 1 of the algorit
 And how this changes with version 2 of the algorithm:
       
 ![](vignettes/img/drift_over_time_correction_v2.png)
-
-
-

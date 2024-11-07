@@ -224,12 +224,14 @@ remove_technical_variation <- function(
   # Handle the handful of samples missing a sample measurement time. In the above
   # these default to 00:00:00, instead, impute these to the median time of measurement
   # for that spectrometer on that day
-  missing_time <- sinfo[, which(is.na(suppressWarnings(ymd_hms(Sample.Measured.Date.and.Time))))]
-  for (idx in missing_time) {
-    this_date <- sinfo[idx, Sample.Measured.Date]
-    this_spectrometer <- sinfo[idx, Spectrometer]
-    median_measure_time <- sinfo[Sample.Measured.Date == this_date & Spectrometer == this_spectrometer, median(Sample.Measured.Time)]
-    sinfo[idx, Sample.Measured.Time := median_measure_time]
+  if (version == 3L) {
+    missing_time <- sinfo[, which(is.na(suppressWarnings(ymd_hms(Sample.Measured.Date.and.Time))))]
+    for (idx in missing_time) {
+      this_date <- sinfo[idx, Sample.Measured.Date]
+      this_spectrometer <- sinfo[idx, Spectrometer]
+      median_measure_time <- sinfo[Sample.Measured.Date == this_date & Spectrometer == this_spectrometer, median(Sample.Measured.Time)]
+      sinfo[idx, Sample.Measured.Time := median_measure_time]
+    }
   }
 
   # Compute hours between sample prep and sample measurement

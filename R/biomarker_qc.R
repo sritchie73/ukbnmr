@@ -1,59 +1,69 @@
 #' Remove technical variation from NMR biomarker data in UK Biobank.
 #'
-#' @param x \code{data.frame} containing a dataset extracted by
-#' \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#' with \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank fields}
-#' containing the \href{https://research.nightingalehealth.com/biomarkers/}{Nightingale Health NMR metabolomics biomarker} data.
+#' @param x \code{data.frame} containing a tabular phenotype dataset extracted by the
+#' \href{https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/accessing-data/accessing-phenotypic-data#create-a-tsv-or-csv-file-using-table-exporter}{Table Exporter} tool on the
+#' \href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform}
+#' containing the project specific sample id (eid) and all fields (and instances)
+#' relating to the NMR metabolomics data (i.e. fields listed in showcase categories
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{220},
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=221}{221}, and
+#' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=222}{222}.
 #' @param remove.outlier.plates logical, when set to \code{FALSE} biomarker
 #' concentrations on outlier shipment plates (see details) are not set to
 #' missing but simply flagged in the \code{biomarker_qc_flags} \code{data.frame}
 #' in the returned \code{list}.
 #' @param skip.biomarker.qc.flags logical, when set to \code{TRUE} biomarker QC
 #' flags are not processed or returned.
-#' @param version version of the QC algorithm to apply. Set to 1 to use the
-#' algorithm as described in Ritchie S. C. \emph{et al.} 2023. Defaults to 2, to
-#' run the updated algorithm modified after examining the phase 2 NMR biomarker
-#' data released by UK Biobank in July 2023 (see details).
+#' @param version version of the QC algorithm to apply. Defaults to 3, the latest
+#' version of the algorithm (see details).
 #'
 #' @details
-#' A multi-step procedure (version 1) is applied to the raw biomarker data to
-#' remove the effects of technical variation:
-#' \enumerate{
-#'   \item{First biomarker data is filtered to the 107 biomarkers that
-#'   cannot be derived from any combination of other biomarkers.}
-#'   \item{Absolute concentrations are log transformed, with a small offset
-#'   applied to biomarkers with concentrations of 0.}
-#'   \item{Each biomarker is adjusted for the time between sample preparation
-#'   and sample measurement (hours).}
-#'   \item{Each biomarker is adjusted for systematic differences between rows
-#'   (A-H) on the 96-well shipment plates.}
-#'   \item{Each biomarker is adjusted for remaining systematic differences
-#'   between columns (1-12) on the 96-well shipment plates.}
-#'   \item{Each biomarker is adjusted for drift over time within each of the six
-#'   spectrometers. To do so, samples are grouped into 10 bins, within each
-#'   spectrometer, by the date the majority of samples on their respective
-#'   96-well plates were measured.}
-#'   \item{Regression residuals after the sequential adjustments are
-#'   transformed back to absolute concentrations.}
-#'   \item{Samples belonging to shipment plates that are outliers of
-#'   non-biological origin are identified and set to missing.}
-#'   \item{The 61 composite biomarkers and 81 biomarker ratios are recomputed
-#'   from their adjusted parts.}
-#'   \item{An additional 76 biomarker ratios of potential biological
-#'   significance are computed.}
-#' }
+#' Three versions of the QC algorithm have been developed. Version 1 was designed
+#' based on the first phase of data released to the public covering ~120,000
+#' UK Biobank participants. Version 2 made several improvements to the algorithm
+#' based on the subsequent second public release of data covering an additional
+#' ~150,000 participants. Version 3, the default, makes some further minor tweaks
+#' primarily so that the algorithm is compatible with the full public data
+#' release covering all ~500,000 participants.
+#'
+#' Details on the impact of these algorithms on technical variation in the latest
+#' UK Biobank data are provided in the package vignette and on the github readme.
+#'
+#' ## Version 1
+#' Setting version to 1 applies the algorithm as exactly described in Ritchie S.
+#' C. *et al.* _Sci Data_ 2023. In brief, this multi-step procedure applies the
+#' following steps in sequence:
+#'
+#' 1. First biomarker data is filtered to the 107 biomarkers that cannot be
+#'    derived from any combination of other biomarkers.
+#' 2. Absolute concentrations are log transformed, with a small offset
+#'    applied to biomarkers with concentrations of 0.
+#' 3. Each biomarker is adjusted for the time between sample preparation
+#'    and sample measurement (hours).
+#' 4. Each biomarker is adjusted for systematic differences between rows
+#'    (A-H) on the 96-well shipment plates.
+#' 5. Each biomarker is adjusted for remaining systematic differences
+#'    between columns (1-12) on the 96-well shipment plates.
+#' 6. Each biomarker is adjusted for drift over time within each of the six
+#'    spectrometers. To do so, samples are grouped into 10 bins, within each
+#'    spectrometer, by the date the majority of samples on their respective
+#'    96-well plates were measured.
+#' 7. Regression residuals after the sequential adjustments are
+#'    transformed back to absolute concentrations.
+#' 8. Samples belonging to shipment plates that are outliers of
+#'    non-biological origin are identified and set to missing.
+#' 9. The 61 composite biomarkers and 81 biomarker ratios are recomputed
+#'    from their adjusted parts.
+#' 10. An additional 76 biomarker ratios of potential biological
+#'     significance are computed.
 #'
 #' At each step, adjustment for technical covariates is performed using
 #' \link[MASS:rlm]{robust linear regression}. Plate row, plate column, and
 #' sample measurement date bin are treated as factors, using the group with the
 #' largest sample size as reference in the regression.
 #'
-#' Further details can be found in Ritchie S. C. \emph{et al.} Quality control
-#' and removal of technical variation of NMR metabolic biomarker data in
-#' ~120,000 UK Biobank participants, \emph{Sci Data} \strong{10}, 64 (2023). doi:
-#' \href{https://www.nature.com/articles/s41597-023-01949-y}{10.1038/s41597-023-01949-y}
-#'
-#' Version 2 of the algorithm (the default) modifies the above procedure to (1)
+#' ## Version 2
+#' Version 2 of the algorithm modifies the above procedure to (1)
 #' adjust for well and column within each processing batch separately in steps 4
 #' and 5, and (2) in step 6 instead of splitting samples into 10 bins per
 #' spectrometer uses a fixed bin size of approximately 2,000 samples per bin,
@@ -72,7 +82,19 @@
 #' concentrations akin to a spectrometer recalibration event most strongly
 #' observed for alanine concentrations.
 #'
-#' This function takes 20-30 minutes to run and requires at least 14 GB of RAM.
+#' ## Version 3
+#' Version 3 of the algorithm makes two further minor changes:
+#'
+#' 1. Imputation of missing sample preparation times has been improved. Previously,
+#'    any samples missing time of measurement (N=3 in the phase 2 public release)
+#'    had their time of measurement set to 00:00. In version 3, the time of measurement
+#'    is set to the median time of measurement for that spectrometer on that day,
+#'    which is between 12:00-13:00, instead of 00:00.
+#' 2. Underlying code for adjusting drift over time has been modified to accommodate
+#'    the phase 3 public release, which includes one spectrometer with ~2,500 samples.
+#'    Version 2 of the algorithm would split this into two bins, whereas version 3
+#'    keeps this as a single bin to better match the bin sizes of the rest of the
+#'    spectrometers.
 #'
 #' @return a \code{list} containing three \code{data.frames}: \describe{
 #'   \item{biomarkers}{A \code{data.frame} with column names "eid",
@@ -120,8 +142,8 @@
 #'         each biomarker. "Lower.Limit" and "Upper.Limit" give the values below
 #'         and above which plates are flagged as outliers based on their plate
 #'         median. See publication for more details.}
-#'   \item{algorithm_version}{Version of the algorithm run, currently either 1
-#'         or 2.}
+#'   \item{algorithm_version}{Version of the algorithm run, either 1, 2, or 3
+#'         (default).}
 #' }
 #'
 #' @examples

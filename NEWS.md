@@ -1,5 +1,26 @@
 # NEWS
 
+## Version 3.0.0
+
+ - Fixed bug where empty character strings were incorrectly not interpreted as 
+   missing data  (see https://github.com/sritchie73/ukbnmr/issues/10).
+
+ - Added dependency to the lubridate package to enable more flexible parsing of
+   date-time formats, which differ between data extraction and data reading 
+   methods (see https://github.com/sritchie73/ukbnmr/issues/10).
+
+ - Updated package documentation to reflect that the UK Biobank Research Analysis
+   Platform data format is what will now be encountered by analysts due to UK 
+   Biobank policy changes on data access and downloads.
+
+ - Updated package to work with new data format on the UK Biobank Research 
+   Analysis Platform.
+
+## Version 2.2.2
+
+ - Added progress messages to the long-running remove_technical_variation() 
+   function.
+
 ## Version 2.2.1
 
  - Fixed unexpected warning about NAs arising due to mislabelling of well 

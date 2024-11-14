@@ -2,8 +2,6 @@
 
 export(compute_extended_ratio_qc_flags)
 export(compute_extended_ratios)
-export(compute_nightingale_ratio_qc_flags)
-export(compute_nightingale_ratios)
 export(extract_biomarker_qc_flags)
 export(extract_biomarkers)
 export(extract_sample_qc_flags)

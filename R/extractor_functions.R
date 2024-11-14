@@ -4,9 +4,8 @@
 #' \href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{NMR metabolomics fields}
 #' extracted by the Table Exporter tool on the
 #' \href{https://ukbiobank.dnanexus.com/landing}{UK Biobank Research Analysis Platform},
-#' this function extracts the
-#' \href{https://research.nightingalehealth.com/biomarkers/}{NMR metabolomics biomarkers}
-#' giving them short variable names as listed in the \code{\link{nmr_info}} information data sheet
+#' this function extracts the NMR metabolomics biomarkers giving them short variable
+#' names as listed in the \code{\link{nmr_info}} information data sheet
 #' available in this package.
 #'
 #' @details

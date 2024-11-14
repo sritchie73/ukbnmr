@@ -91,13 +91,6 @@ and removal of technical variation of NMR metabolic biomarker data in
 
 \section{Methods for computing biomarker ratios}{
 
-The \code{\link{compute_nightingale_ratios}()} function will compute the
-\href{https://research.nightingalehealth.com/biomarkers/}{81 Nightingale Health biomarker ratios}
-that were missing prior to the August 2021 update of
-\href{https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220}{UK Biobank}.
-A companion function, \code{\link{compute_nightingale_ratio_qc_flags}()} will
-aggregate the QC flags for the biomarkers underlying each ratio.
-
 The \code{\link{compute_extended_ratios}()} function will compute an extended
 set of biomarker ratios expanding on the biomarkers available directly from
 the Nightingale platform. A companion function, \code{\link{compute_extended_ratio_qc_flags}()},
@@ -106,9 +99,10 @@ will aggregate the QC flags for the biomarkers underlying each ratio.
 The \code{\link{recompute_derived_biomarkers}()} function will recompute all
 composite biomarkers and ratios from 107 non-derived biomarkers, which is
 useful for ensuring data consistency when adjusting for unwanted biological
-variation. A companion function, \code{\link{recompute_derived_biomarker_qc_flags}()} will
-aggregate the QC flags for the biomarkers underlying each composite biomarker
-and ratio.
+variation. This includes the extended biomarker rations computed by the
+\code{\link{compute_extended_ratios}()} function. A companion function,
+\code{\link{recompute_derived_biomarker_qc_flags}()} will aggregate the QC
+flags for the biomarkers underlying each composite biomarker and ratio.
 }
 
 \seealso{

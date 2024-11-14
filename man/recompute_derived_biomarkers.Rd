@@ -40,8 +40,6 @@ bio_qc <- recompute_derived_biomarkers(ukb_data)
 \code{\link{nmr_info}} for list of computed biomarker ratios,
   \code{\link{recompute_derived_biomarker_qc_flags}()} for obtaining an
   aggregate of the biomarker QC flags from the biomarkers underlying each
-  computed biomarker, and \code{\link{extract_biomarkers}()} for details on how
-  raw data from
-  \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-  is processed.
+  computed biomarker, and \code{\link{extract_biomarkers}()} for details on
+  how the raw field data extracted by the Table Exporter tool is processed.
 }

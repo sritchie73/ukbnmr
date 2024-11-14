@@ -72,8 +72,8 @@ The `remove_technical_variation()` function removes additional technical variati
 
 Note that the no prefiltering of samples or columns should be performed prior to running this function: the algorithms used for removing technical variation expect all the data to be present.
 
-This function takes 20-30 minutes to run, and requires at least 16 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
-      
+This function takes 40 minutes to run, and requires at least 32 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
+
 An example workflow for using this function and saving the output for loading into future R sessions or other programs:
 
 ```{r eval=FALSE}

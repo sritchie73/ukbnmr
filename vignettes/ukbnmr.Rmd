@@ -24,13 +24,13 @@ This package also works with datasets predating the Research Analysis Platform, 
 
 This package also provides a `data.frame` of biomarker information, loaded as `nmr_info`, and a `data.frame` of sample processing information, loaded as `sample_qc_info`. See `help("nmr_info")` and `help("sample_qc_info")` for details on column contents. 
 
-Note several updates have been made to the package to reflect the new tranche of NMR data released by UK Biobank in July 2023 covering ~275,000 UK Biobank participants. See the sections below on (1) [updates made to the algorithm for removing technical varation](#algorithms-for-removing-technical-variation), (2) [justification for algorithm modifications based on our exploration of the new tranche of data](#justification-for-algorithm-updates), and (3) [an overview of the impact of technical varation and its removal on the new tranche of data](#technical-variation-in-the-phase-2-release-of-uk-biobank-nmr-data).
-
 ## Citation
 
 If using this package to remove additional technical variation or compute additional biomarker ratios, please cite:
 
 Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, <ins>Sci Data</ins> *10* 64 (2023). doi: [10.1038/s41597-023-01949-y](https://www.nature.com/articles/s41597-023-01949-y).
+
+Note that several updates have been made to the package and algorithm based on subsequent releases of NMR metabolomic biomarker data that have expanded to cover all ~500,000 UK Biobank participants with blood samples. These updates are described in more detail in the [Algorithms for removing technical varation](#algorithms-for-removing-technical-variation) section below. The impact of technical variation and its removal in the full UK Biobank data are also shown in the [Technical variation in the full UK Biobank NMR data](#technical-variation-in-the-full-uk-biobank-nmr-data) section below.
 
 Citation is appreciated, but not expected, if simply using the data extraction functions for convenience to extract the NMR biomarker data and associated information as-is into analysis-ready data.frames. 
 
@@ -85,7 +85,7 @@ The `remove_technical_variation()` function removes additional technical variati
 
 Note that the no prefiltering of samples or columns should be performed prior to running this function: the algorithms used for removing technical variation expect all the data to be present.
 
-This function takes 20-30 minutes to run, and requires at least 16 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
+This function takes 40 minutes to run, and requires at least 32 GB of RAM, so you will want to save the output, rather than incorporate this function into your analysis scripts.
       
 An example workflow for using this function and saving the output for loading into future R sessions or other programs:
 
@@ -173,15 +173,15 @@ fwrite(biomarker_qc_flags, file="path/to/biomarker_qc_flags.csv")
 
 ## Algorithms for removing technical variation
 
-The algorithm used for removing this technical variation is based on our previously described approach published in [Ritchie *et al.* 2023](https://www.nature.com/articles/s41597-023-01949-y). 
+Three versions of the QC algorithm have been developed:
 
-Two versions of the algorithm are currently implemented: version 1, which was developed based on the characterisation of the variation present in the phase 1 public release of the UK Biobank NMR data and is as described in the publication, and version 2, which has been developed based on our subsequent characterisation of the technical variation present in the phase 2 public release data (see [section below](#technical-variation-in-the-phase-2-release-of-uk-biobank-nmr-data) for details). 
-
-Version 2 of the algorithm is new as of `ukbnmr` package version 2.0, and is the default when running `remove_technical_variation()`.
+1. Version 1 was designed based on the first phase of data released to the public covering ~120,000 UK Biobank participants. 
+2. Version 2 made several improvements to the algorithm based on the subsequent second public release of data covering an additional ~150,000 participants.
+3. Version 3 **(the default)** makes some further minor tweaks primarily so that the algorithm is compatible with the full public data release covering all ~500,000 participants.
 
 ### Algorithm version 1
 
-Version 1 of the algorithm applies a multi-step process to remove unwanted technical variation: 
+Version 1 of the algorithm is as described in [Ritchie *et al.* 2023](https://www.nature.com/articles/s41597-023-01949-y), which was developed based on the technical variation observed in the NMR metabolomics data in the first ~120,000 participants that were measured. In brief, this multi-step procedure applies the following steps in sequence:
 
   1. First biomarker data is filtered to the 107 biomarkers that cannot be derived from any combination of other biomarkers.
   2. Absolute concentrations are log transformed, with a small offset applied to biomarkers with concentrations of 0.
@@ -195,33 +195,55 @@ Version 1 of the algorithm applies a multi-step process to remove unwanted techn
   9. The 61 composite biomarkers and 81 biomarker ratios are recomputed from their adjusted parts.
   10. An additional 76 biomarker ratios of potential biological significance are computed.
 
-
 ### Algorithm version 2
 
-Version 2 of the algorithm (the default) modifies this algorithm:
+Version 2 of the algorithm modifies this algorithm:
 
   - Steps 4 and 5 above are performed within each processing batch
   - Step 6 above is modified to:
 
       1. group samples into bins of ~2,000 samples 
       2. hard codes a bin split on spectrometer 5 between plates 0490000006726 and 0490000006714
+      
+The first modification was made as applying version 1 of the algorithm to the combined data from the first and second tranche of measurements revealed introduced stratification by well position when examining the correctedconcentrations in each data release separately.
 
-These changes have been made based on our exploration of the technical variation in the phase 2 release (July 2023) of the UK Biobank NMR data (see [section below](#justification-for-algorithm-updates) for details).
+The second modification was made to ensure consistent bin sizes across data releases when correcting for drift over time. Otherwise, spectrometers used in multiple data releases would have different bin sizes when adjusting different releases. A bin split is also hard coded on spectrometer 5 between plates 0490000006726 and 0490000006714 which correspond to a large change in concentrations akin to a spectrometer recalibration event most strongly observed for alanine concentrations.
+
+### Algorithm version 3
+
+Version 3 of the algorithm makes two further minor changes:
+
+ 1. Imputation of missing sample preparation times has been improved. Previously, any samples missing time of measurement (N=3 in the phase 2 public release) had their time of measurement set to 00:00. In version 3, the time of measurement is set to the median time of measurement for that spectrometer on that day, which is between 12:00-13:00, instead of 00:00.
+ 
+ 2. Underlying code for adjusting drift over time has been modified to accommodate the phase 3 public release, which includes one spectrometer with ~2,500 samples. Version 2 of the algorithm would split this into two bins, whereas version 3 keeps this as a single bin to better match the bin sizes of the rest of the spectrometers.
+
+## Technical variation in the full UK Biobank NMR data
+
+The phase 3 release (January 2025) of the UK Biobank data in covers all ~500,000 UK Biobank participants, including the ~122,000 measured as part of the phase 1 release (June 2021) and the ~170,000 measured as part of the phase 2 release (July 2023).
+
+The following figures below summarise the impact of the possible sources of variation on this updated dataset, and the impact of applying version 3 of our algorithm for removing technical variation, similar to what was shown in Figure 2 and Figure 7 of [Ritchie *et al.* 2023](https://www.nature.com/articles/s41597-023-01949-y) for the phase 1 release data: 
+
+![Boxplots showing variance explained (r<sup>2</sup> in linear regression) across the 249 NMR metabolic biomarkers by each possible technical covariate in the January 2025 release of the UK Biobank NMR data (left) and after application of version 3 of the algorithm for removing technical variation. The vertical red dashed line indicates 1% variance explained.](img/r2_explained_v3.png){width=98%}
+
+![Repeatability improves amongst 11,483 blind duplicates (samples measured twice or thrice (N=4) with randomised sample identifier so that Nightingale Health were blinded to the identity of the repeated samples at time of sample measurement).](img/repeatability_v3.png){width=98%}
+
+![Power for genetic associations increases after removing technical variation. Here, scatterplots compare the P-values from GWAS of 8.5 million common SNPs (MAF > 1%, INFO > 0.4) for selected biomarkers before removal of technical variation (x-axes) and after removal of technical variation with version 3 of our algorithm (y-axes). The dashed line on the diagonal shows y=x, where P-values are identical for both the original and post-QC concentrations. GWAS were performed in the 373,342 unrelated ["White British" genetic ancestry subset](https://www.nature.com/articles/s41586-018-0579-z) adjusting for age, sex, genotyping chip, and 10 genetic PCs as described in the Methods section of [Ritchie *et al.* 2023](https://www.nature.com/articles/s41597-023-01949-y). Biomarkers shown here are those most greatly affected by specific sources of technical variation: Alanine (drift over time within spectrometer), Albumin (outlier plates of undeterminable non-biological origin), Glycine (stratification by well position), and Histidine (Sample degredation time).](img/gwas_improvement_v3.png){width=98%}
+
+Extended diagnostic plots showing the impact of technical variation and its removal on all biomarkers are available to download on FigShare at [10.6084/m9.figshare.27730101](https://doi.org/10.6084/m9.figshare.27730101).
 
 ## Technical variation in the phase 2 release of UK Biobank NMR data
 
-The July 2023 release of the UK Biobank NMR data covers ~275,000 UK Biobank participants, including ~122,000 measured as part of the phase 1 release (June 2021).
+The July 2023 release of the UK Biobank NMR data covered ~275,000 UK Biobank participants, including ~122,000 measured as part of the phase 1 release (June 2021).
 
 The following figures below summarise the impact of the possible sources of variation on this updated dataset, and the impact of applying version 2 of our algorithm for removing technical variation, similar to what was shown in Figure 2 of [Ritchie *et al.* 2023](https://www.nature.com/articles/s41597-023-01949-y) for the phase 1 release data: 
 
 ![Boxplots showing variance explained (r<sup>2</sup> in linear regression) across the 249 NMR metabolic biomarkers by each possible technical covariate in the July 2023 release of the UK Biobank NMR data (left) and after application of version 2 of the algorithm for removing technical variation. The vertical red dashed line indicates 1% variance explained.](img/r2_explained_v2.png){width=98%}
 
+![Repeatability improves amongst 6,811 blind duplicates (samples measured twice or thrice (N=4) with randomised sample identifier so that Nightingale Health were blinded to the identity of the repeated samples at time of sample measurement).](img/repeatability_v2.png){width=98%}
 
-![Repeatability improves amongst 6,811 blind duplicates (samples measured twice or thrice (N=4) with randomised sample identifier so that Nightingale Health were blinded to the identity of the repeated samples at time of sample measurement)](img/repeatability_v2.png){width=98%}
+Extended diagnostic plots showing the impact of technical variation and its removal on all biomarkers are available to download on FigShare at [10.6084/m9.figshare.23686407](https://doi.org/10.6084/m9.figshare.23686407).
 
-Extended diagnostic plots for all biomarkers are available to download on FigShare at [10.6084/m9.figshare.23686407](https://doi.org/10.6084/m9.figshare.23686407).
-
-### Justification for algorithm updates
+### Justification for algorithm version 2 updates
 
 Our exploration of this updated data release (advance access under UK Biobank application 30418) revealed several changes were needed to our existing algorithm for removing technical variation developed on the phase 1 data.
 

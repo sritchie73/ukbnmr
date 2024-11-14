@@ -2,6 +2,9 @@
 
 ## Version 3.0.0
 
+ - Updated README page and vignette with details on technical variation in full
+   UK Biobank data release.
+
  - Fixed bug where empty character strings were incorrectly not interpreted as 
    missing data  (see https://github.com/sritchie73/ukbnmr/issues/10).
 

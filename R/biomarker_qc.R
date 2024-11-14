@@ -70,9 +70,10 @@
 #' ensuring samples measured on the same plate and plates measured on the same
 #' day are grouped into the same bin.
 #'
-#' The first modification was made as applying version 1 of the algorithm
-#' revealed introduced stratification by well position when examining the
-#' corrected concentrations in each data release separately.
+#' The first modification was made as applying version 1 of the algorithm to the
+#' combined data from the first and second tranche of measurements revealed
+#' introduced stratification by well position when examining the corrected
+#' concentrations in each data release separately.
 #'
 #' The second modification was made to ensure consistent bin sizes across data
 #' releases when correcting for drift over time. Otherwise, spectrometers used

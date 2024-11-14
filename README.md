@@ -2,7 +2,11 @@
 
 This package provides utilities for working with the [UK Biobank NMR metabolomics data](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220).
 
-There are three groups of functions in this package: (1) [data extraction](#data-extraction-functions), (2) [removal of technical variation](#removal-of-technical-variation), and (3) [recomputing derived biomarkers and computing additional biomarker ratios after adjustment for biological covariates](#methods-for-computing-derived-biomarkers-and-ratios-after-adjusting-for-biological-variation).
+There are three groups of functions in this package:
+
+1. [Data extraction](#data-extraction-functions)
+2. [Removal of technical variation](#removal-of-technical-variation), 
+3. [Recomputing derived biomarkers and computing additional biomarker ratios after adjustment for biological covariates](#methods-for-computing-derived-biomarkers-and-ratios-after-adjusting-for-biological-variation).
 
 All functions are designed to be applied directly to the UK Biobank phenotype data on the [UK Biobank Research Analysis Platform](https://ukbiobank.dnanexus.com/landing) after the NMR metabolomics fields have been extracted using the [Table Exporter](https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/accessing-data/accessing-phenotypic-data#create-a-tsv-or-csv-file-using-table-exporter) tool. 
 

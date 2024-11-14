@@ -1,12 +1,17 @@
 # NEWS
 
+## Version 3.1.0
+
+ - Added worked example of adjusting for biological covariates and recomputing
+   derived biomarkers (see https://github.com/sritchie73/ukbnmr/issues/7).
+
 ## Version 3.0.0
 
  - Updated README page and vignette with details on technical variation in full
    UK Biobank data release.
 
  - Fixed bug where empty character strings were incorrectly not interpreted as 
-   missing data  (see https://github.com/sritchie73/ukbnmr/issues/10).
+   missing data (see https://github.com/sritchie73/ukbnmr/issues/10).
 
  - Added dependency to the lubridate package to enable more flexible parsing of
    date-time formats, which differ between data extraction and data reading 

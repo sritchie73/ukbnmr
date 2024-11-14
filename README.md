@@ -48,11 +48,12 @@ The `extract_sample_qc_flags()` function similarly returns a `data.frame` with o
 
 An example workflow for extracting these data and saving them for later use:
 
-```R
+```{r eval=FALSE}
 library(ukbnmr)
 library(data.table) # for fast reading and writing of csv files using fread() and fwrite()
 
-exported <- fread("path/to/exported_ukbiobank_phenotype_data.csv") # file saved by Table Exporter tool
+# Load exported field data saved by the Table Exporter tool on the RAP
+exported <- fread("path/to/exported_ukbiobank_phenotype_data.csv")
 
 nmr <- extract_biomarkers(exported)
 biomarker_qc_flags <- extract_biomarker_qc_flags(exported)
@@ -61,11 +62,9 @@ sample_qc_flags <- extract_sample_qc_flags(exported)
 fwrite(nmr, file="path/to/nmr_biomarker_data.csv")
 fwrite(biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
 fwrite(sample_qc_flags, file="path/to/nmr_sample_qc_flags.csv")
-
-# Remember to use the dx upload tool provided by the UK Biobank Research Analysis Platform
-# to save these files to your persistant project storage for later use. See:
-# https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/running-analysis-jobs/rstudio#uploading-local-files-to-the-project
 ```
+
+Remember to use the `dx upload` tool provided by the UK Biobank Research Analysis Platform to [save these files to your persistant project storage](https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/running-analysis-jobs/rstudio#uploading-local-files-to-the-project) for later use.
 
 ## Removal of technical variation
 
@@ -77,11 +76,12 @@ This function takes 20-30 minutes to run, and requires at least 16 GB of RAM, so
       
 An example workflow for using this function and saving the output for loading into future R sessions or other programs:
 
-```R
+```{r eval=FALSE}
 library(ukbnmr)
 library(data.table) # for fast reading and writing of csv files using fread() and fwrite()
 
-exported <- fread("path/to/exported_ukbiobank_phenotype_data.csv") # file saved by Table Exporter tool
+# Load exported field data saved by the Table Exporter tool on the RAP
+exported <- fread("path/to/exported_ukbiobank_phenotype_data.csv")
 
 processed <- remove_technical_variation(exported) 
 
@@ -90,11 +90,9 @@ fwrite(processed$biomarker_qc_flags, file="path/to/nmr_biomarker_qc_flags.csv")
 fwrite(processed$sample_processing, file="path/to/nmr_sample_qc_flags.csv")
 fwrite(processed$log_offset, file="path/to/nmr_biomarker_log_offset.csv")
 fwrite(processed$outlier_plate_detection, file="path/to/outlier_plate_info.csv")
-
-# Remember to use the dx upload tool provided by the UK Biobank Research Analysis Platform
-# to save these files to your persistant project storage for later use. See:
-# https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/running-analysis-jobs/rstudio#uploading-local-files-to-the-project
 ```
+
+Remember to use the `dx upload` tool provided by the UK Biobank Research Analysis Platform to [save these files to your persistant project storage](https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/running-analysis-jobs/rstudio#uploading-local-files-to-the-project) for later use.
 
 ## Algorithms for removing technical variation
 
@@ -221,7 +219,6 @@ A worked example of recomputing derived biomarkers after adjusting for age, sex,
 library(ukbnmr)
 library(data.table) # for fast reading and writing of csv files using fread() and fwrite()
 library(MASS) # Robust linear regression
-
 
 # Load exported field data saved by the Table Exporter tool on the RAP
 exported <- fread("path/to/exported_ukbiobank_phenotype_data.csv")

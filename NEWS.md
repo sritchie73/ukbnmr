@@ -1,5 +1,12 @@
 # NEWS
 
+## Version 3.2.0
+
+ - Removed broken URLs flagged by CRAN submission
+ 
+ - Removed deprecated functionality that is no longer relevant since the UK 
+   Biobank data refresh in July 2023.
+
 ## Version 3.1.0
 
  - Added worked example of adjusting for biological covariates and recomputing

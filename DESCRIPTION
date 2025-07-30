@@ -27,7 +27,7 @@ Imports:
   MASS
 Suggests:
     knitr,
-    rmarkdown,
-    roxygen2
+    rmarkdown
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
+Config/Needs/development: roxygen2

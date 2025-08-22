@@ -72,7 +72,7 @@ hours_decimal <- function(time) {
 
 # Compute durations between events (hours)
 duration_hours <- function(days1, time1, days2, time2) {
-  (days2 - days1)*24 + (hours_decimal(time2) - hours_decimal(time1))
+  (as.double(days2 - days1))*24 + (hours_decimal(time2) - hours_decimal(time1))
 }
 
 # Function for converting a set of numbers to a factor, ordering levels by group size

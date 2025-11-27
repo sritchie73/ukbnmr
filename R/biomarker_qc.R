@@ -257,6 +257,19 @@ remove_technical_variation <- function(
     }
   }
 
+  # In the V20 data release 182 samples are missing both a sample preparation
+  # date and sample preparation time, which are needed to compute hours between
+  # sample prep and sample measurement. Fortunately, cross-referencing these
+  # samples with the extended advance access data made available to us by
+  # Nightingale Health via application 30418 revealed that all 182 samples share
+  # the same sample preparation date and time of 2022-12-20 06:39:03, which makes
+  # it trivial to recover this information. N.b. this date+time stamp is not
+  # unique to these 182 samples, 33,852 samples in the advance access data
+  # (which includes a small number of technical replicates and blind duplicate
+  # samples) share this date+time stamp.
+  sinfo[is.na(Sample.Prepared.Date), Sample.Prepared.Date := as.IDate("2022-12-20")]
+  sinfo[is.na(Sample.Prepared.Time), Sample.Prepared.Time := as.ITime("06:39:03")]
+
   # Compute hours between sample prep and sample measurement
   sinfo[, Prep.to.Measure.Duration := duration_hours(
     Sample.Prepared.Date, Sample.Prepared.Time,

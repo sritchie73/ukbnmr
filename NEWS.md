@@ -1,5 +1,22 @@
 # NEWS
 
+## Version 3.3.0
+
+ - Updated package to work with UK Biobank V20 data release. The V20 data 
+   release included 182 samples missing sample preparation date and time, 
+   which are needed during the QC procedure. Fortunately cross-referencing 
+   the V20 data release with the advance access data in UK Biobank application 
+   30418 provided to us directly by Nightingale Health revealed that all 182
+   samples shared the same date+time of sample preparation making it possible
+   to hard code this date+time stamp into the QC procedure for missing samples.
+   
+ - Removed unecessary dependency in DESCRIPTION to roxygen2 package (this 
+   package is only required to build the package manuals during package 
+   development, and is not required by end users on package installation).
+   
+ - Updated computation of hours between sample preparation and sample 
+   measurement for forward compatibility with future lubridate updates.
+
 ## Version 3.2.0
 
  - Removed broken URLs flagged by CRAN submission

@@ -86,12 +86,22 @@
 #' ## Version 3
 #' Version 3 of the algorithm makes two further minor changes:
 #'
-#' 1. Imputation of missing sample preparation times has been improved. Previously,
+#' 1. Imputation of missing sample measurement times has been improved. Previously,
 #'    any samples missing time of measurement (N=3 in the phase 2 public release)
 #'    had their time of measurement set to 00:00. In version 3, the time of measurement
 #'    is set to the median time of measurement for that spectrometer on that day,
 #'    which is between 12:00-13:00, instead of 00:00.
-#' 2. Underlying code for adjusting drift over time has been modified to accommodate
+#' 2. Samples missing sample preparation dates and times (N=182 in the V20 UK
+#'    Biobank data release) use their sample centrifugation date and time as a
+#'    proxy to allow adjustment for time between sample prep and sample
+#'    measurement. Sample centrifugation always takes place a short time after
+#'    sample preparation. As sample centrifugation date and time is not made
+#'    available via UK Biobank, this data and time is hard coded; all samples
+#'    missing sample preparation date and time had a sample centrifugation date
+#'    and time of 2022-12-20 06:39:03 in the extended advance access data, so
+#'    we use this date and time for any samples missing sample preparation date
+#'    and time.
+#' 3. Underlying code for adjusting drift over time has been modified to accommodate
 #'    the phase 3 public release, which includes one spectrometer with ~2,500 samples.
 #'    Version 2 of the algorithm would split this into two bins, whereas version 3
 #'    keeps this as a single bin to better match the bin sizes of the rest of the
@@ -259,16 +269,17 @@ remove_technical_variation <- function(
 
   # In the V20 data release 182 samples are missing both a sample preparation
   # date and sample preparation time, which are needed to compute hours between
-  # sample prep and sample measurement. Fortunately, cross-referencing these
-  # samples with the extended advance access data made available to us by
-  # Nightingale Health via application 30418 revealed that all 182 samples share
-  # the same sample preparation date and time of 2022-12-20 06:39:03, which makes
-  # it trivial to recover this information. N.b. this date+time stamp is not
-  # unique to these 182 samples, 33,852 samples in the advance access data
-  # (which includes a small number of technical replicates and blind duplicate
-  # samples) share this date+time stamp.
-  sinfo[is.na(Sample.Prepared.Date), Sample.Prepared.Date := as.IDate("2022-12-20")]
-  sinfo[is.na(Sample.Prepared.Time), Sample.Prepared.Time := as.ITime("06:39:03")]
+  # sample prep and sample measurement. In the advance access data, we also had
+  # access to date+time of sample centrifugation, which always takes place a
+  # short time after sample prep, so we substituted that date+time in as a proxy
+  # for sample preparation date+time to QC the data. These samples all shared a
+  # sample centrifugation date and time of 2022-12-20 06:39:03, which makes it
+  # possible to hard-code this value in the package to substitute in for these
+  # samples, as centrifugation date+time is not released by UK Biobank.
+  if (version == 3L) {
+    sinfo[is.na(Sample.Prepared.Date), Sample.Prepared.Date := as.IDate("2022-12-20")]
+    sinfo[is.na(Sample.Prepared.Time), Sample.Prepared.Time := as.ITime("06:39:03")]
+  }
 
   # Compute hours between sample prep and sample measurement
   sinfo[, Prep.to.Measure.Duration := duration_hours(

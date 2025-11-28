@@ -1,5 +1,25 @@
 # NEWS
 
+## Version 3.3.1
+
+ - Updated documentation to better reflect the reason for using a hard-coded
+   sample preparation date and time for samples missing that data. Further 
+   digging revealed these samples were missing that data in the advance access
+   data, and that we had substituted in sample centrifugation date and time in
+   our advance access QC for these samples, as sample centrifugation always 
+   takes place a short time after sample preparation. Sample centrifugation date
+   and time is extended technical information that is not currently released by
+   UK Biobank. All samples missing preparation date and time had the same 
+   centrifugation date and time (along with ~33,000 other samples). We therefore
+   use a hard coded date and time (2022-12-20 06:39:03) for samples missing
+   sample preparation date and time information in the package.
+   
+ - Imputation of missing sample preparation date and time with the hard coded
+   sample centrifugation date and time is now gated behind a check for algorithm
+   version, to accurately reflect that this is a new change to the algorithm for
+   the 3rd and final tranche of data. No samples is previous tranches of data 
+   released were missing sample preparation date and time.
+   
 ## Version 3.3.0
 
  - Updated package to work with UK Biobank V20 data release. The V20 data 

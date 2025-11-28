@@ -155,12 +155,22 @@ observed for alanine concentrations.
 ## Version 3
 Version 3 of the algorithm makes two further minor changes:
 
-1. Imputation of missing sample preparation times has been improved. Previously,
+1. Imputation of missing sample measurement times has been improved. Previously,
    any samples missing time of measurement (N=3 in the phase 2 public release)
    had their time of measurement set to 00:00. In version 3, the time of measurement
    is set to the median time of measurement for that spectrometer on that day,
    which is between 12:00-13:00, instead of 00:00.
-2. Underlying code for adjusting drift over time has been modified to accommodate
+2. Samples missing sample preparation dates and times (N=182 in the V20 UK
+   Biobank data release) use their sample centrifugation date and time as a
+   proxy to allow adjustment for time between sample prep and sample
+   measurement. Sample centrifugation always takes place a short time after
+   sample preparation. As sample centrifugation date and time is not made
+   available via UK Biobank, this data and time is hard coded; all samples
+   missing sample preparation date and time had a sample centrifugation date
+   and time of 2022-12-20 06:39:03 in the extended advance access data, so
+   we use this date and time for any samples missing sample preparation date
+   and time.
+3. Underlying code for adjusting drift over time has been modified to accommodate
    the phase 3 public release, which includes one spectrometer with ~2,500 samples.
    Version 2 of the algorithm would split this into two bins, whereas version 3
    keeps this as a single bin to better match the bin sizes of the rest of the

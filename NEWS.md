@@ -1,5 +1,13 @@
 # NEWS
 
+## Version 3.3.2
+
+ - Resolved new CRAN NOTE about mis-specified Authors@R field
+ 
+ - Fixed internal bug leading the internal function get_sample_qc_flag_values()
+   to crash when data was extracted in non-raw format by Table Exporter 
+   (see https://github.com/sritchie73/ukbnmr/issues/17)
+ 
 ## Version 3.3.1
 
  - Updated documentation to better reflect the reason for using a hard-coded

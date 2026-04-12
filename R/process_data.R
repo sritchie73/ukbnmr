@@ -251,7 +251,7 @@ get_sample_qc_flag_values <- function(x) {
     if (is.integer(x$Measurement.Quality.Flagged)) {
       x[, Measurement.Quality.Flagged := as.character(Measurement.Quality.Flagged)]
       x[measure_quality_map, on = list(Measurement.Quality.Flagged=integer_rep), Measurement.Quality.Flagged := flag]
-    } else if (is.factor(x$Spectrometer)) {
+    } else if (is.factor(x$Measurement.Quality.Flagged)) {
       x[, Measurement.Quality.Flagged := as.character(Measurement.Quality.Flagged)]
     }
   }

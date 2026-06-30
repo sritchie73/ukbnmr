@@ -1462,3 +1462,129 @@ extended_ratios_compute <- function(x) {
   # Finished
   return(x)
 }
+
+lipoprotein_fatty_acids_compute <- function(x) {
+  # Silence CRAN NOTES about undefined global variables (columns in the scope of x)
+  XXL_VLDL_FA <- XL_VLDL_FA <- L_VLDL_FA <- M_VLDL_FA <- S_VLDL_FA <-
+    XS_VLDL_FA <- IDL_FA <- L_LDL_FA <- M_LDL_FA <- S_LDL_FA <- XL_HDL_FA <-
+    L_HDL_FA <- M_HDL_FA <- S_HDL_FA <- VLDL_FA <- LDL_FA <- HDL_FA <-
+    XXL_VLDL_CE <- XXL_VLDL_PL <- XXL_VLDL_TG <- XL_VLDL_CE <- XL_VLDL_PL <-
+    XL_VLDL_TG <- L_VLDL_CE <- L_VLDL_PL <- L_VLDL_TG <- M_VLDL_CE <-
+    M_VLDL_PL <- M_VLDL_TG <- S_VLDL_CE <- S_VLDL_PL <- S_VLDL_TG <-
+    XS_VLDL_CE <- XS_VLDL_PL <- XS_VLDL_TG <- IDL_CE <- IDL_PL <- IDL_TG <-
+    L_LDL_CE <- L_LDL_PL <- L_LDL_TG <- M_LDL_CE <- M_LDL_PL <- M_LDL_TG <-
+    S_LDL_CE <- S_LDL_PL <- S_LDL_TG <- XL_HDL_CE <- XL_HDL_PL <- XL_HDL_TG <-
+    L_HDL_CE <- L_HDL_PL <- L_HDL_TG <- M_HDL_CE <- M_HDL_PL <- M_HDL_TG <-
+    S_HDL_CE <- S_HDL_PL <- S_HDL_TG <- VLDL_CE <- VLDL_PL <- VLDL_TG <-
+    LDL_CE <- LDL_PL <- LDL_TG <- HDL_CE <- HDL_PL <- HDL_TG <- NULL
+
+  # Compute fatty acids within each lipoprotein sublclass as FA = CE + 2PL + 3TG
+  # https://pubs.acs.org/doi/full/10.1021/acs.jproteome.6c00107
+  if (exists("XXL_VLDL_CE", x) && exists("XXL_VLDL_PL", x) && exists("XXL_VLDL_TG", x)) {
+    x[, XXL_VLDL_FA := XXL_VLDL_CE + 2*XXL_VLDL_PL + 3*XXL_VLDL_TG]
+  } else if (!(exists("XXL_VLDL_CE", x) && exists("XXL_VLDL_PL", x) && exists("XXL_VLDL_TG", x)) && exists("XXL_VLDL_FA", x)) {
+    x[, XXL_VLDL_FA := NULL]
+  }
+
+  if (exists("XL_VLDL_CE", x) && exists("XL_VLDL_PL", x) && exists("XL_VLDL_TG", x)) {
+    x[, XL_VLDL_FA := XL_VLDL_CE + 2*XL_VLDL_PL + 3*XL_VLDL_TG]
+  } else if (!(exists("XL_VLDL_CE", x) && exists("XL_VLDL_PL", x) && exists("XL_VLDL_TG", x)) && exists("XL_VLDL_FA", x)) {
+    x[, XL_VLDL_FA := NULL]
+  }
+
+  if (exists("L_VLDL_CE", x) && exists("L_VLDL_PL", x) && exists("L_VLDL_TG", x)) {
+    x[, L_VLDL_FA := L_VLDL_CE + 2*L_VLDL_PL + 3*L_VLDL_TG]
+  } else if (!(exists("L_VLDL_CE", x) && exists("L_VLDL_PL", x) && exists("L_VLDL_TG", x)) && exists("L_VLDL_FA", x)) {
+    x[, L_VLDL_FA := NULL]
+  }
+
+  if (exists("M_VLDL_CE", x) && exists("M_VLDL_PL", x) && exists("M_VLDL_TG", x)) {
+    x[, M_VLDL_FA := M_VLDL_CE + 2*M_VLDL_PL + 3*M_VLDL_TG]
+  } else if (!(exists("M_VLDL_CE", x) && exists("M_VLDL_PL", x) && exists("M_VLDL_TG", x)) && exists("M_VLDL_FA", x)) {
+    x[, M_VLDL_FA := NULL]
+  }
+
+  if (exists("S_VLDL_CE", x) && exists("S_VLDL_PL", x) && exists("S_VLDL_TG", x)) {
+    x[, S_VLDL_FA := S_VLDL_CE + 2*S_VLDL_PL + 3*S_VLDL_TG]
+  } else if (!(exists("S_VLDL_CE", x) && exists("S_VLDL_PL", x) && exists("S_VLDL_TG", x)) && exists("S_VLDL_FA", x)) {
+    x[, S_VLDL_FA := NULL]
+  }
+
+  if (exists("XS_VLDL_CE", x) && exists("XS_VLDL_PL", x) && exists("XS_VLDL_TG", x)) {
+    x[, XS_VLDL_FA := XS_VLDL_CE + 2*XS_VLDL_PL + 3*XS_VLDL_TG]
+  } else if (!(exists("XS_VLDL_CE", x) && exists("XS_VLDL_PL", x) && exists("XS_VLDL_TG", x)) && exists("XS_VLDL_FA", x)) {
+    x[, XS_VLDL_FA := NULL]
+  }
+
+  if (exists("IDL_CE", x) && exists("IDL_PL", x) && exists("IDL_TG", x)) {
+    x[, IDL_FA := IDL_CE + 2*IDL_PL + 3*IDL_TG]
+  } else if (!(exists("IDL_CE", x) && exists("IDL_PL", x) && exists("IDL_TG", x)) && exists("IDL_FA", x)) {
+    x[, IDL_FA := NULL]
+  }
+
+  if (exists("L_LDL_CE", x) && exists("L_LDL_PL", x) && exists("L_LDL_TG", x)) {
+    x[, L_LDL_FA := L_LDL_CE + 2*L_LDL_PL + 3*L_LDL_TG]
+  } else if (!(exists("L_LDL_CE", x) && exists("L_LDL_PL", x) && exists("L_LDL_TG", x)) && exists("L_LDL_FA", x)) {
+    x[, L_LDL_FA := NULL]
+  }
+
+  if (exists("M_LDL_CE", x) && exists("M_LDL_PL", x) && exists("M_LDL_TG", x)) {
+    x[, M_LDL_FA := M_LDL_CE + 2*M_LDL_PL + 3*M_LDL_TG]
+  } else if (!(exists("M_LDL_CE", x) && exists("M_LDL_PL", x) && exists("M_LDL_TG", x)) && exists("M_LDL_FA", x)) {
+    x[, M_LDL_FA := NULL]
+  }
+
+  if (exists("S_LDL_CE", x) && exists("S_LDL_PL", x) && exists("S_LDL_TG", x)) {
+    x[, S_LDL_FA := S_LDL_CE + 2*S_LDL_PL + 3*S_LDL_TG]
+  } else if (!(exists("S_LDL_CE", x) && exists("S_LDL_PL", x) && exists("S_LDL_TG", x)) && exists("S_LDL_FA", x)) {
+    x[, S_LDL_FA := NULL]
+  }
+
+  if (exists("XL_HDL_CE", x) && exists("XL_HDL_PL", x) && exists("XL_HDL_TG", x)) {
+    x[, XL_HDL_FA := XL_HDL_CE + 2*XL_HDL_PL + 3*XL_HDL_TG]
+  } else if (!(exists("XL_HDL_CE", x) && exists("XL_HDL_PL", x) && exists("XL_HDL_TG", x)) && exists("XL_HDL_FA", x)) {
+    x[, XL_HDL_FA := NULL]
+  }
+
+  if (exists("L_HDL_CE", x) && exists("L_HDL_PL", x) && exists("L_HDL_TG", x)) {
+    x[, L_HDL_FA := L_HDL_CE + 2*L_HDL_PL + 3*L_HDL_TG]
+  } else if (!(exists("L_HDL_CE", x) && exists("L_HDL_PL", x) && exists("L_HDL_TG", x)) && exists("L_HDL_FA", x)) {
+    x[, L_HDL_FA := NULL]
+  }
+
+  if (exists("M_HDL_CE", x) && exists("M_HDL_PL", x) && exists("M_HDL_TG", x)) {
+    x[, M_HDL_FA := M_HDL_CE + 2*M_HDL_PL + 3*M_HDL_TG]
+  } else if (!(exists("M_HDL_CE", x) && exists("M_HDL_PL", x) && exists("M_HDL_TG", x)) && exists("M_HDL_FA", x)) {
+    x[, M_HDL_FA := NULL]
+  }
+
+  if (exists("S_HDL_CE", x) && exists("S_HDL_PL", x) && exists("S_HDL_TG", x)) {
+    x[, S_HDL_FA := S_HDL_CE + 2*S_HDL_PL + 3*S_HDL_TG]
+  } else if (!(exists("S_HDL_CE", x) && exists("S_HDL_PL", x) && exists("S_HDL_TG", x)) && exists("S_HDL_FA", x)) {
+    x[, S_HDL_FA := NULL]
+  }
+
+  # Compute aggregate fatty acids across the VLDL, LDL, and HDL subclasses
+  if (exists("XXL_VLDL_FA", x) && exists("XL_VLDL_FA", x) && exists("L_VLDL_FA", x) &&
+      exists("M_VLDL_FA", x) && exists("S_VLDL_FA", x) && exists("XS_VLDL_FA", x)) {
+    x[, VLDL_FA := XXL_VLDL_FA + XL_VLDL_FA + L_VLDL_FA + M_VLDL_FA + S_VLDL_FA + XS_VLDL_FA]
+  } else if (!(exists("XXL_VLDL_FA", x) && exists("XL_VLDL_FA", x) && exists("L_VLDL_FA", x) &&
+               exists("M_VLDL_FA", x) && exists("S_VLDL_FA", x) && exists("XS_VLDL_FA", x)) && exists("VLDL_FA")) {
+    x[, VLDL_FA := NULL]
+  }
+
+  if (exists("L_LDL_FA", x) && exists("M_LDL_FA", x) && exists("S_LDL_FA", x)) {
+    x[, LDL_FA := L_LDL_FA + M_LDL_FA + S_LDL_FA]
+  } else if (!(exists("L_LDL_FA", x) && exists("M_LDL_FA", x) && exists("S_LDL_FA", x)) && exists("LDL_FA")) {
+    x[, LDL_FA := NULL]
+  }
+
+  if (exists("XL_HDL_FA", x) && exists("L_HDL_FA", x) && exists("M_HDL_FA", x) && exists("S_HDL_FA", x)) {
+    x[, HDL_FA := XL_HDL_FA + L_HDL_FA + M_HDL_FA + S_HDL_FA]
+  } else if (!(exists("XL_HDL_FA", x) && exists("L_HDL_FA", x) && exists("M_HDL_FA", x) && exists("S_HDL_FA", x)) && exists("HDL_FA")) {
+    x[, HDL_FA := NULL]
+  }
+
+  # Finished
+  return(x)
+}

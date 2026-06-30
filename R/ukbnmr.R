@@ -6,9 +6,10 @@
 #' Details are provided below, and in the package vignette (type \code{vignette("ukbnmr")} to view).
 #'
 #' @details
-#' There are three groups of functions in this package: (1) data extraction,
-#' (2) removal of technical variation, and (3) recomputing derived biomarkers
-#' and biomarker ratios.
+#' There are four groups of functions in this package: (1) data extraction,
+#' (2) removal of technical variation, (3) recomputing derived biomarkers
+#' and biomarker ratios, and (4) computing additional biomarkers and ratios
+#' that extend the Nightingale Health biomarker panel.
 #'
 #' All functions can be applied directly to raw data extracted from UK Biobank.
 #'
@@ -74,10 +75,7 @@
 #'   significance are computed.}
 #' }
 #'
-#' Further details can be found in Ritchie S. C. \emph{et al.} Quality control
-#' and removal of technical variation of NMR metabolic biomarker data in
-#' ~120,000 UK Biobank participants, \emph{Sci Data} \strong{10}, 64 (2023). doi:
-#' \href{https://www.nature.com/articles/s41597-023-01949-y}{10.1038/s41597-023-01949-y}
+#' Further details can be found in Ritchie \emph{et al.} 2023
 #'
 #' @section  Methods for computing biomarker ratios:
 #' The \code{\link{compute_extended_ratios}()} function will compute an extended
@@ -88,10 +86,41 @@
 #' The \code{\link{recompute_derived_biomarkers}()} function will recompute all
 #' composite biomarkers and ratios from 107 non-derived biomarkers, which is
 #' useful for ensuring data consistency when adjusting for unwanted biological
-#' variation. This includes the extended biomarker rations computed by the
-#' \code{\link{compute_extended_ratios}()} function. A companion function,
+#' variation. This includes additional biomarkers and ratios computed by the
+#' \code{\link{compute_extended_ratios}()} and \code{\link{compute_lipoprotein_fatty_acids}()}
+#' functions (see next section for details). A companion function,
 #' \code{\link{recompute_derived_biomarker_qc_flags}()} will aggregate the QC
 #' flags for the biomarkers underlying each composite biomarker and ratio.
+#'
+#' @section Computing additional biomarkers and ratios:
+#' The \code{\link{compute_extended_ratios}()} function extends the Nightingale
+#' Health biomarker panel with 76 additional ratios that complement existing
+#' ratios provided by Nightingale Health. These include (1) 20 lipid fractions
+#' that are provided for the 14 lipoprotein subclasses but not for the lipoprotein
+#' classes and total serum; (2) cholesterol fractions (percentages of cholesterol
+#' made up of free cholesterol and esterified cholesterol) in each of the
+#' 14 lipoprotein subclasses, three lipoprotein classes, and total serum; (3)
+#' ratios of free cholesterol to cholesteryl esters in each of the 14 lipoprotein
+#' subclasses, three lipoprotein classes, and total serum; and (4) percentage
+#' of polyunsaturated fatty acids comprised of omega-3 and omega-6 fatty acids.
+#'
+#' The \code{\link{compute_lipoprotein_fatty_acids}()} function extends the
+#' Nightingale Health biomarker panel with estimates of fatty acids content in
+#' the 14 lipoprotein subclasses and three lipoprotein classes based on the
+#' observation made by Belkadi \emph{et al.} 2026 that numbers of fatty acyl
+#' side chains bound to each lipid headgroup are three for triacylglycerols
+#' (TGs), two for phospholipids (PLs), and one for cholesteryl esters (CEs),
+#' and fatty acids can be estimated as \eqn{CE + 2 \times PL + 3 \times TG}.
+#'
+#' @references
+#' Ritchie S. C. \emph{et al.} Quality control and removal of technical variation
+#' of NMR metabolic biomarker data in ~120,000 UK Biobank participants. \emph{Sci Data}
+#' \strong{10}, 64 (2023) doi: \href{https://www.nature.com/articles/s41597-023-01949-y}{10.1038/s41597-023-01949-y}
+#'
+#' Belkadi A. \emph{et al.} Size-resolved lipoprotein fatty acid content as a
+#' novel nuclear magnetic resonance-derived trait specifically associates with
+#' genetic variants that control fatty acid metabolism. \emph{J. Proteome Res.}
+#'  (2026) doi: \href{https://pubs.acs.org/doi/10.1021/acs.jproteome.6c00107}{10.1021/acs.jproteome.6c00107}
 #'
 #' @name ukbnmr
 #' @import data.table

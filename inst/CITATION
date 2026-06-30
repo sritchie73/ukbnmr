@@ -19,3 +19,20 @@ bibentry(
   ),
   doi = "10.1038/s41597-023-01949-y"
 )
+
+bibentry(
+  bibtype = "Article",
+  journal = "Journal of Proteome Research",
+  year = "2026",
+  title = "Size-Resolved Lipoprotein Fatty Acid Content as a Novel Nuclear Magnetic Resonance-Derived Trait Specifically Associates with Genetic Variants That Control Fatty Acid Metabolism",
+  author = c(
+      person("Aziz", "Belkadi"),
+      person("Guarav", "Thareja"),
+      person("Nisha", "Stephan"),
+      person("Anna", "Halama"),
+      person("Karsten", "Suhre")
+  ),
+  doi = "10.1021/acs.jproteome.6c00107",
+  header = "If you use the fatty acids in lipoprotein biomarkers in your research please also cite:"
+)
+

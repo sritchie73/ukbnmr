@@ -8,9 +8,9 @@ recompute_derived_biomarkers(x)
 }
 \arguments{
 \item{x}{\code{data.frame} containing NMR metabolomics data from UK Biobank.
-May either be raw field data output by
-\href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.}
+May either be raw field data output by the Table Exporter tool on the UK
+Biobank Research Analysis Platform or data with column names corresponding
+to biomarkers listed in \code{\link{nmr_info}}.}
 }
 \value{
 a \code{data.frame} with all composite biomarkers and ratios

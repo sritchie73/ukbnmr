@@ -14,17 +14,16 @@
 #' aggregated by this function for the computed biomarker ratios.
 #'
 #' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
-#'   May either be raw field data output by
-#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#'   or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.
+#'   May either be raw field data output by the Table Exporter tool on the UK
+#'   Biobank Research Analysis Platform or data with column names corresponding
+#'   to biomarkers listed in \code{\link{nmr_info}}.
 #'
 #' @return a \code{data.frame} with QC flags aggregated for all computed
 #'         biomarker ratios.
 #'
 #' @seealso \code{\link{nmr_info}} for list of computed biomarker ratios and
-#'   \code{\link{extract_biomarkers}()} for details on how raw data from
-#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#'   is processed.
+#'   \code{\link{extract_biomarkers}()} for details on how raw field data
+#'   extracted by the Table Exporter tool is processed.
 #'
 #' @examples
 #' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
@@ -77,17 +76,16 @@ compute_extended_ratio_qc_flags <- function(x) {
 #' aggregated by this function for the computed biomarker ratios.
 #'
 #' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
-#'   May either be raw field data output by
-#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#'   or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.
+#'   May either be raw field data output by the Table Exporter tool on the UK
+#'   Biobank Research Analysis Platform or data with column names corresponding
+#'   to biomarkers listed in \code{\link{nmr_info}}.
 #'
 #' @return a \code{data.frame} with QC flags aggregated for all computed
 #'         biomarkers and ratios.
 #'
 #' @seealso \code{\link{nmr_info}} for list of computed biomarker ratios and
-#'   \code{\link{extract_biomarkers}()} for details on how raw data from
-#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#'   is processed.
+#'   \code{\link{extract_biomarkers}()} for details on how raw field data
+#'   extracted by the Table Exporter tool is processed.
 #'
 #' @examples
 #' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package

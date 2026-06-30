@@ -14,9 +14,9 @@
 #' by this function.
 #'
 #' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
-#'   May either be raw field data output by
-#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#'   or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.
+#'   May either be raw field data output by the Table Exporter tool on the UK
+#'   Biobank Research Analysis Platform or data with column names corresponding
+#'   to biomarkers listed in \code{\link{nmr_info}}.
 #'
 #' @return a \code{data.frame} with the additional computed biomarker ratios.
 #'
@@ -24,9 +24,7 @@
 #'   \code{\link{compute_extended_ratio_qc_flags}()} for obtaining an
 #'   aggregate of the biomarker QC flags from the biomarkers underlying each
 #'   computed ratio, and \code{\link{extract_biomarkers}()} for details on how
-#'   raw data from
-#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#'   is processed.
+#'   raw field data extracted by the Table Exporter tool is processed.
 #'
 #' @examples
 #' ukb_data <- ukbnmr::test_data # Toy example dataset for testing package
@@ -79,9 +77,9 @@ compute_extended_ratios <- function(x) {
 #' by this function.
 #'
 #' @param x \code{data.frame} containing NMR metabolomics data from UK Biobank.
-#'   May either be raw field data output by
-#'   \href{https://biobank.ctsu.ox.ac.uk/crystal/exinfo.cgi?src=accessing_data_guide}{ukbconv}
-#'   or data with column names corresponding to biomarkers listed in \code{\link{nmr_info}}.
+#'   May either be raw field data output by the Table Exporter tool on the UK
+#'   Biobank Research Analysis Platform or data with column names corresponding
+#'   to biomarkers listed in \code{\link{nmr_info}}.
 #'
 #' @return a \code{data.frame} with all composite biomarkers and ratios
 #'   (re)computed from the 107 non-derived biomarkers (see \code{\link{nmr_info}}

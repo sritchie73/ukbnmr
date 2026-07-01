@@ -2,11 +2,12 @@
 
 This package provides utilities for working with the [UK Biobank NMR metabolomics data](https://biobank.ndph.ox.ac.uk/showcase/label.cgi?id=220).
 
-There are three groups of functions in this package:
+There are four groups of functions in this package:
 
 1. [Data extraction](#data-extraction-functions)
 2. [Removal of technical variation](#removal-of-technical-variation) 
-3. [Recomputing derived biomarkers and computing additional biomarker ratios after adjustment for biological covariates](#methods-for-computing-derived-biomarkers-and-ratios-after-adjusting-for-biological-variation)
+3. [Recomputing derived biomarkers and biomarker ratios after adjustment for biological covariates](#methods-for-computing-derived-biomarkers-and-ratios-after-adjusting-for-biological-variation)
+4. [Computing additional biomarkers and ratios that extend the Nightingale Health biomarker panel](#computing-additional-biomarkers-that-extend-the-nightingale-health-panel)
 
 All functions are designed to be applied directly to the UK Biobank phenotype data on the [UK Biobank Research Analysis Platform](https://ukbiobank.dnanexus.com/landing) after the NMR metabolomics fields have been extracted using the [Table Exporter](https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/accessing-data/accessing-phenotypic-data#create-a-tsv-or-csv-file-using-table-exporter) tool. 
 
@@ -32,11 +33,15 @@ install.packages("ukbnmr")
 
 If using this package to remove additional technical variation or compute additional biomarker ratios, please cite:
 
-Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **Sci Data** *10* 64 (2023). doi: [10.1038/s41597-023-01949-y](https://www.nature.com/articles/s41597-023-01949-y).
+Ritchie S. C. *et al.*, Quality control and removal of technical variation of NMR metabolic biomarker data in ~120,000 UK Biobank participants, **Sci Data** *10* 64 (2023). doi: [10.1038/s41597-023-01949-y](http://doi.org/10.1038/s41597-023-01949-y).
 
 Note that several updates have been made to the package and algorithm based on subsequent releases of NMR metabolomic biomarker data that have expanded to cover all ~500,000 UK Biobank participants with blood samples. These updates are described in more detail in the [Algorithms for removing technical varation](#algorithms-for-removing-technical-variation) section below. The impact of technical variation and its removal in the full UK Biobank data are also shown in the [Technical variation in the full UK Biobank NMR data](#technical-variation-in-the-full-uk-biobank-nmr-data) section below.
 
-Citation is appreciated, but not expected, if simply using the data extraction functions for convenience to extract the NMR biomarker data and associated information as-is into analysis-ready data.frames. 
+If using this package to compute the additional fatty acids in lipoprotein biomarkers please cite:
+
+Belkadi A. *et al.*, Size-resolved lipoprotein fatty acid content as a novel nuclear magnetic resonance-derived trait specifically associates with **J. Proteome Res.** (2026). doi: [10.1021/acs.jproteome.6c00107](http://doi.org/10.1021/acs.jproteome.6c00107)
+
+Citation is appreciated, but not expected, if simply using the data extraction functions for convenience to extract the NMR biomarker data and associated information as-is into analysis-ready data.frames.
 
 ## Data Extraction Functions
 
@@ -211,9 +216,9 @@ And how this changes with version 2 of the algorithm:
 
 ## Methods for computing derived biomarkers and ratios after adjusting for biological variation
 
-Analysts may wish to further adjust data for biological covariates. We provide an additional function, `recompute_derived_biomarkers()` to recompute all composite biomarkers and ratios from 107 non-derived biomarkers, which is useful for ensuring data consistency when adjusting for unwanted biological variation. A companion function, `recompute_derived_biomarker_qc_flags()` will aggregate the QC flags for the biomarkers underlying each composite biomarker and ratio.
+Analysts may wish to further adjust data for biological covariates. We provide an additional function, `recompute_derived_biomarkers()` to recompute all composite biomarkers and ratios from 107 non-derived biomarkers, which is useful for ensuring data consistency when adjusting for unwanted biological variation. A companion function, `recompute_derived_biomarker_qc_flags()` will aggregate the QC flags for the biomarkers underlying each composite biomarker and ratio. Note these functions also compute 76 additional ratios and 17 lipoprotein fatty acid biomarkers that extend the Nightingale Health biomarker panel (see next section for details).
 
-Note these functions assume the data has been returned to absolute units after adjusting for covariates. For example the ratio of two biomarkers A and B is computed as A/B, which may not be true if the two biomarkers are on different scales (e.g. regression residuals) after adjustment.
+Note these functions assume the data has been returned to absolute units after adjusting for covariates. For example the ratio of two biomarkers A and B is computed as A/B, which may not be true if the two biomarkers are on different scales (e.g. regression residuals) after adjustment. The example below shows how biomarkers can be returned to the absolute scale after adjustment for covariates.
 
 If using these functions, please cite:
 
@@ -308,3 +313,11 @@ fwrite(biomarker_qc_flags, file="path/to/biomarker_qc_flags.csv")
 ```
 
 Finally, remember to use the `dx upload` tool provided by the UK Biobank Research Analysis Platform to [save these files to your persistant project storage](https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/running-analysis-jobs/rstudio#uploading-local-files-to-the-project) for later use.
+
+## Computing additional biomarkers that extend the Nightingale Health panel
+
+Additional biomarkers and ratios that extend the Nightingale Health panel are also computed when running the `remove_technical_variation()` and  `recompute_derived_biomarkers()` functions. For analysts who just wish to compute these additional biomarkers and ratios we also provide functions to compute these directly. 
+
+The `compute_extended_ratios()` function extends the Nightingale Health biomarker panel with 76 additional ratios that complement existing ratios provided by Nightingale Health. These include (1) 20 lipid fractions that are provided for the 14 lipoprotein subclasses but not for the lipoprotein classes and total serum; (2) cholesterol fractions (percentages of cholesterol made up of free cholesterol and esterified cholesterol) in each of the 14 lipoprotein subclasses, three lipoprotein classes, and total serum; (3) ratios of free cholesterol to cholesteryl esters in each of the 14 lipoprotein subclasses, three lipoprotein classes, and total serum; and (4) percentage of polyunsaturated fatty acids comprised of omega-3 and omega-6 fatty acids.
+
+The `compute_lipoprotein_fatty_acids()` function extends the Nightingale Health biomarker panel with estimates of fatty acids content in the 14 lipoprotein subclasses and three lipoprotein classes based on the observation made by Belkadi \emph{et al.} 2026 that numbers of fatty acyl side chains bound to each lipid headgroup are three for triacylglycerols (TGs), two for phospholipids (PLs), and one for cholesteryl esters (CEs), and fatty acids can be estimated as $CE + 2 \times PL + 3 \times TG$.

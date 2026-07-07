@@ -1,5 +1,18 @@
 # NEWS
 
+## Version 3.4
+
+ - Added lipoprotein fatty acid contents to the extended set of biomarkers 
+   computed by the ukbnmr package based on the formula published by Belkadi 
+   *et al.* 2026 (doi: 10.1021/acs.jproteome.6c00107). These can be computed
+   directly by the new compute_lipoprotein_fatty_acids() function, and are 
+   returned with the extended set of biomarkers computed by the 
+   recompute_derived_biomarkers() and remove_technical_variation() functions.
+   
+ - Updated outdated documentation that referred to the tools used for legacy 
+   UK Biobank datasets for data extraction that are no longer relevant now that
+   analyses must take place on the UK Biobank Research Analysis Platform.
+
 ## Version 3.3.2
 
  - Resolved new CRAN NOTE about mis-specified Authors@R field

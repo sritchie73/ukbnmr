@@ -5,12 +5,12 @@
 \alias{nmr_info}
 \title{Nightingale biomarker information}
 \format{
-A data table with 325 rows and 8 columns:
+A data table with 344 rows and 8 columns:
 \describe{
   \item{Biomarker}{Short column name assigned to the biomarker}
   \item{Description}{Biomarker description, matching the description field provided by UK Biobank and Nightingale Health}
   \item{Units}{Units of measurement for the biomarker ("mmol/L", "g/L", "nm", "degree", "ratio", or "\%")}
-  \item{Type}{Biomarker type ("Non-derived", "Composite", "Ratio", or "Percentage")}
+  \item{Type}{Biomarker type ("Non-derived", "Composite", "Ratio", "Percentage", or "Estimate")}
   \item{Group}{Biomarker group as provided by Nightingale Health}
   \item{Sub.Group}{Biomarker sub-group as provided by Nightingale Health}
   \item{Nightingale}{Logical. Indicates biomarker is quantified by the Nightingale Health platform}
@@ -24,7 +24,15 @@ A data table with 325 rows and 8 columns:
 nmr_info
 }
 \description{
+{
 Contains details on the Nightingale biomarkers available in UK Biobank and
 computed by this package.
+
+If you use the estimated fatty acids in lipoprotein measurements please cite:
+Belkadi A. \emph{et al.} Size-resolved lipoprotein fatty acid content as a
+novel nuclear magnetic resonance-derived trait specifically associates with
+genetic variants that control fatty acid metabolism. \emph{J. Proteome Res.}
+ (2026) doi: \href{https://pubs.acs.org/doi/10.1021/acs.jproteome.6c00107}{10.1021/acs.jproteome.6c00107}
+}
 }
 \keyword{datasets}

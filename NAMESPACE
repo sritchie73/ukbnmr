@@ -2,6 +2,8 @@
 
 export(compute_extended_ratio_qc_flags)
 export(compute_extended_ratios)
+export(compute_lipoprotein_fatty_acids)
+export(compute_lipoprotein_fatty_acids_flags)
 export(extract_biomarker_qc_flags)
 export(extract_biomarkers)
 export(extract_sample_qc_flags)
